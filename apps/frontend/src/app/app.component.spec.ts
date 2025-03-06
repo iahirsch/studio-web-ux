@@ -16,5 +16,7 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  it('', () => {});
+  it('should create the app', () => {
+    // Test
+  });
 });
