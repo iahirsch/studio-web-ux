@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  main:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+          cache: 'npm'
 
       - run: npm ci --legacy-peer-deps
       - uses: nrwl/nx-set-shas@v4
@@ -36,4 +36,25 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: npx nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      - run: npx nx affected -t lint test build
+      #- run: npx nx affected -t lint test build
+      - run: npx nx run-many -t lint test build -p frontend backend shared
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: dist/apps/frontend/browser
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
