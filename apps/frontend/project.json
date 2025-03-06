@@ -27,6 +27,7 @@
       },
       "configurations": {
         "production": {
+          "baseHref": "/studio-web-ux/",
           "budgets": [
             {
               "type": "initial",
