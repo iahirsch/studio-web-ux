@@ -3,7 +3,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { env } from '../../env/env';
+import { env } from '../../../env/env';
 
 @Component({
   selector: 'app-dashboard',
