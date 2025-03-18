@@ -6,6 +6,9 @@ import { AuthService } from './auth/auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { UserService } from './user/user.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './user/user.module';
 import { OjpApiController } from './ojp-api/ojp-api.controller';
 import { OjpApiService } from './ojp-api/ojp-api.service';
 
@@ -19,11 +22,22 @@ import { OjpApiService } from './ojp-api/ojp-api.service';
         signOptions: { expiresIn: '8h' },
         secret: configService.get<string>('JWT_SECRET'),
       }),
-      inject: [ConfigService],
+      inject: [ConfigService]
     }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get('DATABASE_URL'),
+        autoLoadEntities: true,
+        synchronize: true
+      }),
+      inject: [ConfigService]
+    }),
+    UsersModule
   ],
   controllers: [AppController, OjpApiController],
-  providers: [AppService, AuthService, OjpApiService],
-  exports: [AuthService, JwtModule],
+  providers: [AppService, AuthService, UserService, OjpApiService],
+  exports: [AuthService, JwtModule]
 })
 export class AppModule {}
