@@ -6,6 +6,8 @@ import { AuthService } from './auth/auth.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { OjpApiController } from './ojp-api/ojp-api.controller';
+import { OjpApiService } from './ojp-api/ojp-api.service';
 
 @Module({
   imports: [
@@ -15,13 +17,13 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         signOptions: { expiresIn: '8h' },
-        secret: configService.get<string>('JWT_SECRET')
+        secret: configService.get<string>('JWT_SECRET'),
       }),
-      inject: [ConfigService]
-    })],
-  controllers: [AppController],
-  providers: [AppService, AuthService],
-  exports: [AuthService, JwtModule]
+      inject: [ConfigService],
+    }),
+  ],
+  controllers: [AppController, OjpApiController],
+  providers: [AppService, AuthService, OjpApiService],
+  exports: [AuthService, JwtModule],
 })
-export class AppModule {
-}
+export class AppModule {}
