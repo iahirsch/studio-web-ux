@@ -20,7 +20,7 @@ import { OjpApiService } from './ojp-api/ojp-api.service';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         signOptions: { expiresIn: '8h' },
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('JWT_SECRET')
       }),
       inject: [ConfigService]
     }),
@@ -30,7 +30,8 @@ import { OjpApiService } from './ojp-api/ojp-api.service';
         type: 'postgres',
         url: configService.get('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: true
+        synchronize: true,
+        ssl: true
       }),
       inject: [ConfigService]
     }),
@@ -40,4 +41,5 @@ import { OjpApiService } from './ojp-api/ojp-api.service';
   providers: [AppService, AuthService, UserService, OjpApiService],
   exports: [AuthService, JwtModule]
 })
-export class AppModule {}
+export class AppModule {
+}
