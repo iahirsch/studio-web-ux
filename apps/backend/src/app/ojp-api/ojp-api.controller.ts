@@ -10,6 +10,6 @@ export class OjpApiController {
         @Query('from') from: string,
         @Query('to') to: string,
     ) {
-        return this.ojpApiService.getJourney(from, to);
+        return this.ojpApiService.getJourney({ from, to });
     }
 }

@@ -1,37 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { buildOjpRequestXml } from './ojp-request-builder';
+import { parseOjpResponse } from './ojp-response-parser';
 
 @Injectable()
 export class OjpApiService {
-    async getJourney(from: string, to: string) {
+    async getJourney(params: {
+        from: string;
+        to: string;
+        mode?: string;
+        datetime?: string;
+    }) {
         try {
-            // XML als String definieren
-            const xmlRequestBody = `<?xml version="1.0" encoding="utf-8"?>
-        <OJP xmlns:siri="http://www.siri.org.uk/siri" version="2.0" xmlns="http://www.vdv.de/ojp">
-          <!-- Hier können die spezifischen Parameter eingefügt werden -->
-          <Request>
-            <From>${from}</From>
-            <To>${to}</To>
-            <DepartureTime>2025-03-14T08:30:00</DepartureTime>
-          </Request>
-        </OJP>`;
+            const xmlBody = buildOjpRequestXml(params);
+            console.log('Gesaendeter XML-Body:', xmlBody);  // Hier loggen wir den XML-Body
 
-            // API-Anfrage mit Axios und Bearer Token
             const response = await axios.post(
-                process.env.OJP_API_URL,
-                xmlRequestBody,
+                'https://api.opentransportdata.swiss/ojp20',
+                xmlBody,
                 {
                     headers: {
-                        'Content-Type': 'application/xml',
-                        Authorization: `Bearer ${process.env.OJP_API_TOKEN}`,
-                    },
+                        'Content-Type': 'text/xml',
+                        'Authorization': `Bearer ${process.env.OJP_API_TOKEN}`
+                    }
                 }
             );
+            console.log('Antwort der OJP-API:', response.data);  // Hier loggen wir die Antwort
 
-            return response.data;
+            const json = await parseOjpResponse(response.data);
+            return json;
         } catch (error) {
-            console.error('Fehler beim OJP API Call', error);
-            throw new Error('OJP API Anfrage fehlgeschlagen');
+            console.error('Fehler bei der API-Anfrage:', error.response || error.message);
+            throw new Error('Fehler bei der Verbindung zur OJP-API');
         }
     }
 }

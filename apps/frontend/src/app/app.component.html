@@ -1,1 +1,4 @@
 <router-outlet></router-outlet>
+<app-ojp-search (search)="onSearch($event)"></app-ojp-search>
+<app-ojp-results [connections]="connections"></app-ojp-results>
+<app-map-view></app-map-view>
