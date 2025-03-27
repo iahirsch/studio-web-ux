@@ -1,0 +1,39 @@
+<div>
+  <label for="fromInput">Von (Abfahrt):</label>
+  <input
+    type="text"
+    id="fromInput"
+    (input)="onFromChange($event)"
+    placeholder="Abfahrtsort"
+  />
+
+  <label for="toInput">Nach (Ziel):</label>
+  <input
+    type="text"
+    id="toInput"
+    (input)="onToChange($event)"
+    placeholder="Zielort"
+  />
+
+  <label for="transport">Verkehrsmittel:</label>
+  <select id="transport" (change)="onTransportChange($event)">
+    <option value="car">Auto</option>
+    <option value="train">Zug</option>
+  </select>
+
+  <label for="dateInput">Datum:</label>
+  <input type="date" id="dateInput" (change)="onDateChange($event)" />
+
+  <label for="timeInput">Zeit:</label>
+  <input type="time" id="timeInput" (change)="onTimeChange($event)" />
+
+  <button (click)="submit()">Absenden</button>
+</div>
+
+<div>
+  <p>Abfahrtsort: {{ from }}</p>
+  <p>Zielort: {{ to }}</p>
+  <p>Verkehrsmittel: {{ transport }}</p>
+  <p>Datum: {{ date }}</p>
+  <p>Zeit: {{ time }}</p>
+</div>

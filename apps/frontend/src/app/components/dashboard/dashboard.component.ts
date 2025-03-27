@@ -4,10 +4,11 @@ import { AuthService } from '../../services/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
+import { OjpRequestComponent } from '../ojp-request/ojp-request.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [AsyncPipe, CommonModule],
+  imports: [AsyncPipe, CommonModule, OjpRequestComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

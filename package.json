@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@angular/animations": "~19.1.0",
+    "@angular/cdk": "^19.2.7",
     "@angular/common": "~19.1.0",
     "@angular/compiler": "~19.1.0",
     "@angular/core": "~19.1.0",
@@ -75,8 +76,10 @@
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/swagger": "^8.1.1",
     "@nestjs/typeorm": "^11.0.0",
+    "@sbb-esta/angular": "^19.1.5",
     "axios": "^1.6.0",
     "cookie-parser": "^1.4.7",
+    "ojp-sdk": "git+https://github.com/openTdataCH/ojp-js.git#feature/ojp-v2",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
