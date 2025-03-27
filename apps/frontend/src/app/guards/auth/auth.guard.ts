@@ -1,32 +1,21 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { CanActivate } from '@nestjs/common';
-import { catchError, map, Observable, of } from 'rxjs';
-import { AuthService } from '../../services/auth/auth.service';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
 
-@Injectable({
-  providedIn: 'root'
-})
+export const authGuard: CanActivateFn = (_route, state) => {
+  const oauthService = inject(OAuthService);
+  const router = inject(Router);
 
-export class AuthGuard implements CanActivate {
-
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
-  canActivate(): Observable<boolean> {
-    return this.authService.isAuthenticated().pipe(
-      map((response) => {
-        if (response.authenticated) {
-          return true;
-        } else {
-          this.router.navigate(['/login']);
-          return false;
-        }
-      }),
-      catchError(() => {
-        this.router.navigate(['/login']);
-        return of(false);
-      })
-    );
+  if (oauthService.hasValidAccessToken()) {
+    return true;
   }
-}
+
+  return oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
+    if (oauthService.hasValidAccessToken()) {
+      return true;
+    }
+    //oauthService.initLoginFlow(state.url);
+    router.navigate(['/login']);
+    return false;
+  });
+};
