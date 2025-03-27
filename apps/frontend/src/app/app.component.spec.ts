@@ -8,9 +8,9 @@ describe('AppComponent', () => {
       imports: [AppComponent, RouterModule.forRoot([])],
       providers: [
         {
-          useValue: { api: jest.fn() },
-        },
-      ],
+          useValue: { api: jest.fn() }
+        }
+      ]
     }).compileComponents();
   });
 

@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth/auth.service';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-login',
   imports: [CommonModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  private authService = inject(AuthService);
+  private oauthService = inject(OAuthService);
 
-  login = () => this.authService.login();
+  login = () => this.oauthService.initLoginFlow();
 }
