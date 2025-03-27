@@ -5,7 +5,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AuthConfig, provideOAuthClient } from 'angular-oauth2-oidc';
 import { env } from '../env/env';
-import { authConfig } from './services/auth/auth.config';
+import { authConfig } from './guards/auth/auth.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
