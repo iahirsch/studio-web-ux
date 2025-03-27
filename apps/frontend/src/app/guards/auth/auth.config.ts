@@ -4,8 +4,8 @@ import { env } from '../../../env/env';
 export const authConfig: AuthConfig = {
   oidc: true,
   issuer: env.auth0Domain,
-  redirectUri: window.location.origin,
-  logoutUrl: window.location.origin,
+  redirectUri: env.redirectUri,
+  logoutUrl: env.redirectUri,
   clientId: env.auth0ClientId,
   responseType: 'code',
   scope: 'openid profile email',
