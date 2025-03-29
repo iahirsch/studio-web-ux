@@ -1,0 +1,128 @@
+<div class="travel-container">
+  <h1>Plan Your Journey</h1>
+
+  <form [formGroup]="travelForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="from">From:</label>
+        <input
+          type="text"
+          id="from"
+          formControlName="from"
+          placeholder="Enter origin location"
+        />
+        <div
+          class="error"
+          *ngIf="
+            travelForm.get('from')?.invalid && travelForm.get('from')?.touched
+          "
+        >
+          Origin location is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="to">To:</label>
+        <input
+          type="text"
+          id="to"
+          formControlName="to"
+          placeholder="Enter destination"
+        />
+        <div
+          class="error"
+          *ngIf="travelForm.get('to')?.invalid && travelForm.get('to')?.touched"
+        >
+          Destination is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="mode">Travel Mode:</label>
+        <select id="mode" formControlName="mode">
+          <option value="train">Train</option>
+          <option value="car">Car</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date" formControlName="date" />
+      </div>
+
+      <div class="form-group">
+        <label for="time">Time:</label>
+        <input type="time" id="time" formControlName="time" />
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="travelForm.invalid || loading">
+      {{ loading ? 'Searching...' : 'Find Routes' }}
+    </button>
+  </form>
+
+  <div class="results" *ngIf="travelResults">
+    <h2>Travel Options</h2>
+
+    <div class="request-info">
+      <h3>Request Details</h3>
+      <pre>{{ travelResults.requestXML }}</pre>
+    </div>
+
+    <div
+      class="connections"
+      *ngIf="
+        travelResults.trainConnections && travelResults.trainConnections.length
+      "
+    >
+      <h3>Train Connections</h3>
+      <div
+        class="connection"
+        *ngFor="let connection of travelResults.trainConnections; let i = index"
+      >
+        <div class="connection-header">Option {{ i + 1 }}</div>
+        <div class="connection-details">
+          <div><strong>Departure:</strong> {{ connection.departure }}</div>
+          <div><strong>Arrival:</strong> {{ connection.arrival }}</div>
+          <div><strong>Duration:</strong> {{ connection.duration }}</div>
+          <div><strong>Transfers:</strong> {{ connection.transfers }}</div>
+          <div *ngIf="connection.platforms && connection.platforms.length">
+            <strong>Platforms:</strong>
+            <span
+              *ngFor="let platform of connection.platforms; let last = last"
+            >
+              {{ platform }}{{ !last ? ' → ' : '' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-route" *ngIf="travelResults.carRoute">
+      <h3>Car Route</h3>
+      <div>
+        <strong>Distance:</strong> {{ travelResults.carRoute.distance }}
+      </div>
+      <div>
+        <strong>Duration:</strong> {{ travelResults.carRoute.duration }}
+      </div>
+      <div
+        class="route-steps"
+        *ngIf="
+          travelResults.carRoute.steps && travelResults.carRoute.steps.length
+        "
+      >
+        <strong>Directions:</strong>
+        <ol>
+          <li *ngFor="let step of travelResults.carRoute.steps">{{ step }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+</div>

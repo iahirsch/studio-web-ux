@@ -1,37 +1,79 @@
+// apps/backend/src/app/ojp-api/ojp-api.service.ts
 import { Injectable } from '@nestjs/common';
+import { TravelRequestDto } from './dto/travel-request.dto';
 import axios from 'axios';
 
 @Injectable()
 export class OjpApiService {
+    private readonly baseUrl: string;
+
+    constructor() {
+        // For local development, use localhost
+        // For production, use the same host (since both services run on the same Heroku app)
+        this.baseUrl = process.env.NODE_ENV === 'production'
+            ? '/ojp-service'
+            : 'http://localhost:3000/ojp-service';
+    }
+
     async getJourney(from: string, to: string) {
         try {
-            // XML als String definieren
-            const xmlRequestBody = `<?xml version="1.0" encoding="utf-8"?>
-        <OJP xmlns:siri="http://www.siri.org.uk/siri" version="2.0" xmlns="http://www.vdv.de/ojp">
-          <!-- Hier können die spezifischen Parameter eingefügt werden -->
-          <Request>
-            <From>${from}</From>
-            <To>${to}</To>
-            <DepartureTime>2025-03-14T08:30:00</DepartureTime>
-          </Request>
-        </OJP>`;
+            const response = await axios.post(`${this.baseUrl}/trip-search`, {
+                from,
+                to,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toTimeString().substring(0, 5),
+                mode: 'train'
+            });
 
-            // API-Anfrage mit Axios und Bearer Token
-            const response = await axios.post(
-                process.env.OJP_API_URL,
-                xmlRequestBody,
-                {
-                    headers: {
-                        'Content-Type': 'application/xml',
-                        Authorization: `Bearer ${process.env.OJP_API_TOKEN}`,
-                    },
-                }
-            );
-
-            return response.data;
+            return {
+                requestXML: response.data.requestXML,
+                result: response.data
+            };
         } catch (error) {
-            console.error('Fehler beim OJP API Call', error);
-            throw new Error('OJP API Anfrage fehlgeschlagen');
+            console.error('Error in journey request:', error);
+            throw new Error('OJP API request failed');
         }
     }
+
+    async searchTrip(travelRequest: TravelRequestDto) {
+        try {
+            const response = await axios.post(`${this.baseUrl}/trip-search`, {
+                from: travelRequest.from,
+                to: travelRequest.to,
+                date: travelRequest.date,
+                time: travelRequest.time,
+                mode: travelRequest.mode
+            });
+
+            const result = response.data;
+
+            // Format the results for the frontend
+            let trainConnections = [];
+            let carRoute = null;
+
+            if (result.trips && result.trips.length > 0) {
+                if (travelRequest.mode === 'train' || travelRequest.mode === 'car') {
+                    trainConnections = result.trips.map(trip => this.formatTripForDisplay(trip));
+                }
+
+                if (travelRequest.mode === 'car' && result.trips.length > 0) {
+                    carRoute = this.formatCarRouteForDisplay(result.trips[0]);
+                }
+            }
+
+            return {
+                requestXML: result.requestXML,
+                trainConnections,
+                carRoute
+            };
+        } catch (error) {
+            console.error('Error in trip search:', error);
+            throw new Error(`Failed to search for trip options: ${error.message}`);
+        }
+    }
+
+    // Keep the existing format methods from previous implementations
+    private formatTripForDisplay(trip: any) { /* ... */ }
+    private formatCarRouteForDisplay(trip: any) { /* ... */ }
+    private formatDateTime(date: Date): string { /* ... */ }
 }

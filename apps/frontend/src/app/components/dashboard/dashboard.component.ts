@@ -4,11 +4,12 @@ import { AuthService } from '../../services/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
-import { OjpRequestComponent } from '../ojp-request/ojp-request.component';
+
+import { TravelSearchComponent } from "../travel-search/travel-search.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [AsyncPipe, CommonModule, OjpRequestComponent],
+  imports: [AsyncPipe, CommonModule, TravelSearchComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
