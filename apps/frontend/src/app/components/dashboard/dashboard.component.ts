@@ -4,7 +4,6 @@ import { AuthService } from '../../services/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
-
 import { TravelSearchComponent } from "../travel-search/travel-search.component";
 
 @Component({
