@@ -5,8 +5,7 @@
   "scripts": {
     "build": "npx nx build backend",
     "start": "npx nx serve backend",
-    "start:prod": "node dist/apps/backend/main",
-    "start:combined": "node apps/backend/src/combined-server.js"
+    "start:prod": "node dist/apps/backend/main"
   },
   "private": true,
   "devDependencies": {
