@@ -23,6 +23,48 @@
 
       <div class="form-group">
         <label for="to">To:</label>
+        <location-button
+          title="Informatik"
+          location="Rotkreuz"
+          (btnClicked)="
+            onLocationButtonClick('47.14352282294816, 8.432576926508915')
+          "
+        ></location-button>
+        <location-button
+          title="Design,Film und Kunst"
+          location="Emmenbrücke"
+          (btnClicked)="
+            onLocationButtonClick('47.07173422069437, 8.277630465694969')
+          "
+        ></location-button>
+        <location-button
+          title="Soziale Arbeit"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.04824253253547, 8.314788883279503')
+          "
+        ></location-button>
+        <location-button
+          title="Wirtschaft"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.049212803608405, 8.309684542699761')
+          "
+        ></location-button>
+        <location-button
+          title="Musik"
+          location="Kriens"
+          (btnClicked)="
+            onLocationButtonClick('47.032920164342464, 8.297112187930741')
+          "
+        ></location-button>
+        <location-button
+          title="Technik und Architektur"
+          location="Horw"
+          (btnClicked)="
+            onLocationButtonClick('47.01459985298802, 8.305195454112935')
+          "
+        ></location-button>
         <input
           type="text"
           id="to"
@@ -65,11 +107,6 @@
 
   <div class="results" *ngIf="travelResults">
     <h2>Travel Options</h2>
-
-    <div class="request-info">
-      <h3>Request Details</h3>
-      <pre>{{ travelResults.requestXML }}</pre>
-    </div>
 
     <div
       class="connections"

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
+import { LocationButtonComponent } from '../location-button/location-button.component';
 
 interface TravelResults {
   requestXML: string;
@@ -10,16 +11,23 @@ interface TravelResults {
   carRoute: any;
 }
 
+
 @Component({
   selector: 'app-travel-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LocationButtonComponent],
   templateUrl: './travel-search.component.html',
   styleUrl: './travel-search.component.css'
 })
 export class TravelSearchComponent {
+
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
+
+  onLocationButtonClick(coordinates: string): void {
+    this.travelForm.patchValue({ to: coordinates });
+    console.log('Coordinates received:', coordinates);
+  }
 
   travelForm: FormGroup;
   travelResults: TravelResults | null = null;

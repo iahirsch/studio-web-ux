@@ -4,6 +4,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { TravelSearchComponent } from './components/travel-search/travel-search.component';
+import { LocationButtonComponent } from './components/location-button/location-button.component';
 
 
 export const appRoutes: Route[] = [
@@ -11,6 +12,7 @@ export const appRoutes: Route[] = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'app-travel-search', component: TravelSearchComponent, canActivate: [AuthGuard] },
+  { path: 'location-button', component: LocationButtonComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
