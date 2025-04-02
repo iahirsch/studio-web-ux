@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { LocationButtonComponent } from '../location-button/location-button.component';
+import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 
 interface TravelResults {
   requestXML: string;
@@ -23,10 +24,21 @@ export class TravelSearchComponent {
 
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
+  private geoUtilsService = inject(GeoUtilsService);
 
   onLocationButtonClick(coordinates: string): void {
-    this.travelForm.patchValue({ to: coordinates });
-    console.log('Coordinates received:', coordinates);
+    try {
+      // Convert coordinates to bounding box
+      const bbox = this.geoUtilsService.convertCoordinateToBBox(coordinates);
+
+      // Format the bbox for form input
+      const formattedBBox = this.geoUtilsService.formatBBoxForOJP(bbox);
+
+      this.travelForm.patchValue({ to: formattedBBox });
+      console.log('Coordinates converted to bbox:', formattedBBox);
+    } catch (error) {
+      console.error('Error converting coordinates:', error);
+    }
   }
 
   travelForm: FormGroup;
