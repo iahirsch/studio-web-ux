@@ -7,13 +7,27 @@ import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { MapComponent } from '../map/map.component';
 import * as OJP from 'ojp-sdk';
 
+
 interface TravelResults {
   requestXML: string;
-  trainConnections: any[];
-  carRoute: any;
+  trainConnections: TrainConnections[] | null;
+  carRoute: CarRoute | null;
   tripGeometry?: GeoJSON.Feature[];
 }
 
+interface TrainConnections {
+  arrival: string;
+  departure: string;
+  duration: string;
+  platforms: string[];
+  transfers: number;
+}
+
+interface CarRoute {
+  distance: string;
+  duration: string;
+  steps: string[];
+}
 @Component({
   selector: 'app-travel-search',
   standalone: true,
