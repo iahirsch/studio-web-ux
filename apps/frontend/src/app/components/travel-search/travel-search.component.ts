@@ -26,6 +26,21 @@ export class TravelSearchComponent {
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
 
+  travelForm: FormGroup;
+  travelResults: TravelResults | null = null;
+  loading = false;
+  error: string | null = null;
+
+  constructor() {
+    this.travelForm = this.fb.group({
+      from: ['', Validators.required],
+      to: ['', Validators.required],
+      mode: ['train', Validators.required], // Default to train
+      date: [this.formatDate(new Date()), Validators.required],
+      time: [this.formatTime(new Date()), Validators.required]
+    });
+  }
+
   onLocationButtonClick(coordinates: string): void {
     try {
       // Convert coordinates to bounding box
@@ -41,19 +56,37 @@ export class TravelSearchComponent {
     }
   }
 
-  travelForm: FormGroup;
-  travelResults: TravelResults | null = null;
-  loading = false;
-  error: string | null = null;
+  // Method to get current location
+  getCurrentLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position: GeolocationPosition) => {
+          // Convert current location to coordinate string
+          const coordinates = `${position.coords.latitude}, ${position.coords.longitude}`;
 
-  constructor() {
-    this.travelForm = this.fb.group({
-      from: ['', Validators.required],
-      to: ['', Validators.required],
-      mode: ['train', Validators.required], // Default to train
-      date: [this.formatDate(new Date()), Validators.required],
-      time: [this.formatTime(new Date()), Validators.required]
-    });
+          try {
+            // Convert coordinates to bounding box
+            const bbox = this.geoUtilsService.convertCoordinateToBBox(coordinates);
+
+            // Format the bbox for form input
+            const formattedBBox = this.geoUtilsService.formatBBoxForOJP(bbox);
+
+            this.travelForm.patchValue({ from: formattedBBox });
+            console.log('Current location converted to bbox:', formattedBBox);
+          } catch (error) {
+            console.error('Error converting current location:', error);
+            this.error = 'Could not retrieve current location';
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          this.error = 'Could not retrieve current location';
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser');
+      this.error = 'Geolocation is not supported';
+    }
   }
 
   onSubmit(): void {

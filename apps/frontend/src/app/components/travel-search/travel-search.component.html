@@ -11,6 +11,14 @@
           formControlName="from"
           placeholder="Enter origin location"
         />
+        <button
+          type="button"
+          class="location-btn"
+          (click)="getCurrentLocation()"
+          title="Use Current Location"
+        >
+          <span class="material-icons">my_location</span>
+        </button>
         <div
           class="error"
           *ngIf="
