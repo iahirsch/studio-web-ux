@@ -2,14 +2,28 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { LocationButtonComponent } from '../location-button/location-button.component';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { MapboxComponent } from '../mapbox/mapbox.component';
+import { LocationButtonComponent } from '../location-button/location-button.component';
 
 interface TravelResults {
   requestXML: string;
-  trainConnections: any[];
-  carRoute: any;
+  trainConnections: TrainConnections[] | null;
+  carRoute: CarRoute | null;
+}
+
+interface TrainConnections {
+  arrival: string;
+  departure: string;
+  duration: string;
+  platforms: string[];
+  transfers: number;
+}
+
+interface CarRoute {
+  distance: string;
+  duration: string;
+  steps: string[];
 }
 
 @Component({
@@ -25,7 +39,6 @@ interface TravelResults {
   styleUrl: './travel-search.component.css'
 })
 export class TravelSearchComponent {
-
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
@@ -129,18 +142,22 @@ export class TravelSearchComponent {
       departureDate,
       formData.mode
     ).then((result) => {
-      const trainConnections: any[] = [];
-      let carRoute = null;
+      const trainConnections: TrainConnections[] = [];
+      let carRoute: CarRoute | null = null;
 
       if (result.trips && result.trips.length > 0) {
         if (formData.mode === 'train' || formData.mode === 'car') {
-          result.trips.forEach(trip => {
-            trainConnections.push(this.ojpSdkService.formatTripForDisplay(trip));
+          result.trips.forEach((trip) => {
+            trainConnections.push(
+              this.ojpSdkService.formatTripForDisplay(trip)
+            );
           });
         }
 
         if (formData.mode === 'car' && result.trips.length > 0) {
-          carRoute = this.ojpSdkService.formatCarRouteForDisplay(result.trips[0]);
+          carRoute = this.ojpSdkService.formatCarRouteForDisplay(
+            result.trips[0]
+          );
         }
       }
 
@@ -150,12 +167,15 @@ export class TravelSearchComponent {
         carRoute
       };
 
+      console.log('Trainconnection', trainConnections);
+
       this.loading = false;
-    }).catch((err: Error) => {
-      this.error = `Failed to retrieve travel data: ${err.message}`;
-      console.error('Error fetching travel data:', err);
-      this.loading = false;
-    });
+    })
+      .catch((err: Error) => {
+        this.error = `Failed to retrieve travel data: ${err.message}`;
+        console.error('Error fetching travel data:', err);
+        this.loading = false;
+      });
   }
 
   private formatDate(date: Date): string {

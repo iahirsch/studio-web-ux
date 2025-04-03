@@ -1,4 +1,18 @@
-<p>dashboard works!</p>
-Authenticated: {{ helloWorld$ | async }}
-<button (click)="logout()">Logout</button>
+<div class="mt-15">
+  <app-card-greeting class="card" name="Yannick Röösli"></app-card-greeting>
+</div>
+
+<div class="my-10 grid h-50 grid-flow-row grid-cols-2 gap-2">
+  <div class="card flex-center">Card 1</div>
+  <div class="card flex-center">Card 2</div>
+  <div class="card flex-center">Card 3</div>
+  <div class="card flex-center">Card 4</div>
+</div>
+
+<button class="button-1 bg-primary-400 text-black">Ich nehme euch mit</button>
+<button class="button-1 bg-secondary-300 text-black">Ich nehme euch mit</button>
+<button class="button-1 bg-white text-primary-500 border border-primary-500">Ich nehme euch mit</button>
+<button class="button-1">Ich nehme euch mit</button>
+
+<button class="flex-none" (click)='logout()'>Logout</button>
 <app-travel-search></app-travel-search>
