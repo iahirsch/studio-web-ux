@@ -2,28 +2,16 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
-import { MapboxComponent } from '../mapbox/mapbox.component';
 import { LocationButtonComponent } from '../location-button/location-button.component';
+import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
+import { MapComponent } from '../map/map.component';
+import * as OJP from 'ojp-sdk';
 
 interface TravelResults {
   requestXML: string;
-  trainConnections: TrainConnections[] | null;
-  carRoute: CarRoute | null;
-}
-
-interface TrainConnections {
-  arrival: string;
-  departure: string;
-  duration: string;
-  platforms: string[];
-  transfers: number;
-}
-
-interface CarRoute {
-  distance: string;
-  duration: string;
-  steps: string[];
+  trainConnections: any[];
+  carRoute: any;
+  tripGeometry?: GeoJSON.Feature[];
 }
 
 @Component({
@@ -33,12 +21,13 @@ interface CarRoute {
     CommonModule,
     ReactiveFormsModule,
     LocationButtonComponent,
-    MapboxComponent
+    MapComponent
   ],
   templateUrl: './travel-search.component.html',
   styleUrl: './travel-search.component.css'
 })
 export class TravelSearchComponent {
+
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
@@ -48,6 +37,7 @@ export class TravelSearchComponent {
   loading = false;
   error: string | null = null;
   mapLocations: any[] = [];
+  mapGeometry: GeoJSON.Feature[] = [];
 
   constructor() {
     this.travelForm = this.fb.group({
@@ -59,16 +49,31 @@ export class TravelSearchComponent {
     });
   }
 
+  // Koordinaten-Konvertierung und Formatierung
+  private normalizeCoordinates(coordinates: string): string {
+    const [first, second] = coordinates.split(',').map(coord => parseFloat(coord.trim()));
+
+    // Überprüfe, ob erste Koordinate eher wie eine Longitude aussieht
+    if (first > 90 || first < -90) {
+      return `${second},${first}`;
+    }
+
+    return coordinates;
+  }
+
   onLocationButtonClick(coordinates: string): void {
     try {
-      const [longitude, latitude] = coordinates.split(',').map(parseFloat);
+      // Normalisiere Koordinaten
+      const normalizedCoords = this.normalizeCoordinates(coordinates);
+      const [latitude, longitude] = normalizedCoords.split(',').map(parseFloat);
 
+      // Aktualisiere das Formular
       this.travelForm.patchValue({
-        to: coordinates
+        to: normalizedCoords
       });
 
-      // Update map locations
-      this.updateMapLocations(longitude, latitude);
+      // Aktualisiere Kartenmarkierungen
+      this.updateMapLocations(longitude, latitude, 'Destination');
     } catch (error) {
       console.error('Error converting coordinates:', error);
     }
@@ -78,16 +83,17 @@ export class TravelSearchComponent {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
-          const coordinates = `${position.coords.longitude},${position.coords.latitude}`;
+          const coordinates = `${position.coords.latitude},${position.coords.longitude}`;
 
           this.travelForm.patchValue({
             from: coordinates
           });
 
-          // Update map locations
+          // Aktualisiere Kartenmarkierungen
           this.updateMapLocations(
             position.coords.longitude,
-            position.coords.latitude
+            position.coords.latitude,
+            'Current Location'
           );
         },
         (error) => {
@@ -101,12 +107,16 @@ export class TravelSearchComponent {
     }
   }
 
-  private updateMapLocations(longitude: number, latitude: number) {
+  private updateMapLocations(
+    longitude: number,
+    latitude: number,
+    label: string = 'Location'
+  ) {
     this.mapLocations = [
       {
         longitude,
         latitude,
-        label: 'Selected Location'
+        label
       }
     ];
   }
@@ -119,63 +129,96 @@ export class TravelSearchComponent {
     this.loading = true;
     this.error = null;
     this.travelResults = null;
+    this.mapGeometry = [];
 
     const formData = this.travelForm.value;
     const dateTimeStr = `${formData.date}T${formData.time}:00`;
     const departureDate = new Date(dateTimeStr);
 
-    // Validate coordinate format
-    const validateCoordinates = (coord: string) => {
-      const [lon, lat] = coord.split(',').map(parseFloat);
-      return !isNaN(lon) && !isNaN(lat);
-    };
+    // Extrahiere und normalisiere Koordinaten
+    const [fromLatitude, fromLongitude] = this.normalizeCoordinates(formData.from).split(',').map(parseFloat);
+    const [toLatitude, toLongitude] = this.normalizeCoordinates(formData.to).split(',').map(parseFloat);
 
-    if (!validateCoordinates(formData.from) || !validateCoordinates(formData.to)) {
-      this.error = 'Invalid coordinate format. Use "longitude,latitude"';
-      this.loading = false;
-      return;
-    }
+    // Aktualisiere Kartenmarkierungen für Start und Ziel
+    this.mapLocations = [
+      {
+        longitude: fromLongitude,
+        latitude: fromLatitude,
+        label: 'Start'
+      },
+      {
+        longitude: toLongitude,
+        latitude: toLatitude,
+        label: 'Destination'
+      }
+    ];
 
     this.ojpSdkService.searchTrip(
-      formData.from,
-      formData.to,
+      `${fromLongitude},${fromLatitude}`, // OJP erwartet Longitude,Latitude
+      `${toLongitude},${toLatitude}`,
       departureDate,
       formData.mode
     ).then((result) => {
-      const trainConnections: TrainConnections[] = [];
-      let carRoute: CarRoute | null = null;
+      const trainConnections: any[] = [];
+      let carRoute = null;
+      let tripGeometry: GeoJSON.Feature[] = [];
 
       if (result.trips && result.trips.length > 0) {
-        if (formData.mode === 'train' || formData.mode === 'car') {
-          result.trips.forEach((trip) => {
-            trainConnections.push(
-              this.ojpSdkService.formatTripForDisplay(trip)
-            );
+        const firstTrip = result.trips[0];
+
+        if (formData.mode === 'train') {
+          // Extrahiere Zugstrecke
+          firstTrip.legs.forEach(leg => {
+            if (leg.legTrack && leg.legTrack.trackSections) {
+              leg.legTrack.trackSections.forEach(section => {
+                if (section.linkProjection) {
+                  const feature = section.linkProjection.asGeoJSONFeature();
+                  if (feature) {
+                    tripGeometry.push(feature);
+                  }
+                }
+              });
+            }
           });
+
+          trainConnections.push(this.ojpSdkService.formatTripForDisplay(firstTrip));
         }
 
-        if (formData.mode === 'car' && result.trips.length > 0) {
-          carRoute = this.ojpSdkService.formatCarRouteForDisplay(
-            result.trips[0]
-          );
+        if (formData.mode === 'car' && firstTrip) {
+          // Extrahiere Autostrecke
+          firstTrip.legs.forEach(leg => {
+            if (leg.legTrack && leg.legTrack.trackSections) {
+              leg.legTrack.trackSections.forEach(section => {
+                if (section.linkProjection) {
+                  const feature = section.linkProjection.asGeoJSONFeature();
+                  if (feature) {
+                    tripGeometry.push(feature);
+                  }
+                }
+              });
+            }
+          });
+
+          carRoute = this.ojpSdkService.formatCarRouteForDisplay(firstTrip);
         }
       }
 
       this.travelResults = {
         requestXML: result.requestXML,
         trainConnections,
-        carRoute
+        carRoute,
+        tripGeometry
       };
 
-      console.log('Trainconnection', trainConnections);
+      // Setze Geometrie für Kartendarstellung
+      this.mapGeometry = tripGeometry;
 
       this.loading = false;
-    })
-      .catch((err: Error) => {
-        this.error = `Failed to retrieve travel data: ${err.message}`;
-        console.error('Error fetching travel data:', err);
-        this.loading = false;
-      });
+    }).catch((err: Error) => {
+      this.error = `Failed to retrieve travel data: ${err.message}`;
+      console.error('Error fetching travel data:', err);
+      this.loading = false;
+    });
   }
 
   private formatDate(date: Date): string {
