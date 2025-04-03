@@ -5,7 +5,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const authGuard: CanActivateFn = (_route, state) => {
   const oauthService = inject(OAuthService);
-  const router = inject(Router);
+  //const router = inject(Router);
 
   if (oauthService.hasValidAccessToken()) {
     return true;
@@ -15,8 +15,8 @@ export const authGuard: CanActivateFn = (_route, state) => {
     if (oauthService.hasValidAccessToken()) {
       return true;
     }
-    //oauthService.initLoginFlow(state.url);
-    router.navigate(['/login']);
+    oauthService.initLoginFlow(state.url);
+    //router.navigate(['/login']);
     return false;
   });
 };
