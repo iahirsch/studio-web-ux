@@ -3,20 +3,18 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { LocationButtonComponent } from '../location-button/location-button.component';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 
 interface TravelResults {
   requestXML: string;
-  trainConnections: any[];
-  carRoute: any;
+  trainConnections: unknown[];
+  carRoute: unknown;
 }
-
 
 @Component({
   selector: 'app-travel-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LocationButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './travel-search.component.html',
   styleUrl: './travel-search.component.css'
 })
@@ -76,7 +74,7 @@ export class TravelSearchComponent {
       formData.mode
     ).then((result) => {
       // Format the results for display
-      const trainConnections: any[] = [];
+      const trainConnections: unknown[] = [];
       let carRoute = null;
 
       if (result.trips && result.trips.length > 0) {

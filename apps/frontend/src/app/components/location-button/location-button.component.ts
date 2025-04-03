@@ -2,10 +2,10 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'location-button',
+  selector: 'app-location-button',
   imports: [CommonModule],
   templateUrl: './location-button.component.html',
-  styleUrl: './location-button.component.css',
+  styleUrl: './location-button.component.css'
 })
 export class LocationButtonComponent {
   title = input<string>();
