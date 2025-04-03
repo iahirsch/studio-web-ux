@@ -4,22 +4,36 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
+import { LocationButtonComponent } from '../location-button/location-button.component';
 
 interface TravelResults {
   requestXML: string;
-  trainConnections: unknown[];
-  carRoute: unknown;
+  trainConnections: TrainConnections[] | null;
+  carRoute: CarRoute | null;
+}
+
+interface TrainConnections {
+  arrival: string;
+  departure: string;
+  duration: string;
+  platforms: string[];
+  transfers: number;
+}
+
+interface CarRoute {
+  distance: string;
+  duration: string;
+  steps: string[];
 }
 
 @Component({
   selector: 'app-travel-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LocationButtonComponent],
   templateUrl: './travel-search.component.html',
   styleUrl: './travel-search.component.css'
 })
 export class TravelSearchComponent {
-
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
@@ -67,40 +81,44 @@ export class TravelSearchComponent {
     const dateTimeStr = `${formData.date}T${formData.time}:00`;
     const departureDate = new Date(dateTimeStr);
 
-    this.ojpSdkService.searchTrip(
-      formData.from,
-      formData.to,
-      departureDate,
-      formData.mode
-    ).then((result) => {
-      // Format the results for display
-      const trainConnections: unknown[] = [];
-      let carRoute = null;
+    this.ojpSdkService
+      .searchTrip(formData.from, formData.to, departureDate, formData.mode)
+      .then((result) => {
+        // Format the results for display
+        const trainConnections: TrainConnections[] = [];
+        let carRoute: CarRoute | null = null;
 
-      if (result.trips && result.trips.length > 0) {
-        if (formData.mode === 'train' || formData.mode === 'car') {
-          result.trips.forEach(trip => {
-            trainConnections.push(this.ojpSdkService.formatTripForDisplay(trip));
-          });
+        if (result.trips && result.trips.length > 0) {
+          if (formData.mode === 'train' || formData.mode === 'car') {
+            result.trips.forEach((trip) => {
+              trainConnections.push(
+                this.ojpSdkService.formatTripForDisplay(trip)
+              );
+            });
+          }
+
+          if (formData.mode === 'car' && result.trips.length > 0) {
+            carRoute = this.ojpSdkService.formatCarRouteForDisplay(
+              result.trips[0]
+            );
+          }
         }
 
-        if (formData.mode === 'car' && result.trips.length > 0) {
-          carRoute = this.ojpSdkService.formatCarRouteForDisplay(result.trips[0]);
-        }
-      }
+        this.travelResults = {
+          requestXML: result.requestXML,
+          trainConnections,
+          carRoute
+        };
 
-      this.travelResults = {
-        requestXML: result.requestXML,
-        trainConnections,
-        carRoute
-      };
+        console.log('Trainconnection', trainConnections);
 
-      this.loading = false;
-    }).catch((err: Error) => {
-      this.error = `Failed to retrieve travel data: ${err.message}`;
-      console.error('Error fetching travel data:', err);
-      this.loading = false;
-    });
+        this.loading = false;
+      })
+      .catch((err: Error) => {
+        this.error = `Failed to retrieve travel data: ${err.message}`;
+        console.error('Error fetching travel data:', err);
+        this.loading = false;
+      });
   }
 
   private formatDate(date: Date): string {
