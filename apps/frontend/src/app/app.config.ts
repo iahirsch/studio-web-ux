@@ -7,6 +7,7 @@ import { AuthConfig, provideOAuthClient } from 'angular-oauth2-oidc';
 import { env } from '../env/env';
 import { authConfig } from './guards/auth/auth.config';
 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

@@ -1,3 +1,4 @@
+// apps/backend/src/app/app.module.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,8 +9,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserService } from './user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './user/user.module';
-import { OjpApiController } from './ojp-api/ojp-api.controller';
-import { OjpApiService } from './ojp-api/ojp-api.service';
 
 @Module({
   imports: [
@@ -29,9 +28,8 @@ import { OjpApiService } from './ojp-api/ojp-api.service';
     }),
     UsersModule
   ],
-  controllers: [AppController, OjpApiController],
-  providers: [AppService, UserService, OjpApiService],
+  controllers: [AppController],
+  providers: [AppService, UserService],
   exports: [JwtModule]
 })
-export class AppModule {
-}
+export class AppModule { }

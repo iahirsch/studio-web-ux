@@ -1,0 +1,165 @@
+<div class="travel-container">
+  <h1>Plan Your Journey</h1>
+
+  <form [formGroup]="travelForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="from">From:</label>
+        <input
+          type="text"
+          id="from"
+          formControlName="from"
+          placeholder="Enter origin location"
+        />
+        <div
+          class="error"
+          *ngIf="
+            travelForm.get('from')?.invalid && travelForm.get('from')?.touched
+          "
+        >
+          Origin location is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="to">To:</label>
+        <app-location-button
+          title="Informatik"
+          location="Rotkreuz"
+          (btnClicked)="
+            onLocationButtonClick('47.14352282294816, 8.432576926508915')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Design,Film und Kunst"
+          location="Emmenbrücke"
+          (btnClicked)="
+            onLocationButtonClick('47.07173422069437, 8.277630465694969')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Soziale Arbeit"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.04824253253547, 8.314788883279503')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Wirtschaft"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.049212803608405, 8.309684542699761')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Musik"
+          location="Kriens"
+          (btnClicked)="
+            onLocationButtonClick('47.032920164342464, 8.297112187930741')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Technik und Architektur"
+          location="Horw"
+          (btnClicked)="
+            onLocationButtonClick('47.01459985298802, 8.305195454112935')
+          "
+        ></app-location-button>
+        <input
+          type="text"
+          id="to"
+          formControlName="to"
+          placeholder="Enter destination"
+        />
+        <div
+          class="error"
+          *ngIf="travelForm.get('to')?.invalid && travelForm.get('to')?.touched"
+        >
+          Destination is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="mode">Travel Mode:</label>
+        <select id="mode" formControlName="mode">
+          <option value="train">Train</option>
+          <option value="car">Car</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" id="date" formControlName="date" />
+      </div>
+
+      <div class="form-group">
+        <label for="time">Time:</label>
+        <input type="time" id="time" formControlName="time" />
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="travelForm.invalid || loading">
+      {{ loading ? 'Searching...' : 'Find Routes' }}
+    </button>
+  </form>
+
+  <div class="results" *ngIf="travelResults">
+    <h2>Travel Options</h2>
+
+    <div
+      class="connections"
+      *ngIf="
+        travelResults.trainConnections && travelResults.trainConnections.length
+      "
+    >
+      <h3>Train Connections</h3>
+      <div
+        class="connection"
+        *ngFor="let connection of travelResults.trainConnections; let i = index"
+      >
+        <div class="connection-header">Option {{ i + 1 }}</div>
+        <div class="connection-details">
+          <div><strong>Departure:</strong> {{ connection.departure }}</div>
+          <div><strong>Arrival:</strong> {{ connection.arrival }}</div>
+          <div><strong>Duration:</strong> {{ connection.duration }}</div>
+          <div><strong>Transfers:</strong> {{ connection.transfers }}</div>
+          <div *ngIf="connection.platforms && connection.platforms.length">
+            <strong>Platforms:</strong>
+            <span
+              *ngFor="let platform of connection.platforms; let last = last"
+            >
+              {{ platform }}{{ !last ? ' → ' : '' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-route" *ngIf="travelResults.carRoute">
+      <h3>Car Route</h3>
+      <div>
+        <strong>Distance:</strong> {{ travelResults.carRoute.distance }}
+      </div>
+      <div>
+        <strong>Duration:</strong> {{ travelResults.carRoute.duration }}
+      </div>
+      <div
+        class="route-steps"
+        *ngIf="
+          travelResults.carRoute.steps && travelResults.carRoute.steps.length
+        "
+      >
+        <strong>Directions:</strong>
+        <ol>
+          <li *ngFor="let step of travelResults.carRoute.steps">{{ step }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+</div>
