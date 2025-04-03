@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ElementRef, ViewChild } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import { environment } from '../../../environments/environment';
+import { env } from '../../../env/env';
 
 interface MapLocation {
   longitude: number;
@@ -34,7 +34,7 @@ export class MapboxComponent implements OnInit, OnChanges {
   private markers: mapboxgl.Marker[] = [];
 
   constructor() {
-    mapboxgl.accessToken = environment.mapboxToken;
+    mapboxgl.accessToken = env.mapboxToken;
   }
 
   ngOnInit() {
