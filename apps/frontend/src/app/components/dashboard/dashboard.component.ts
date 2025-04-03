@@ -5,10 +5,11 @@ import { map } from 'rxjs';
 import { env } from '../../../env/env';
 import { TravelSearchComponent } from '../travel-search/travel-search.component';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { CardGreetingComponent } from '../card-greeting/card-greeting.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, TravelSearchComponent],
+  imports: [CommonModule, CardGreetingComponent, TravelSearchComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

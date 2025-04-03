@@ -27,7 +27,7 @@
           }
         ],
         "styles": [
-          "apps/frontend/src/styles.scss"
+          "apps/frontend/src/styles.css"
         ],
         "scripts": []
       },
