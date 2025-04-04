@@ -14,13 +14,14 @@ export class UserService {
   async findOrCreate(profile: Profile): Promise<User> {
     let user = await this.userRepository.findOne({ where: { id: profile.id } });
 
+    console.log(profile);
+    
     if (!user) {
-      console.log(profile);
       user = this.userRepository.create(
         {
           id: profile.id,
           username: profile.username || '',
-          name: profile.displayName || ''
+          displayName: profile.displayName || ''
         }
       );
       await this.userRepository.save(user);

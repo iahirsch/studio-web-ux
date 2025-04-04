@@ -9,5 +9,5 @@ export class User {
   username: string;
 
   @Column()
-  name: string;
+  displayName: string;
 }
