@@ -12,23 +12,13 @@ export const authGuard: CanActivateFn = (_route, state) => {
   //const router = inject(Router);
 
   if (oauthService.hasValidAccessToken() && oauthService.hasValidIdToken()) {
-
-    const idToken = oauthService.getIdToken();
-    httpClient.post(`${env.api}/auth/save-user`, { idToken }).subscribe({
-      next: (res: any) => console.log('User saved: ', res),
-      error: (err: any) => console.error('Error saving user: ', err)
-    });
+    callbackSaveUser();
     return true;
   }
 
   return oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
-
     if (oauthService.hasValidAccessToken() && oauthService.hasValidIdToken()) {
-      const idToken = oauthService.getIdToken();
-      httpClient.post(`${env.api}/auth/save-user`, { idToken }).subscribe({
-        next: (res: any) => console.log('User saved: ', res),
-        error: (err: any) => console.log('Error saving user: ', err)
-      });
+      callbackSaveUser();
       return true;
     }
 
@@ -36,4 +26,12 @@ export const authGuard: CanActivateFn = (_route, state) => {
     //router.navigate(['/login']);
     return false;
   });
+
+  function callbackSaveUser() {
+    const idToken = oauthService.getIdToken();
+    httpClient.post(`${env.api}/auth/saveUser`, { idToken }).subscribe({
+      next: (res: any) => console.log('User saved: ', res),
+      error: (err: any) => console.error('Error saving user: ', err)
+    });
+  }
 };

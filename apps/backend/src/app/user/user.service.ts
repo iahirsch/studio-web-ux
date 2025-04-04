@@ -17,7 +17,6 @@ export class UserService {
       user = this.userRepository.create(userData);
       await this.userRepository.save(user);
     }
-
     return user;
   }
 }

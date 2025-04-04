@@ -10,10 +10,8 @@ export class AuthController {
   ) {
   }
 
-  @Post('save-user')
+  @Post('saveUser')
   async saveUser(@Body('idToken') idToken: string) {
-
-
     const decodedToken = this.jwtService.decode(idToken) as any;
 
     if (!decodedToken) {
