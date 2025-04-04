@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
@@ -9,7 +9,7 @@ import { CardGreetingComponent } from '../card-greeting/card-greeting.component'
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, CardGreetingComponent, TravelSearchComponent],
+  imports: [AsyncPipe, CommonModule, CardGreetingComponent, TravelSearchComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

@@ -9,5 +9,11 @@ export class User {
   username: string;
 
   @Column()
-  displayName: string;
+  name: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  picture: string;
 }

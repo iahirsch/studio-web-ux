@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { passportJwtSecret } from 'jwks-rsa';
 import { UserService } from '../user/user.service';
-import { Profile } from 'passport-github2';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate = async (profile: Profile) => {
-    return await this.userService.findOrCreate(profile);
+  validate = async (payload: any) => {
+    return payload;
   };
 }
