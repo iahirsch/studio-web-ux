@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
@@ -14,10 +14,18 @@ import { CardGreetingComponent } from '../card-greeting/card-greeting.component'
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+
+  constructor() {
+    console.log(this.userInfo);
+  }
+
   private oauthService = inject(OAuthService);
   private httpClient = inject(HttpClient);
+  userInfo = this.oauthService.getIdentityClaims();
 
   logout = () => this.oauthService.logOut();
+
+  userName = signal(this.userInfo['name']);
 
   api$ = this.httpClient
     .get<{ message: string }>(env.api)

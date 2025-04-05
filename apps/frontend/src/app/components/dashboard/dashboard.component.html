@@ -1,6 +1,5 @@
 <div class="mt-15">
-  <app-card-greeting class="card" name="Yannick Röösli"></app-card-greeting>
-  {{ api$ | async }}
+  <app-card-greeting class="card" name="{{ userName() }}"></app-card-greeting>
 </div>
 
 <div class="my-10 grid h-50 grid-flow-row grid-cols-2 gap-2">
@@ -17,3 +16,4 @@
 
 <button class="flex-none" (click)='logout()'>Logout</button>
 <app-travel-search></app-travel-search>
+{{ api$ | async }}
