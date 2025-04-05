@@ -105,6 +105,9 @@
     </button>
   </form>
 
+  <button (click)="saveJourney()">Save Journey</button>
+  {{ journey$ | async }}
+
   <div class="results" *ngIf="travelResults">
     <h2>Travel Options</h2>
 
