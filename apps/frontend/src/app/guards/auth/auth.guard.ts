@@ -30,8 +30,8 @@ export const authGuard: CanActivateFn = (_route, state) => {
   function callbackSaveUser() {
     const idToken = oauthService.getIdToken();
     httpClient.post(`${env.api}/auth/saveUser`, { idToken }).subscribe({
-      next: (res: any) => console.log('User saved: ', res),
-      error: (err: any) => console.error('Error saving user: ', err)
+      next: (res) => console.log('User saved: ', res),
+      error: (err) => console.error('Error saving user: ', err)
     });
   }
 };
