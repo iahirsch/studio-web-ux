@@ -27,7 +27,6 @@
           }
         ],
         "styles": [
-          "node_modules/mapbox-gl/dist/mapbox-gl.css",
           "apps/frontend/src/styles.css"
         ],
         "scripts": []
@@ -37,8 +36,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "3mb"
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
             },
             {
               "type": "anyComponentStyle",

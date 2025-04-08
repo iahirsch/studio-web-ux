@@ -5,22 +5,12 @@
     <div class="form-row">
       <div class="form-group">
         <label for="from">From:</label>
-        <div class="input-group">
-          <input
-            type="text"
-            id="from"
-            formControlName="from"
-            placeholder="Enter origin (latitude,longitude)"
-          />
-          <button
-            type="button"
-            class="location-btn"
-            (click)="getCurrentLocation()"
-            title="Use Current Location"
-          >
-            📍
-          </button>
-        </div>
+        <input
+          type="text"
+          id="from"
+          formControlName="from"
+          placeholder="Enter origin location"
+        />
         <div
           class="error"
           *ngIf="
@@ -33,55 +23,53 @@
 
       <div class="form-group">
         <label for="to">To:</label>
-        <div class="input-locations">
-          <app-location-button
-            title="Informatik"
-            location="Rotkreuz"
-            (btnClicked)="
-              onLocationButtonClick('47.14352282294816, 8.432576926508915')
-            "
-          ></app-location-button>
-          <app-location-button
-            title="Design,Film und Kunst"
-            location="Emmenbrücke"
-            (btnClicked)="
-              onLocationButtonClick('47.07173422069437, 8.277630465694969')
-            "
-          ></app-location-button>
-          <app-location-button
-            title="Soziale Arbeit"
-            location="Luzern"
-            (btnClicked)="
-              onLocationButtonClick('47.04824253253547, 8.314788883279503')
-            "
-          ></app-location-button>
-          <app-location-button
-            title="Wirtschaft"
-            location="Luzern"
-            (btnClicked)="
-              onLocationButtonClick('47.049212803608405, 8.309684542699761')
-            "
-          ></app-location-button>
-          <app-location-button
-            title="Musik"
-            location="Kriens"
-            (btnClicked)="
-              onLocationButtonClick('47.032920164342464, 8.297112187930741')
-            "
-          ></app-location-button>
-          <app-location-button
-            title="Technik und Architektur"
-            location="Horw"
-            (btnClicked)="
-              onLocationButtonClick('47.01459985298802, 8.305195454112935')
-            "
-          ></app-location-button>
-        </div>
+        <app-location-button
+          title="Informatik"
+          location="Rotkreuz"
+          (btnClicked)="
+            onLocationButtonClick('47.14352282294816, 8.432576926508915')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Design,Film und Kunst"
+          location="Emmenbrücke"
+          (btnClicked)="
+            onLocationButtonClick('47.07173422069437, 8.277630465694969')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Soziale Arbeit"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.04824253253547, 8.314788883279503')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Wirtschaft"
+          location="Luzern"
+          (btnClicked)="
+            onLocationButtonClick('47.049212803608405, 8.309684542699761')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Musik"
+          location="Kriens"
+          (btnClicked)="
+            onLocationButtonClick('47.032920164342464, 8.297112187930741')
+          "
+        ></app-location-button>
+        <app-location-button
+          title="Technik und Architektur"
+          location="Horw"
+          (btnClicked)="
+            onLocationButtonClick('47.01459985298802, 8.305195454112935')
+          "
+        ></app-location-button>
         <input
           type="text"
           id="to"
           formControlName="to"
-          placeholder="Enter destination (latitude,longitude)"
+          placeholder="Enter destination"
         />
         <div
           class="error"
@@ -117,24 +105,39 @@
     </button>
   </form>
 
-  <!-- Mapbox Component -->
-  <app-mapbox [locations]="mapLocations" [geometry]="mapGeometry"></app-mapbox>
-
-  <!-- Results Section -->
   <button (click)="saveJourney()">Save Journey</button>
   {{ journey$ | async }}
 
   <div class="results" *ngIf="travelResults">
     <h2>Travel Options</h2>
 
-    <div *ngIf="(travelResults?.trainConnections?.length ?? 0) > 0">
-      <h3>Zugverbindungen</h3>
-      <app-train-connection
+    <div
+      class="connections"
+      *ngIf="
+        travelResults.trainConnections && travelResults.trainConnections.length
+      "
+    >
+      <h3>Train Connections</h3>
+      <div
+        class="connection"
         *ngFor="let connection of travelResults.trainConnections; let i = index"
-        [connection]="connection"
-        [index]="i"
       >
-      </app-train-connection>
+        <div class="connection-header">Option {{ i + 1 }}</div>
+        <div class="connection-details">
+          <div><strong>Departure:</strong> {{ connection.departure }}</div>
+          <div><strong>Arrival:</strong> {{ connection.arrival }}</div>
+          <div><strong>Duration:</strong> {{ connection.duration }}</div>
+          <div><strong>Transfers:</strong> {{ connection.transfers }}</div>
+          <div *ngIf="connection.platforms && connection.platforms.length">
+            <strong>Platforms:</strong>
+            <span
+              *ngFor="let platform of connection.platforms; let last = last"
+            >
+              {{ platform }}{{ !last ? ' → ' : '' }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="car-route" *ngIf="travelResults.carRoute">

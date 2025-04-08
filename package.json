@@ -78,7 +78,6 @@
     "@nestjs/typeorm": "^11.0.0",
     "@sbb-esta/angular": "^19.1.5",
     "@tailwindcss/postcss": "^4.0.17",
-    "@types/mapbox-gl": "^3.4.1",
     "angular-oauth2-oidc": "^19.0.0",
     "axios": "^1.6.0",
     "cookie-parser": "^1.4.7",

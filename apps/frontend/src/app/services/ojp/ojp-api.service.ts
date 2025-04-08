@@ -9,19 +9,6 @@ export class OjpApiService {
 
   async searchLocation(locationName: string): Promise<Location[]> {
     try {
-      // Überprüfe, ob es sich um Koordinaten handelt
-      const coordinateRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
-      if (coordinateRegex.test(locationName)) {
-        // Koordinaten direkt in Location umwandeln
-        const [latitude, longitude] = locationName.split(',').map(coord => parseFloat(coord.trim()));
-
-        // Erstelle eine Location direkt aus Koordinaten
-        const geoLocation = Location.initWithLngLat(longitude, latitude);
-
-        return [geoLocation];
-      }
-
-      // Bestehende Standortsuche für Ortsnamen
       const locationRequest = LocationInformationRequest.initWithLocationName(
         env.ojp,
         'de',
@@ -44,17 +31,6 @@ export class OjpApiService {
     mode: 'train' | 'car'
   ) {
     try {
-      console.log('Trip Request Locations:', {
-        from: {
-          longitude: fromLocation.geoPosition?.longitude,
-          latitude: fromLocation.geoPosition?.latitude
-        },
-        to: {
-          longitude: toLocation.geoPosition?.longitude,
-          latitude: toLocation.geoPosition?.latitude
-        }
-      });
-
       // Create trip request based on mode
       let tripRequest;
       if (mode === 'car') {
@@ -68,13 +44,9 @@ export class OjpApiService {
           toTripLocation,
           departureDate,
           'Dep',
-          true,       // includeLegProjection
-          'monomodal', // modeType
-          'self-drive-car', // transportMode
-          [], // viaTripLocations
-          5,  // numberOfResults
-          null, // numberOfResultsBefore
-          null  // numberOfResultsAfter
+          true,  // includeLegProjection
+          'monomodal',  // modeType
+          'self-drive-car'  // transportMode
         );
       } else {
         tripRequest = TripRequest.initWithLocationsAndDate(
@@ -85,17 +57,14 @@ export class OjpApiService {
           departureDate,
           'Dep'
         );
-
-        // Für Zug-Routen zusätzliche Konfigurationen direkt setzen
-        if (tripRequest) {
-          tripRequest.numberOfResults = 5;
-          tripRequest.includeLegProjection = true;
-        }
       }
 
       if (!tripRequest) {
         throw new Error('Failed to create trip request');
       }
+
+      // Set number of results to 5
+      tripRequest.numberOfResults = 5;
 
       // Execute the request
       await tripRequest.fetchResponse();

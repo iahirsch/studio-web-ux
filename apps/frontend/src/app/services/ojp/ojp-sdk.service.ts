@@ -32,20 +32,9 @@ export class OjpSdkService {
 
   async searchTrip(from: string, to: string, dateTime: Date, mode: 'train' | 'car'): Promise<TripSearchResult> {
     try {
-      console.log('Search Trip Input:', { from, to, dateTime, mode });
-
-      // Stelle sicher, dass Koordinaten im richtigen Format sind (Longitude, Latitude)
-      const normalizeCoordinates = (coord: string) => {
-        const [lat, lon] = coord.split(',').map(p => parseFloat(p.trim()));
-        return `${lon},${lat}`;
-      };
-
-      const normalizedFrom = normalizeCoordinates(from);
-      const normalizedTo = normalizeCoordinates(to);
-
-      // Suche Standorte
-      const fromLocations = await this.ojpApiService.searchLocation(normalizedFrom);
-      const toLocations = await this.ojpApiService.searchLocation(normalizedTo);
+      // First search for locations
+      const fromLocations = await this.ojpApiService.searchLocation(from);
+      const toLocations = await this.ojpApiService.searchLocation(to);
 
       if (fromLocations.length === 0 || toLocations.length === 0) {
         throw new Error(`Could not find locations for '${from}' or '${to}'`);
@@ -54,7 +43,7 @@ export class OjpSdkService {
       const fromLocation = fromLocations[0];
       const toLocation = toLocations[0];
 
-      // Mache die Trip-Anfrage
+      // Make the trip request
       const result = await this.ojpApiService.makeTripsRequest(
         fromLocation,
         toLocation,
@@ -76,6 +65,7 @@ export class OjpSdkService {
     const departureTime = trip.computeDepartureTime();
     const arrivalTime = trip.computeArrivalTime();
 
+    // Get platforms for each leg
     const platforms = trip.legs
       .filter(leg => leg.legType === 'TimedLeg')
       .map(leg => {
