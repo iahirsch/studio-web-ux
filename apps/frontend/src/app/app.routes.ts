@@ -1,10 +1,10 @@
 import { Route, RouterModule } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LoginComponent } from './pages/login/login.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NgModule } from '@angular/core';
-import { TravelSearchComponent } from './components/travel-search/travel-search.component';
+import { LocationSelectorComponent } from './components/location-selector/location-selector.component';
 import { authGuard } from './guards/auth/auth.guard';
-import { CreateShareRideComponent } from './components/create-share-ride/create-share-ride.component';
+import { CreateRideComponent } from './pages/create-ride/create-ride.component';
 
 export const appRoutes: Route[] = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -14,12 +14,12 @@ export const appRoutes: Route[] = [
     component: DashboardComponent,
     canActivate: [authGuard],
   },
-  { path: 'app-travel-search', component: TravelSearchComponent },
-  { path: 'create-share-ride', component: CreateShareRideComponent },
+  { path: 'app-location-selector', component: LocationSelectorComponent },
+  { path: 'create-ride', component: CreateRideComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
   providers: [],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
