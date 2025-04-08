@@ -6,7 +6,9 @@ import { LocationButtonComponent } from '../location-button/location-button.comp
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { MapComponent } from '../map/map.component';
 import { TrainConnectionComponent } from '../train-connection/train-connection.component';
-
+import { env } from '../../../env/env';
+import { map } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 interface TravelResults {
   requestXML: string;
@@ -46,6 +48,10 @@ export class TravelSearchComponent {
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
+  private httpClient = inject(HttpClient);
+
+  trainConnections: TrainConnections[] = [];
+  carRoute: null | CarRoute = null;
 
   travelForm: FormGroup;
   travelResults: TravelResults | null = null;
@@ -249,4 +255,18 @@ export class TravelSearchComponent {
   private formatTime(date: Date): string {
     return date.toTimeString().substring(0, 5);
   }
+}
+
+  saveJourney() {
+    console.log('TrainConnection 1: ', this.trainConnections[0]);
+
+    this.httpClient.post(`${env.api}/saveJourney`, this.trainConnections[0]).subscribe({
+      next: (response) => console.log('Journey saved successfully:', response),
+      error: (err) => console.error('Error saving journey:', err)
+    });
+  }
+
+  journey$ = this.httpClient
+    .get<{ message: string }>(`${env.api}/getJourney`)
+    .pipe(map((res) => res.message));
 }

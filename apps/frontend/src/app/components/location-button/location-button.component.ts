@@ -12,5 +12,3 @@ export class LocationButtonComponent {
   location = input<string>();
   btnClicked = output();
 }
-
-
