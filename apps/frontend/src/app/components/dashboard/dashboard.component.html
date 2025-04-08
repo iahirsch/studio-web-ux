@@ -1,18 +1,34 @@
-<div class="mt-15">
-  <app-card-greeting class="card" name="Yannick Röösli"></app-card-greeting>
+<div class="flex flex-col gap-8">
+  <app-card-greeting class="card mt-20 mb-2" name="Yannick Röösli"></app-card-greeting>
+
+  <div>
+    <h1 class="px-2 mb-4">Wohin geht's?</h1>
+    <div class="grid grid-flow-row grid-cols-2 gap-4">
+      <app-location-button title="Soziale Arbeit" location="Luzern" (btnClicked)="testFunction()"></app-location-button>
+      <app-location-button title="Technik und Architektur" location="Horw"
+                           (btnClicked)="testFunction()"></app-location-button>
+      <app-location-button title="Wirtschaft" location="Luzern" (btnClicked)="testFunction()"></app-location-button>
+      <app-location-button title="Musik" location="Kriens" (btnClicked)="testFunction()"></app-location-button>
+      <app-location-button title="Informatik" location="Rotkreuz" (btnClicked)="testFunction()"></app-location-button>
+      <app-location-button title="Design, Film & Kunst" location="Emmenbrücke"
+                           (btnClicked)="testFunction()"></app-location-button>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="px-2 mb-4">Wohin geht's?</h1>
+    <div class="grid h-50 grid-flow-row grid-cols-2 gap-2">
+      <div class="card flex-center">Card 1</div>
+      <div class="card flex-center">Card 2</div>
+      <div class="card flex-center">Card 3</div>
+      <div class="card flex-center">Card 4</div>
+    </div>
+  </div>
+
+  <button class="button bg-primary-400 text-black">Ich nehme euch mit</button>
+  <button class="button bg-secondary-300 text-black">Ich nehme euch mit</button>
+  <button class="button bg-white text-primary-500 border-2 border-primary-500">Ich nehme euch mit</button>
+  <button class="button bg-white text-secondary-500 border-2 border-secondary-500">Ich nehme euch mit</button>
+
+  <button class="flex-none" (click)='logout()'>Logout</button>
 </div>
-
-<div class="my-10 grid h-50 grid-flow-row grid-cols-2 gap-2">
-  <div class="card flex-center">Card 1</div>
-  <div class="card flex-center">Card 2</div>
-  <div class="card flex-center">Card 3</div>
-  <div class="card flex-center">Card 4</div>
-</div>
-
-<button class="button-1 bg-primary-400 text-black">Ich nehme euch mit</button>
-<button class="button-1 bg-secondary-300 text-black">Ich nehme euch mit</button>
-<button class="button-1 bg-white text-primary-500 border border-primary-500">Ich nehme euch mit</button>
-<button class="button-1">Ich nehme euch mit</button>
-
-<button class="flex-none" (click)='logout()'>Logout</button>
-<app-travel-search></app-travel-search>
