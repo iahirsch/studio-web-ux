@@ -1,5 +1,9 @@
-<div class="flex flex-col gap-8">
-  <app-card-greeting class="card mt-20 mb-2" name="Yannick Röösli"></app-card-greeting>
+<div class="mt-15">
+  <app-card-greeting class="card" name="{{ userName() }}"></app-card-greeting>
+</div>
+
+{{ api$ | async }}
+
 
   <div>
     <h1 class="px-2 mb-4">Wohin geht's?</h1>
@@ -25,10 +29,6 @@
     </div>
   </div>
 
-  <button class="button bg-primary-400 text-black">Ich nehme euch mit</button>
-  <button class="button bg-secondary-300 text-black">Ich nehme euch mit</button>
-  <button class="button bg-white text-primary-500 border-2 border-primary-500">Ich nehme euch mit</button>
-  <button class="button bg-white text-secondary-500 border-2 border-secondary-500">Ich nehme euch mit</button>
-
   <button class="flex-none" (click)='logout()'>Logout</button>
-</div>
+
+

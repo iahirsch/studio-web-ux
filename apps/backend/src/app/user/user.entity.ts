@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { TrainConnections } from '../train_connections/train-connections.entity';
+import { CarConnections } from '../car_connections/car-connections.entity';
 
 @Entity()
 export class User {
@@ -10,4 +12,16 @@ export class User {
 
   @Column()
   name: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  picture: string;
+
+  @OneToMany(() => TrainConnections, (trainConnections) => trainConnections.id)
+  trainConnections: TrainConnections[];
+
+  @OneToMany(() => CarConnections, (carConnections) => carConnections.id)
+  carConnections: CarConnections[];
 }

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
@@ -9,15 +9,25 @@ import { LocationButtonComponent } from '../location-button/location-button.comp
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, CardGreetingComponent, LocationButtonComponent],
+
+  imports: [AsyncPipe, CommonModule, CardGreetingComponent, TravelSearchComponent],
+
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+
+  constructor() {
+    console.log(this.userInfo);
+  }
+
   private oauthService = inject(OAuthService);
   private httpClient = inject(HttpClient);
+  userInfo = this.oauthService.getIdentityClaims();
 
   logout = () => this.oauthService.logOut();
+
+  userName = signal(this.userInfo['name']);
 
   api$ = this.httpClient
     .get<{ message: string }>(env.api)
