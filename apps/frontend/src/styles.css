@@ -4,6 +4,11 @@
 @theme {
   /*Fonts*/
   --font-lexend: "Lexend", sans-serif;
+  --text-base: 1rem;
+
+  /*Border Radius*/
+  --radius-l: 1.25rem;
+  --radius-m: 1.13rem;
 
   /*Colors*/
   --color-black: var(--color-gray-950);
@@ -61,6 +66,10 @@
     @apply text-2xl font-medium;
   }
 
+  h2 {
+    @apply text-base font-medium;
+  }
+
   button {
     @apply h-full rounded-md bg-white px-4 py-2 text-sm font-medium text-primary-800 hover:cursor-pointer;
   }
@@ -68,18 +77,38 @@
 
 @layer components {
   .card {
-    @apply flex items-center bg-white rounded-[1.25rem];
+    @apply flex rounded-l bg-white p-4;
   }
-  
-  .button-1 {
-    @apply p-4 mt-2 flex-center font-medium rounded-2xl
+
+  .input-text {
+    @apply block w-full p-4 pl-6 bg-background rounded-m outline-none
+    placeholder:opacity-100
+    focus:ring-2 focus:text-primary-500 focus:border-primary-500
+    disabled:text-gray-500;
+  }
+
+  .primary-button-purple {
+    @apply button bg-primary-400 text-purple-950;
+  }
+
+  .primary-button-green {
+    @apply button bg-secondary-300 text-green-950;
+  }
+
+  .secondary-button-purple {
+    @apply border bg-white button text-primary-500 border-primary-500;
+  }
+
+  .secondary-button-green {
+    @apply border bg-white button text-secondary-500 border-secondary-500;
   }
 }
+
 
 @utility flex-center {
   @apply flex items-center justify-center;
 }
 
-@utility drop-shadow {
-  @apply shadow-md bg-primary-100 ;
+@utility button {
+  @apply mt-2 rounded-2xl p-4 font-medium flex-center;
 }
