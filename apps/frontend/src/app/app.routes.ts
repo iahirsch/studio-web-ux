@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import { TravelSearchComponent } from './components/travel-search/travel-search.component';
 import { LocationButtonComponent } from './components/location-button/location-button.component';
 import { authGuard } from './guards/auth/auth.guard';
+import { TrainConnectionComponent } from './components/train-connection/train-connection.component';
 import { CreateShareRideComponent } from './components/create-share-ride/create-share-ride.component';
 
 export const appRoutes: Route[] = [
@@ -12,7 +13,6 @@ export const appRoutes: Route[] = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'app-travel-search', component: TravelSearchComponent },
-  { path: 'location-button', component: LocationButtonComponent },
   { path: 'create-share-ride', component: CreateShareRideComponent }
 ];
 
