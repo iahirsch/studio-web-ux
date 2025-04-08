@@ -3,8 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { TravelSearchComponent } from './travel-search.component';
-import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { OjpApiService } from '../../services/ojp/ojp-api.service';
+
 
 jest.mock('ojp-sdk', () => ({}));
 

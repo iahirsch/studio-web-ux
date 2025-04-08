@@ -8,10 +8,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './train-connection.component.css',
 })
 export class TrainConnectionComponent {
-  @Input() connection: any; // Typisiere dies entsprechend, z. B. `TrainConnections`
-  @Input() index: number = 0;
+  @Input() connection: any;
+  @Input() index = 0;
 
-  showDetails: boolean = false;
+  showDetails = false;
 
   toggleDetails(): void {
     this.showDetails = !this.showDetails;

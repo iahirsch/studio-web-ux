@@ -1,12 +1,12 @@
 <div class="train-connection">
-  <div class="summary" (click)="toggleDetails()">
+  <button class="summary" (click)="toggleDetails()">
     <h4>Verbindung {{ index + 1 }}</h4>
     <p>
       <strong>Abfahrt:</strong> {{ connection.departure }}<br />
       <strong>Ankunft:</strong> {{ connection.arrival }}<br />
       <strong>Dauer:</strong> {{ connection.duration }}
     </p>
-  </div>
+  </button>
 
   <div class="details" *ngIf="showDetails">
     <h5>Details</h5>

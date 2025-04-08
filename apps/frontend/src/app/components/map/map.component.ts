@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  OnInit,
   OnChanges,
   SimpleChanges,
   ElementRef,
@@ -28,7 +27,7 @@ interface MapLocation {
     }
   `]
 })
-export class MapComponent implements OnInit, AfterViewInit, OnChanges {
+export class MapComponent implements AfterViewInit, OnChanges {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
 
   @Input() locations: MapLocation[] = [];
@@ -37,7 +36,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     longitude: 8.3,
     latitude: 47.0
   };
-  @Input() zoom: number = 8;
+  @Input() zoom = 8;
 
   private map!: mapboxgl.Map;
   private markers: mapboxgl.Marker[] = [];
@@ -46,9 +45,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     mapboxgl.accessToken = env.mapboxToken;
   }
 
-  ngOnInit() {
-    // Initialization logic moved to ngAfterViewInit
-  }
 
   ngAfterViewInit() {
     if (this.mapContainer) {

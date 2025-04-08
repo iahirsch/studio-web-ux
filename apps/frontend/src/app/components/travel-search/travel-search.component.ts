@@ -5,7 +5,6 @@ import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { LocationButtonComponent } from '../location-button/location-button.component';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { MapComponent } from '../map/map.component';
-import * as OJP from 'ojp-sdk';
 import { TrainConnectionComponent } from '../train-connection/train-connection.component';
 
 
@@ -126,7 +125,7 @@ export class TravelSearchComponent {
   private updateMapLocations(
     longitude: number,
     latitude: number,
-    label: string = 'Location'
+    label = 'Location'
   ) {
     this.mapLocations = [
       {
@@ -177,7 +176,7 @@ export class TravelSearchComponent {
     ).then((result) => {
       const trainConnections: TrainConnections[] = [];
       let carRoute: CarRoute | null = null;
-      let tripGeometry: GeoJSON.Feature[] = [];
+      const tripGeometry: GeoJSON.Feature[] = [];
 
       if (result.trips && result.trips.length > 0) {
         // Verarbeite alle Trips
