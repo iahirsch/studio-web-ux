@@ -9,17 +9,14 @@ import { CreateRideComponent } from './pages/create-ride/create-ride.component';
 export const appRoutes: Route[] = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [authGuard],
-  },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'app-location-selector', component: LocationSelectorComponent },
-  { path: 'create-ride', component: CreateRideComponent },
+  { path: 'create-ride', component: CreateRideComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
-  providers: [],
+  providers: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

@@ -4,19 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { BtnLocationComponent} from '../../components/btn-location/btn-location.component';
+import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
+import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    CommonModule,
-    BtnLocationComponent
-
-
-  ],
-  templateUrl: '../dashboard.component.html',
-  styleUrl: '../dashboard.component.css'
+  imports: [CommonModule, CardGreetingComponent, LocationSelectorComponent],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   constructor() {

@@ -1,16 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { env } from '../../../env/env';
 import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
+import { BtnLocationComponent } from '../btn-location/btn-location.component';
+import { MapPinLocationComponent } from '../map-pin-location/map-pin-location.component';
+import { CardTrainComponent } from '../card-train/card-train.component';
 
 interface TravelResults {
   requestXML: string;
@@ -32,15 +30,19 @@ interface CarRoute {
   duration: string;
   steps: string[];
 }
+
 @Component({
   selector: 'app-location-selector',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BtnLocationComponent,
+    MapPinLocationComponent,
+    CardTrainComponent
   ],
-  templateUrl: '../location-selector.component.html',
-  styleUrl: '../location-selector.component.css',
+  templateUrl: './location-selector.component.html',
+  styleUrl: './location-selector.component.css'
 })
 export class LocationSelectorComponent {
   private fb = inject(FormBuilder);
@@ -64,7 +66,7 @@ export class LocationSelectorComponent {
       to: ['', Validators.required],
       mode: ['train', Validators.required],
       date: [this.formatDate(new Date()), Validators.required],
-      time: [this.formatTime(new Date()), Validators.required],
+      time: [this.formatTime(new Date()), Validators.required]
     });
   }
 
@@ -90,7 +92,7 @@ export class LocationSelectorComponent {
 
       // Aktualisiere das Formular
       this.travelForm.patchValue({
-        to: normalizedCoords,
+        to: normalizedCoords
       });
 
       // Aktualisiere Kartenmarkierungen
@@ -107,7 +109,7 @@ export class LocationSelectorComponent {
           const coordinates = `${position.coords.latitude},${position.coords.longitude}`;
 
           this.travelForm.patchValue({
-            from: coordinates,
+            from: coordinates
           });
 
           // Aktualisiere Kartenmarkierungen
@@ -137,8 +139,8 @@ export class LocationSelectorComponent {
       {
         longitude,
         latitude,
-        label,
-      },
+        label
+      }
     ];
   }
 
@@ -171,13 +173,13 @@ export class LocationSelectorComponent {
       {
         longitude: fromLongitude,
         latitude: fromLatitude,
-        label: 'Start',
+        label: 'Start'
       },
       {
         longitude: toLongitude,
         latitude: toLatitude,
-        label: 'Destination',
-      },
+        label: 'Destination'
+      }
     ];
 
     this.ojpSdkService
@@ -242,7 +244,7 @@ export class LocationSelectorComponent {
           requestXML: result.requestXML,
           trainConnections,
           carRoute,
-          tripGeometry,
+          tripGeometry
         };
 
         this.trainConnections = trainConnections;
@@ -277,7 +279,7 @@ export class LocationSelectorComponent {
       .subscribe({
         next: (response) =>
           console.log('Journey saved successfully:', response),
-        error: (err) => console.error('Error saving journey:', err),
+        error: (err) => console.error('Error saving journey:', err)
       });
   }
 
