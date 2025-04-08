@@ -1,9 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'mapbox-gl/dist/mapbox-gl.css';
 
 @theme {
   /*Fonts*/
   --font-lexend: "Lexend", sans-serif;
+  --text-base: 1rem;
+
+  /*Border Radius*/
+  --radius-l: 1.25rem;
+  --radius-m: 1.13rem;
 
   /*Colors*/
   --color-black: var(--color-gray-950);
@@ -31,7 +37,6 @@
   --color-secondary-600: #15A41B;
   --color-secondary-700: #14811A;
   --color-secondary-800: #15661A;
-  --color-secondary-900: #145319;
   --color-secondary-950: #052E09;
 
   --color-gray-50: #F6F7F6;
@@ -41,14 +46,11 @@
   --color-gray-400: #7C857D;
   --color-gray-500: #626A63;
   --color-gray-600: #4D544D;
-  --color-gray-700: #404541;
-  --color-gray-800: #363937;
   --color-gray-900: #2F3230;
   --color-gray-950: #181B19;
 }
 
 @layer base {
-
   html {
     @apply selection:bg-gray-100 font-light text-gray-800 font-lexend bg-background;
   }
@@ -61,6 +63,10 @@
     @apply text-2xl font-medium;
   }
 
+  h2 {
+    @apply text-base font-medium;
+  }
+
   button {
     @apply h-full rounded-md bg-white px-4 py-2 text-sm font-medium text-primary-800 hover:cursor-pointer;
   }
@@ -68,11 +74,30 @@
 
 @layer components {
   .card {
-    @apply flex items-center bg-white rounded-[1.25rem];
+    @apply flex w-full rounded-l bg-white p-4 items-center;
   }
-  
-  .button-1 {
-    @apply p-4 mt-2 flex-center font-medium rounded-2xl
+
+  .input-text {
+    @apply block w-full p-4 pl-6 bg-background rounded-m outline-none
+    placeholder:opacity-100
+    focus:ring-2 focus:text-primary-500 focus:border-primary-500
+    disabled:text-gray-500;
+  }
+
+  .primary-button-purple {
+    @apply button bg-primary-400 text-purple-950;
+  }
+
+  .primary-button-green {
+    @apply button bg-secondary-300 text-green-950;
+  }
+
+  .secondary-button-purple {
+    @apply border bg-white button text-primary-500 border-primary-500;
+  }
+
+  .secondary-button-green {
+    @apply border bg-white button text-secondary-500 border-secondary-500;
   }
 }
 
@@ -80,6 +105,6 @@
   @apply flex items-center justify-center;
 }
 
-@utility drop-shadow {
-  @apply shadow-md bg-primary-100 ;
+@utility button {
+  @apply mt-2 rounded-2xl p-4 font-medium flex-center;
 }
