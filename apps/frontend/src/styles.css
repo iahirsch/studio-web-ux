@@ -10,6 +10,10 @@
   --radius-l: 1.25rem;
   --radius-m: 1.13rem;
 
+  /*Radius*/
+  --radius-mobile: 1.25rem;
+  --radius-innerElement: 1.125rem;
+
   /*Colors*/
   --color-black: var(--color-gray-950);
   --color-white: #FBFBFB;
@@ -55,15 +59,15 @@
 @layer base {
 
   html {
-    @apply selection:bg-gray-100 font-light text-gray-800 font-lexend bg-background;
+    @apply selection:bg-gray-100 font-light text-black font-lexend bg-background;
   }
 
   body {
-    @apply m-5 min-h-screen;
+    @apply m-4 min-h-screen;
   }
 
   h1 {
-    @apply text-2xl font-medium;
+    @apply text-2xl font-medium leading-9;
   }
 
   h2 {
@@ -71,12 +75,13 @@
   }
 
   button {
-    @apply h-full rounded-md bg-white px-4 py-2 text-sm font-medium text-primary-800 hover:cursor-pointer;
+    @apply p-4 text-sm font-medium rounded-mobile flex-center hover:cursor-pointer;
   }
 }
 
 @layer components {
   .card {
+
     @apply flex rounded-l bg-white p-4;
   }
 
@@ -101,6 +106,7 @@
 
   .secondary-button-green {
     @apply border bg-white button text-secondary-500 border-secondary-500;
+
   }
 }
 
@@ -109,6 +115,8 @@
   @apply flex items-center justify-center;
 }
 
+
 @utility button {
   @apply mt-2 rounded-2xl p-4 font-medium flex-center;
+
 }
