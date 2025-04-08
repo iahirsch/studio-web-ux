@@ -9,10 +9,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserService } from './user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './user/user.module';
-import { TrainConnectionsService } from './train_connections/train-connections.service';
-import { TrainConnectionsModule } from './train_connections/train-connections.module';
-import { CarConnectionsModule } from './car_connections/car-connections.module';
-import { CarConnectionsService } from './car_connections/car-connections.service';
 
 @Module({
   imports: [
@@ -30,13 +26,10 @@ import { CarConnectionsService } from './car_connections/car-connections.service
       }),
       inject: [ConfigService]
     }),
-    UsersModule,
-    TrainConnectionsModule,
-    CarConnectionsModule
+    UsersModule
   ],
   controllers: [AppController],
-  providers: [AppService, UserService, TrainConnectionsService, CarConnectionsService],
+  providers: [AppService, UserService],
   exports: [JwtModule]
 })
-export class AppModule {
-}
+export class AppModule { }
