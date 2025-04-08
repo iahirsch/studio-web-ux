@@ -5,9 +5,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { LocationButtonComponent } from '../location-button/location-button.component';
-import { env } from '../../../env/env';
-import { map } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 
 interface TravelResults {
   requestXML: string;
@@ -40,10 +37,6 @@ export class TravelSearchComponent {
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
-  private httpClient = inject(HttpClient);
-
-  trainConnections: TrainConnections[] = [];
-  carRoute: null | CarRoute = null;
 
   onLocationButtonClick(coordinates: string): void {
     try {
@@ -118,8 +111,6 @@ export class TravelSearchComponent {
         };
 
         console.log('Trainconnection', trainConnections);
-        this.trainConnections = trainConnections;
-        this.carRoute = carRoute;
 
         this.loading = false;
       })
@@ -137,17 +128,4 @@ export class TravelSearchComponent {
   private formatTime(date: Date): string {
     return date.toTimeString().substring(0, 5);
   }
-
-  saveJourney() {
-    console.log('TrainConnection 1: ', this.trainConnections[0]);
-
-    this.httpClient.post(`${env.api}/saveJourney`, this.trainConnections[0]).subscribe({
-      next: (response) => console.log('Journey saved successfully:', response),
-      error: (err) => console.error('Error saving journey:', err)
-    });
-  }
-
-  journey$ = this.httpClient
-    .get<{ message: string }>(`${env.api}/getJourney`)
-    .pipe(map((res) => res.message));
 }
