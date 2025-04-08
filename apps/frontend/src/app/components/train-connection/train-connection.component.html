@@ -1,0 +1,25 @@
+<div class="train-connection">
+  <div class="summary" (click)="toggleDetails()">
+    <h4>Verbindung {{ index + 1 }}</h4>
+    <p>
+      <strong>Abfahrt:</strong> {{ connection.departure }}<br />
+      <strong>Ankunft:</strong> {{ connection.arrival }}<br />
+      <strong>Dauer:</strong> {{ connection.duration }}
+    </p>
+  </div>
+
+  <div class="details" *ngIf="showDetails">
+    <h5>Details</h5>
+    <p><strong>Umstiege:</strong> {{ connection.transfers }}</p>
+    <p><strong>Plattformen:</strong> {{ connection.platforms.join(' → ') }}</p>
+    <ul>
+      <li *ngFor="let leg of connection.legs">
+        <strong>Von:</strong> {{ leg.from }} → <strong>Nach:</strong> {{ leg.to
+        }}<br />
+        <strong>Abfahrt:</strong> {{ leg.departure }}<br />
+        <strong>Ankunft:</strong> {{ leg.arrival }}<br />
+        <strong>Plattform:</strong> {{ leg.platform || 'Unknown' }}
+      </li>
+    </ul>
+  </div>
+</div>

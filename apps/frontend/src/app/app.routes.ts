@@ -5,13 +5,15 @@ import { NgModule } from '@angular/core';
 import { TravelSearchComponent } from './components/travel-search/travel-search.component';
 import { LocationButtonComponent } from './components/location-button/location-button.component';
 import { authGuard } from './guards/auth/auth.guard';
+import { TrainConnectionComponent } from './components/train-connection/train-connection.component';
 
 export const appRoutes: Route[] = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'app-travel-search', component: TravelSearchComponent },
-  { path: 'location-button', component: LocationButtonComponent },
+  { path: 'app-location-button', component: LocationButtonComponent },
+  { path: 'app-train-connection', component: TrainConnectionComponent },
 ];
 
 @NgModule({

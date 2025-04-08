@@ -124,33 +124,14 @@
   <div class="results" *ngIf="travelResults">
     <h2>Travel Options</h2>
 
-    <div
-      class="connections"
-      *ngIf="
-        travelResults.trainConnections && travelResults.trainConnections.length
-      "
-    >
-      <h3>Train Connections</h3>
-      <div
-        class="connection"
+    <div *ngIf="(travelResults?.trainConnections?.length ?? 0) > 0">
+      <h3>Zugverbindungen</h3>
+      <app-train-connection
         *ngFor="let connection of travelResults.trainConnections; let i = index"
+        [connection]="connection"
+        [index]="i"
       >
-        <div class="connection-header">Option {{ i + 1 }}</div>
-        <div class="connection-details">
-          <div><strong>Departure:</strong> {{ connection.departure }}</div>
-          <div><strong>Arrival:</strong> {{ connection.arrival }}</div>
-          <div><strong>Duration:</strong> {{ connection.duration }}</div>
-          <div><strong>Transfers:</strong> {{ connection.transfers }}</div>
-          <div *ngIf="connection.platforms && connection.platforms.length">
-            <strong>Platforms:</strong>
-            <span
-              *ngFor="let platform of connection.platforms; let last = last"
-            >
-              {{ platform }}{{ !last ? ' → ' : '' }}
-            </span>
-          </div>
-        </div>
-      </div>
+      </app-train-connection>
     </div>
 
     <div class="car-route" *ngIf="travelResults.carRoute">

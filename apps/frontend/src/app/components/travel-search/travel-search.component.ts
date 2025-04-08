@@ -6,6 +6,7 @@ import { LocationButtonComponent } from '../location-button/location-button.comp
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { MapComponent } from '../map/map.component';
 import * as OJP from 'ojp-sdk';
+import { TrainConnectionComponent } from '../train-connection/train-connection.component';
 
 
 interface TravelResults {
@@ -35,7 +36,8 @@ interface CarRoute {
     CommonModule,
     ReactiveFormsModule,
     LocationButtonComponent,
-    MapComponent
+    MapComponent,
+    TrainConnectionComponent
   ],
   templateUrl: './travel-search.component.html',
   styleUrl: './travel-search.component.css'
@@ -173,56 +175,62 @@ export class TravelSearchComponent {
       departureDate,
       formData.mode
     ).then((result) => {
-      const trainConnections: any[] = [];
-      let carRoute = null;
+      const trainConnections: TrainConnections[] = [];
+      let carRoute: CarRoute | null = null;
       let tripGeometry: GeoJSON.Feature[] = [];
 
       if (result.trips && result.trips.length > 0) {
-        const firstTrip = result.trips[0];
-
-        if (formData.mode === 'train') {
-          // Extrahiere Zugstrecke
-          firstTrip.legs.forEach(leg => {
-            if (leg.legTrack && leg.legTrack.trackSections) {
-              leg.legTrack.trackSections.forEach(section => {
-                if (section.linkProjection) {
-                  const feature = section.linkProjection.asGeoJSONFeature();
-                  if (feature) {
-                    tripGeometry.push(feature);
+        // Verarbeite alle Trips
+        result.trips.forEach(trip => {
+          if (formData.mode === 'train') {
+            // Extrahiere Zugstrecke
+            trip.legs.forEach(leg => {
+              if (leg.legTrack && leg.legTrack.trackSections) {
+                leg.legTrack.trackSections.forEach(section => {
+                  if (section.linkProjection) {
+                    const feature = section.linkProjection.asGeoJSONFeature();
+                    if (feature) {
+                      tripGeometry.push(feature);
+                    }
                   }
-                }
-              });
-            }
-          });
+                });
+              }
+            });
 
-          trainConnections.push(this.ojpSdkService.formatTripForDisplay(firstTrip));
-        }
+            // Formatiere die Verbindung und füge sie hinzu
+            trainConnections.push(this.ojpSdkService.formatTripForDisplay(trip));
+          }
 
-        if (formData.mode === 'car' && firstTrip) {
-          // Extrahiere Autostrecke
-          firstTrip.legs.forEach(leg => {
-            if (leg.legTrack && leg.legTrack.trackSections) {
-              leg.legTrack.trackSections.forEach(section => {
-                if (section.linkProjection) {
-                  const feature = section.linkProjection.asGeoJSONFeature();
-                  if (feature) {
-                    tripGeometry.push(feature);
+          if (formData.mode === 'car') {
+            // Extrahiere Autostrecke
+            trip.legs.forEach(leg => {
+              if (leg.legTrack && leg.legTrack.trackSections) {
+                leg.legTrack.trackSections.forEach(section => {
+                  if (section.linkProjection) {
+                    const feature = section.linkProjection.asGeoJSONFeature();
+                    if (feature) {
+                      tripGeometry.push(feature);
+                    }
                   }
-                }
-              });
-            }
-          });
+                });
+              }
+            });
 
-          carRoute = this.ojpSdkService.formatCarRouteForDisplay(firstTrip);
-        }
+            // Formatiere die Autostrecke
+            carRoute = this.ojpSdkService.formatCarRouteForDisplay(trip);
+          }
+        });
       }
 
+      // Speichere die Ergebnisse
       this.travelResults = {
         requestXML: result.requestXML,
         trainConnections,
         carRoute,
         tripGeometry
       };
+
+      console.log('Trip Results:', this.travelResults);
 
       // Setze Geometrie für Kartendarstellung
       this.mapGeometry = tripGeometry;
