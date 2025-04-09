@@ -71,6 +71,10 @@
     @apply text-base font-medium;
   }
 
+  h4 {
+    @apply text-[0.875rem];
+  }
+
   button {
     @apply rounded-big px-4 py-2 hover:cursor-pointer;
   }

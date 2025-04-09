@@ -122,7 +122,6 @@
   <button (click)="saveJourney()">Save Journey</button>
   {{ journey$ | async }}
 
-  <app-mapbox [locations]="mapLocations" [geometry]="mapGeometry"></app-mapbox>
 
   <div class="results" *ngIf="travelResults">
     <h3>Travel Options</h3>

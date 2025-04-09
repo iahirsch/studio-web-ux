@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ElementRef,
-  ViewChild,
-  AfterViewInit
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import { env } from '../../../env/env';
 
@@ -17,7 +9,7 @@ interface MapLocation {
 }
 
 @Component({
-  selector: 'app-mapbox',
+  selector: 'app-map-pin-location',
   template: `
     <div #mapContainer style="width: 100%; height: 400px;"></div>
   `,

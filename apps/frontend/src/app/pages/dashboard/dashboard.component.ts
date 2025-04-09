@@ -5,12 +5,13 @@ import { map } from 'rxjs';
 import { env } from '../../../env/env';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
-import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
+import { BtnLocationComponent } from '../../components/btn-location/btn-location.component';
+import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, CardGreetingComponent, LocationSelectorComponent],
+  imports: [CommonModule, CardGreetingComponent, BtnLocationComponent, BtnPrimaryComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -23,7 +24,6 @@ export class DashboardComponent {
   private httpClient = inject(HttpClient);
   userInfo = this.oauthService.getIdentityClaims();
 
-  logout = () => this.oauthService.logOut();
 
   userName = signal(this.userInfo['name']);
 
