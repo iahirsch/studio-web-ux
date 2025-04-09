@@ -1,1 +1,19 @@
-<p>card-train-details works!</p>
+<div class="train-details" *ngIf="connection">
+  <h5>Verbindungsdetails</h5>
+  <p><strong>Umstiege:</strong> {{ connection.transfers }}</p>
+  <p><strong>Plattformen:</strong> {{ connection.platforms.join(' → ') }}</p>
+  <ul class="connection-legs">
+    <li *ngFor="let leg of connection.legs">
+      <div class="leg-item">
+        <div class="leg-header">
+          <strong>Von:</strong> {{ leg.from }} → <strong>Nach:</strong> {{ leg.to }}
+        </div>
+        <div class="leg-details">
+          <strong>Abfahrt:</strong> {{ leg.departure }}<br />
+          <strong>Ankunft:</strong> {{ leg.arrival }}<br />
+          <strong>Plattform:</strong> {{ leg.platform || 'Unbekannt' }}
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

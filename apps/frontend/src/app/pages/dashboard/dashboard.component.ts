@@ -1,24 +1,36 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnLocationComponent } from '../../components/btn-location/btn-location.component';
+import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
+import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, CardGreetingComponent, BtnLocationComponent, BtnPrimaryComponent],
+  imports: [CommonModule, BtnLocationComponent, NgFor, CardGreetingComponent, BtnPrimaryComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-  constructor() {
-    console.log(this.userInfo);
+  locations: Location[] = [];
+
+  constructor(private locationService: HsluLocationDataService, private router: Router) {
+    this.locations = this.locationService.getHsluLocations();
   }
+
+  onLocationButtonClick(coordinates: string) {
+    // Hier die Logik für das Handling der Koordinaten
+    console.log('Koordinaten wurden geklickt:', coordinates);
+    this.router.navigate(['/search-ride'], { queryParams: { coordinates: coordinates } });
+    // Weitere Aktionen wie Navigation zur Karte oder Speichern des ausgewählten Ortes
+  }
+
 
   private oauthService = inject(OAuthService);
   private httpClient = inject(HttpClient);

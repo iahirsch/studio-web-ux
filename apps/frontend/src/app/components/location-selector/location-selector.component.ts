@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
@@ -6,9 +6,10 @@ import { env } from '../../../env/env';
 import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
-import { BtnLocationComponent } from '../btn-location/btn-location.component';
-import { MapPinLocationComponent } from '../map-pin-location/map-pin-location.component';
 import { CardTrainComponent } from '../card-train/card-train.component';
+import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
+import { CardTrainDetailsComponent } from '../card-train-details/card-train-details.component';
+import { ActivatedRoute } from '@angular/router';
 
 interface TravelResults {
   requestXML: string;
@@ -37,18 +38,28 @@ interface CarRoute {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    BtnLocationComponent,
-    MapPinLocationComponent,
-    CardTrainComponent
+    CardTrainComponent,
+    CardTrainDetailsComponent
   ],
   templateUrl: './location-selector.component.html',
   styleUrl: './location-selector.component.css'
 })
-export class LocationSelectorComponent {
+export class LocationSelectorComponent implements OnInit {
   private fb = inject(FormBuilder);
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
   private httpClient = inject(HttpClient);
+  private locationService = inject(HsluLocationDataService);
+  private route = inject(ActivatedRoute);
+
+  locations: Location[] = this.locationService.getHsluLocations();
+  selectedFromLocation: Location | null = null;
+  selectedToLocation: Location | null = null;
+  currentLocationLabel = 'Bitte wählen Sie einen Startort';
+  destinationLocationLabel = 'Bitte wählen Sie einen Zielort';
+  nearbyHsluLocation: Location | null = null;
+
+  selectedConnection: TrainConnections | null = null;
 
   trainConnections: TrainConnections[] = [];
   carRoute: null | CarRoute = null;
@@ -70,6 +81,88 @@ export class LocationSelectorComponent {
     });
   }
 
+  ngOnInit(): void {
+    // Prüfe, ob Koordinaten aus einer anderen Komponente übergeben wurden
+    this.route.queryParams.subscribe(params => {
+      if (params['coordinates']) {
+        this.onLocationButtonClick(params['coordinates']);
+      }
+    });
+  }
+
+  onLocationButtonClick(coordinates: string): void {
+    if (!coordinates) return;
+
+    const [latitude, longitude] = coordinates.split(',').map(parseFloat);
+
+    // Prüfe, ob ein HSLU-Standort in der Nähe ist
+    this.nearbyHsluLocation = this.checkNearbyHsluLocation(latitude, longitude);
+
+    if (this.nearbyHsluLocation) {
+      // Wenn ein HSLU-Standort in der Nähe ist, wähle diesen als Startort
+      this.selectFromLocation(this.nearbyHsluLocation);
+    } else {
+      // Ansonsten setze die Koordinaten direkt als Startpunkt
+      const locationStr = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+      this.travelForm.patchValue({ from: locationStr });
+      this.currentLocationLabel = 'Benutzerdefinierter Standort';
+    }
+  }
+
+
+  private checkNearbyHsluLocation(latitude: number, longitude: number): Location | null {
+    const MAX_DISTANCE_KM = 1; // 1 Kilometer Umkreis
+
+    // Gehe alle HSLU-Standorte durch
+    for (const location of this.locations) {
+      const [locLat, locLng] = location.coordinates.split(',').map(parseFloat);
+
+      // Berechne Entfernung (Haversine-Formel)
+      const distance = this.calculateDistance(latitude, longitude, locLat, locLng);
+
+      if (distance <= MAX_DISTANCE_KM) {
+        return location;
+      }
+    }
+
+    return null;
+  }
+
+  // Haversine-Formel zur Berechnung der Entfernung zwischen zwei Koordinaten
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Erdradius in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Entfernung in km
+    return distance;
+  }
+
+
+  // Hilfsfunktion für die Berechnung des Abstands (falls noch nicht vorhanden)
+  private deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+// Methode zum Auswählen des Startorts
+  selectFromLocation(location: Location): void {
+    this.selectedFromLocation = location;
+    this.currentLocationLabel = `${location.title}, ${location.city}`;
+    this.travelForm.patchValue({ from: location.coordinates });
+  }
+
+  // Methode zum Auswählen des Zielorts
+  selectToLocation(location: Location): void {
+    this.selectedToLocation = location;
+    this.destinationLocationLabel = `${location.title}, ${location.city}`;
+    this.travelForm.patchValue({ to: location.coordinates });
+  }
+
+
   // Koordinaten-Konvertierung und Formatierung
   private normalizeCoordinates(coordinates: string): string {
     const [first, second] = coordinates
@@ -84,23 +177,6 @@ export class LocationSelectorComponent {
     return coordinates;
   }
 
-  onLocationButtonClick(coordinates: string): void {
-    try {
-      // Normalisiere Koordinaten
-      const normalizedCoords = this.normalizeCoordinates(coordinates);
-      const [latitude, longitude] = normalizedCoords.split(',').map(parseFloat);
-
-      // Aktualisiere das Formular
-      this.travelForm.patchValue({
-        to: normalizedCoords
-      });
-
-      // Aktualisiere Kartenmarkierungen
-      this.updateMapLocations(longitude, latitude, 'Destination');
-    } catch (error) {
-      console.error('Error converting coordinates:', error);
-    }
-  }
 
   getCurrentLocation(): void {
     if (navigator.geolocation) {
@@ -108,27 +184,69 @@ export class LocationSelectorComponent {
         (position: GeolocationPosition) => {
           const coordinates = `${position.coords.latitude},${position.coords.longitude}`;
 
-          this.travelForm.patchValue({
-            from: coordinates
-          });
+          // Überprüfe, ob der aktuelle Standort in der Nähe eines HSLU-Standorts liegt
+          this.nearbyHsluLocation = this.checkNearbyHsluLocation(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+
+          if (this.nearbyHsluLocation) {
+            // Wenn in der Nähe eines HSLU-Standorts, nutze diesen als Startort
+            this.selectFromLocation(this.nearbyHsluLocation);
+          } else {
+            // Sonst verwende die genauen Koordinaten
+            this.travelForm.patchValue({ from: coordinates });
+            this.selectedFromLocation = null;
+            this.currentLocationLabel = 'Ihr Standort';
+          }
 
           // Aktualisiere Kartenmarkierungen
           this.updateMapLocations(
             position.coords.longitude,
             position.coords.latitude,
-            'Current Location'
+            'Aktueller Standort'
           );
         },
         (error) => {
           console.error('Geolocation error:', error);
-          this.error = 'Could not retrieve current location';
+          this.error = 'Standort konnte nicht abgerufen werden';
         }
       );
     } else {
       console.error('Geolocation is not supported');
-      this.error = 'Geolocation is not supported';
+      this.error = 'Standortermittlung wird nicht unterstützt';
     }
   }
+
+  // Überarbeitete Methode für Standort-Button-Klick (von Dashboard)
+  handleLocationSelection(coordinates: string): void {
+    try {
+      // Normalisiere Koordinaten
+      const normalizedCoords = this.normalizeCoordinates(coordinates);
+      const [latitude, longitude] = normalizedCoords.split(',').map(parseFloat);
+
+      // Finde den HSLU-Standort, der diesen Koordinaten entspricht
+      const matchingLocation = this.locations.find(
+        loc => loc.coordinates === normalizedCoords
+      );
+
+      if (matchingLocation) {
+        // Setze diesen als Zielort
+        this.selectToLocation(matchingLocation);
+      } else {
+        // Falls kein direkter Match, setze einfach die Koordinaten
+        this.travelForm.patchValue({ to: normalizedCoords });
+        this.selectedToLocation = null;
+        this.destinationLocationLabel = 'Ausgewählter Ort';
+      }
+
+      // Aktualisiere Kartenmarkierungen
+      this.updateMapLocations(longitude, latitude, 'Zielort');
+    } catch (error) {
+      console.error('Error converting coordinates:', error);
+    }
+  }
+
 
   private updateMapLocations(
     longitude: number,
@@ -263,13 +381,16 @@ export class LocationSelectorComponent {
       });
   }
 
+// Formatierungshilfe für Datum
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
 
+  // Formatierungshilfe für Zeit
   private formatTime(date: Date): string {
-    return date.toTimeString().substring(0, 5);
+    return date.toTimeString().slice(0, 5);
   }
+
 
   saveJourney() {
     console.log('TrainConnection 1: ', this.trainConnections[0]);
