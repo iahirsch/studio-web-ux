@@ -114,5 +114,5 @@
 }
 
 @utility button {
-  @apply rounded-big p-4 font-medium flex-center;
+  @apply rounded-big p-4 font-medium flex-center w-full;
 }

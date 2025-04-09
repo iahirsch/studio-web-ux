@@ -1,27 +1,34 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
 import { DashboardComponent } from './dashboard.component';
 
 jest.mock('ojp-sdk', () => ({}));
 
 describe('DashboardComponent', () => {
-    let component: DashboardComponent;
-    let fixture: ComponentFixture<DashboardComponent>;
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            imports: [DashboardComponent, OAuthModule.forRoot()],
-            providers: [provideHttpClient(), provideHttpClientTesting()]
-        }).compileComponents();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DashboardComponent, OAuthModule.forRoot()],
+      providers: [provideHttpClient(), provideHttpClientTesting(),
+        {
+          provide: OAuthService, useValue: {
+            getIdentityClaims: () => ({
+              name: 'NAME'
+            })
+          }
+        }]
+    }).compileComponents();
 
-        fixture = TestBed.createComponent(DashboardComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });

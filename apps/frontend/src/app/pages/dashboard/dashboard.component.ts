@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
@@ -24,14 +24,9 @@ export class DashboardComponent {
   private httpClient = inject(HttpClient);
   userInfo = this.oauthService.getIdentityClaims();
 
-
-  userName = signal(this.userInfo['name']);
+  userName = this.userInfo['name'];
 
   api$ = this.httpClient
     .get<{ message: string }>(env.api)
     .pipe(map((res) => res.message));
-
-  testFunction() {
-    console.log('test');
-  }
 }
