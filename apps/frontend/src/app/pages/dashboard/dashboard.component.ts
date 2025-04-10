@@ -9,8 +9,6 @@ import { HsluLocationDataService, Location } from '../../services/hslu-location/
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { Router, RouterLink } from '@angular/router';
-import { MemberItemComponent } from '../../components/member-item/member-item.component';
-
 
 @Component({
   selector: 'app-dashboard',
