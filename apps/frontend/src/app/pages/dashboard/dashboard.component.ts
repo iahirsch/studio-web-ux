@@ -5,7 +5,10 @@ import { map } from 'rxjs';
 import { env } from '../../../env/env';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BtnLocationComponent } from '../../components/btn-location/btn-location.component';
-import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
+import {
+  HsluLocationDataService,
+  Location,
+} from '../../services/hslu-location/hslu-location.service';
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { Router, RouterLink } from '@angular/router';
@@ -19,7 +22,6 @@ import { Router, RouterLink } from '@angular/router';
     CardGreetingComponent,
     BtnPrimaryComponent,
     RouterLink,
-    MemberItemComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
