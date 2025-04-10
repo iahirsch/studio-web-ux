@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-btn-secondary',
   imports: [CommonModule],
   templateUrl: './btn-secondary.component.html',
-  styleUrl: './btn-secondary.component.css',
+  styleUrl: './btn-secondary.component.css'
 })
-export class BtnSecondaryComponent {}
+export class BtnSecondaryComponent {
+}
