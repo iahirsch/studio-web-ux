@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HsluLocationService } from './hslu-location.service';
+import { HsluLocationDataService } from './hslu-location.service';
 
-describe('HsluLocationService', () => {
-  let service: HsluLocationService;
+describe('HsluLocationDataService', () => {
+  let service: HsluLocationDataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HsluLocationService);
+    service = TestBed.inject(HsluLocationDataService);
   });
 
   it('should be created', () => {

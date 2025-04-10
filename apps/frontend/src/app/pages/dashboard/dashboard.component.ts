@@ -8,12 +8,12 @@ import { BtnLocationComponent } from '../../components/btn-location/btn-location
 import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, BtnLocationComponent, NgFor, CardGreetingComponent, BtnPrimaryComponent],
+  imports: [CommonModule, BtnLocationComponent, NgFor, CardGreetingComponent, BtnPrimaryComponent, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

@@ -1,14 +1,19 @@
-<app-card-greeting routerLink="/profile"></app-card-greeting>
-<div class="input-locations">
-  <div class="grid grid-flow-row grid-cols-2 gap-4">
-    <ng-container *ngFor="let location of locations">
-      <app-btn-location
-        [title]="location.title"
-        [location]="location.city"
-        [coordinates]="location.coordinates"
-        (btnClicked)="onLocationButtonClick($event)"
-      ></app-btn-location>
-    </ng-container>
+<div class="mt-20 flex flex-col gap-6">
+  <app-card-greeting class="card" name="{{userName}}" routerLink="/profile"></app-card-greeting>
+  <div>
+    <h2 class="mb-4">Wohin geht's?</h2>
+    <div class="input-locations">
+      <div class="grid grid-flow-row grid-cols-2 gap-4">
+        <ng-container *ngFor="let location of locations">
+          <app-btn-location
+            [title]="location.title"
+            [location]="location.city"
+            [coordinates]="location.coordinates"
+            (btnClicked)="onLocationButtonClick($event)"
+          ></app-btn-location>
+        </ng-container>
+      </div>
+    </div>
   </div>
+  <app-btn-primary routerLink="/create-ride"></app-btn-primary>
 </div>
-<app-btn-primary routerLink="/create-ride"></app-btn-primary>
