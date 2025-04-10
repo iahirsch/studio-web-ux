@@ -9,28 +9,41 @@ import { HsluLocationDataService, Location } from '../../services/hslu-location/
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { Router, RouterLink } from '@angular/router';
+import { MemberItemComponent } from '../../components/member-item/member-item.component';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, BtnLocationComponent, NgFor, CardGreetingComponent, BtnPrimaryComponent, RouterLink],
+  imports: [
+    CommonModule,
+    BtnLocationComponent,
+    NgFor,
+    CardGreetingComponent,
+    BtnPrimaryComponent,
+    RouterLink,
+    MemberItemComponent,
+  ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
   locations: Location[] = [];
 
-  constructor(private locationService: HsluLocationDataService, private router: Router) {
+  constructor(
+    private locationService: HsluLocationDataService,
+    private router: Router
+  ) {
     this.locations = this.locationService.getHsluLocations();
   }
 
   onLocationButtonClick(coordinates: string) {
     // Hier die Logik für das Handling der Koordinaten
     console.log('Koordinaten wurden geklickt:', coordinates);
-    this.router.navigate(['/search-ride'], { queryParams: { coordinates: coordinates } });
+    this.router.navigate(['/search-ride'], {
+      queryParams: { coordinates: coordinates },
+    });
     // Weitere Aktionen wie Navigation zur Karte oder Speichern des ausgewählten Ortes
   }
-
 
   private oauthService = inject(OAuthService);
   private httpClient = inject(HttpClient);
