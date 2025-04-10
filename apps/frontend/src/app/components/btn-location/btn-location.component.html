@@ -1,5 +1,5 @@
 <button type="button" class="flex-col items-start justify-end text-left card btn h-[6.5rem]"
-        (click)="btnClicked.emit()">
+        (click)="btnClicked.emit(coordinates())" routerLink="/search-ride">
   <h3 class="mb-2 pr-4">{{ title() }}</h3>
   <div class="inline-flex gap-2 items-center">
     <div class="size-2.5 bg-primary-300 rounded-full"></div>
