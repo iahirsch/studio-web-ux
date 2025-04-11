@@ -1,10 +1,9 @@
-import { Component, inject, input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { OAuthService } from 'angular-oauth2-oidc';
+import { Component } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-card-members',
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './card-members.component.html',
   styleUrl: './card-members.component.css',
 })
