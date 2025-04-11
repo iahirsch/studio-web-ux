@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, input, model, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import mapboxgl from 'mapbox-gl';
 import { env } from '../../../env/env';
 
-interface MapLocation {
+export interface MapLocation {
   longitude: number;
   latitude: number;
   label?: string;
@@ -10,189 +11,144 @@ interface MapLocation {
 
 @Component({
   selector: 'app-map-pin-location',
-  template: `
-    <div #mapContainer style="width: 100%; height: 400px;"></div>
-  `,
-  styles: [`
-    .mapboxgl-popup {
-      z-index: 10;
-    }
-  `]
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './map-pin-location.component.html',
+  styleUrls: ['./map-pin-location.component.css']
 })
 export class MapPinLocationComponent implements AfterViewInit, OnChanges {
-  @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
-  @Input() locations: MapLocation[] = [];
-  @Input() geometry: GeoJSON.Feature[] = [];
-  @Input() center: MapLocation = {
-    longitude: 8.3,
-    latitude: 47.0
-  };
-  @Input() zoom = 8;
+  // Neue Input/Output Schreibweise
+  // Standort vom Location-Selector (ohne Markierung anzeigen)
+  locationFromSelector = input<MapLocation | undefined>();
+
+  // Input für den festgelegten Treffpunkt (mit Markierung)
+  meetingPoint = model<MapLocation | undefined>();
+
+  // Mode: 'select' für Auswahlmodus, 'display' für Anzeigemodus
+  mode = input<'select' | 'display'>('select');
+
+  // Icon-URL und Text für die Karte
+  iconUrl = input<string>('/assets/icons/meeting_point.svg');
+  title = input<string>('Treffpunkt wählen');
 
   private map!: mapboxgl.Map;
-  private markers: mapboxgl.Marker[] = [];
+  private marker?: mapboxgl.Marker;
 
   constructor() {
     mapboxgl.accessToken = env.mapboxToken;
   }
 
-
   ngAfterViewInit() {
-    if (this.mapContainer) {
-      this.initializeMap();
-    }
+    this.initializeMap();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.map) {
-      if (changes['locations']) {
-        this.updateMarkers();
-      }
+    if (!this.map) return;
 
-      if (changes['geometry']) {
-        this.updateGeometry();
-      }
+    // Wir nutzen weiterhin ngOnChanges für Reaktionen auf Änderungen
+    // für die neue Inputs, da wir auf mehrere Änderungen gleichzeitig reagieren müssen
 
-      if (changes['center']) {
-        this.map.setCenter([this.center.longitude, this.center.latitude]);
-      }
+    if (changes['locationFromSelector'] && this.locationFromSelector() && !this.meetingPoint()) {
+      // Wenn nur der Standort vom Selector geändert wurde und kein Treffpunkt gesetzt ist,
+      // den Kartenausschnitt anpassen (ohne Marker)
+      this.map.setCenter([this.locationFromSelector()!.longitude, this.locationFromSelector()!.latitude]);
+      this.map.setZoom(15); // Nahe genug für Straßendetails
+    }
+
+    if (changes['meetingPoint'] && this.meetingPoint()) {
+      // Wenn ein Treffpunkt gesetzt ist, Marker platzieren und Karte darauf zentrieren
+      this.updateMarker(this.meetingPoint()!);
+      this.map.setCenter([this.meetingPoint()!.longitude, this.meetingPoint()!.latitude]);
+    }
+
+    if (changes['mode']) {
+      // Je nach Modus die Karten-Interaktivität einstellen
+      this.configureMapForMode();
     }
   }
 
   private initializeMap() {
-    try {
-      this.map = new mapboxgl.Map({
-        container: this.mapContainer.nativeElement,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [this.center.longitude, this.center.latitude],
-        zoom: this.zoom
-      });
-
-      // Handle missing images
-      this.map.on('styleimagemissing', (e) => {
-        const id = e.id;
-        // Fallback for missing images
-        const missingImageWidth = 20;
-        const missingImageHeight = 20;
-        const missingImage = new ImageData(missingImageWidth, missingImageHeight);
-
-        // Fill the image with a visible color
-        for (let i = 0; i < missingImage.data.length; i += 4) {
-          missingImage.data[i] = 200;     // Red
-          missingImage.data[i + 1] = 200; // Green
-          missingImage.data[i + 2] = 200; // Blue
-          missingImage.data[i + 3] = 255; // Alpha
-        }
-
-        this.map.addImage(id, missingImage);
-      });
-
-      this.map.addControl(new mapboxgl.NavigationControl());
-
-      this.map.on('load', () => {
-        this.updateMarkers();
-        this.updateGeometry();
-      });
-    } catch (error) {
-      console.error('Error initializing map-pin-location:', error);
-    }
-  }
-
-  private updateMarkers() {
-    // Remove existing markers
-    this.markers.forEach(marker => marker.remove());
-    this.markers = [];
-
-    // Add new markers
-    this.locations.forEach(location => {
-      const marker = new mapboxgl.Marker({
-        color: location.label === 'Current Location' ? 'blue' : 'red'
-      })
-        .setLngLat([location.longitude, location.latitude])
-        .addTo(this.map);
-
-      if (location.label) {
-        new mapboxgl.Popup({
-          offset: 25,
-          closeButton: false,
-          maxWidth: '300px'
-        })
-          .setLngLat([location.longitude, location.latitude])
-          .setHTML(`<h3>${location.label}</h3>`)
-          .addTo(this.map);
-      }
-
-      this.markers.push(marker);
-    });
-
-    // Fit map-pin-location to markers if multiple locations
-    if (this.locations.length > 1) {
-      const bounds = new mapboxgl.LngLatBounds();
-      this.locations.forEach(location => {
-        bounds.extend([location.longitude, location.latitude]);
-      });
-      this.map.fitBounds(bounds, {
-        padding: 50,
-        maxZoom: this.zoom
-      });
-    }
-  }
-
-  private updateGeometry() {
-    // Remove previous geometries
-    if (this.map.getSource('route')) {
-      this.map.removeLayer('route');
-      this.map.removeSource('route');
-    }
-
-    // No geometry available
-    if (!this.geometry || this.geometry.length === 0) return;
-
-    // Combine all geometries
-    const combinedGeometry: GeoJSON.FeatureCollection = {
-      type: 'FeatureCollection',
-      features: this.geometry
+    // Nutze zuerst den Treffpunkt, dann den Standort vom Selector oder Default-Werte
+    const initialCenter = this.meetingPoint() || this.locationFromSelector() || {
+      longitude: 8.3,
+      latitude: 47.0
     };
 
-    // Add geometry to map-pin-location
-    this.map.addSource('route', {
-      type: 'geojson',
-      data: combinedGeometry
+    this.map = new mapboxgl.Map({
+      container: this.mapContainer.nativeElement,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [initialCenter.longitude, initialCenter.latitude],
+      zoom: 15,
+      interactive: this.mode() === 'select'
     });
 
-    this.map.addLayer({
-      id: 'route',
-      type: 'line',
-      source: 'route',
-      layout: {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      paint: {
-        'line-color': '#3887be',
-        'line-width': 5,
-        'line-opacity': 0.75
+    this.map.addControl(new mapboxgl.NavigationControl());
+
+    this.map.on('load', () => {
+      this.configureMapForMode();
+
+      // Nur für den Treffpunkt einen Marker setzen, nicht für den Standort vom Selector
+      if (this.meetingPoint()) {
+        this.updateMarker(this.meetingPoint()!);
       }
     });
+  }
 
-    // Adjust map-pin-location view to geometry
-    if (this.geometry.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      this.geometry.forEach(feature => {
-        if (feature.geometry.type === 'LineString') {
-          feature.geometry.coordinates.forEach(coord => {
-            bounds.extend(coord as [number, number]);
-          });
-        }
-      });
+  private configureMapForMode() {
+    if (!this.map) return;
 
-      if (!bounds.isEmpty()) {
-        this.map.fitBounds(bounds, {
-          padding: 50,
-          maxZoom: this.zoom
-        });
-      }
+    if (this.mode() === 'select') {
+      // Im Auswahlmodus: Klick-Listener hinzufügen und Karte interaktiv machen
+      this.map.getCanvas().style.cursor = 'crosshair';
+      this.map._interactive = true;
+
+      // Event-Listener für Klicks zur Auswahl des Treffpunkts
+      this.map.on('click', this.handleMapClick);
+    } else {
+      // Im Anzeigemodus: Karte nicht interaktiv machen und Klick-Listener entfernen
+      this.map.getCanvas().style.cursor = 'default';
+      this.map._interactive = false;
+      this.map.off('click', this.handleMapClick);
     }
+  }
+
+  // Event-Handler für Klicks auf die Karte
+  private handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+    const { lng, lat } = e.lngLat;
+
+    const newMeetingPoint: MapLocation = {
+      longitude: lng,
+      latitude: lat,
+      label: 'Treffpunkt'
+    };
+
+    this.updateMarker(newMeetingPoint);
+    this.meetingPoint.set(newMeetingPoint);
+  };
+
+  private updateMarker(location: MapLocation) {
+    // Bestehenden Marker entfernen
+    if (this.marker) {
+      this.marker.remove();
+    }
+
+    // Neuen Marker erstellen mit dem angegebenen Icon
+    this.marker = new mapboxgl.Marker({
+      element: this.createCustomMarkerElement(this.iconUrl())
+    })
+      .setLngLat([location.longitude, location.latitude])
+      .addTo(this.map);
+  }
+
+  private createCustomMarkerElement(iconUrl: string): HTMLElement {
+    const element = document.createElement('div');
+    element.className = 'custom-marker';
+    element.style.backgroundImage = `url(${iconUrl})`;
+    element.style.width = '32px';
+    element.style.height = '32px';
+    element.style.backgroundSize = 'cover';
+    return element;
   }
 }

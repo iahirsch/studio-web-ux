@@ -3,7 +3,14 @@
 <app-location-selector></app-location-selector>
 <app-date-time-picker></app-date-time-picker>
 <h4>Organisation</h4>
-<app-map-pin-location></app-map-pin-location>
+<app-map-pin-location
+  [initialLocation]="fromLocation"
+  [mode]="'select'"
+  [title]="'Treffpunkt wählen'"
+  [iconUrl]="'/assets/icons/meeting_point.svg'"
+  (meetingPointSelected)="onMeetingPointSelected($event)">
+</app-map-pin-location>
+
 <app-available-seats></app-available-seats>
 <h4>Mein Fahrzeug</h4>
 <app-plate-number></app-plate-number>
