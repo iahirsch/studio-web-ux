@@ -1,4 +1,6 @@
-<div class="train-details" *ngIf="connection">
+<!-- Ursprünglicher Code von Marco:
+
+div class="train-details" *ngIf="connection">
   <h5>Verbindungsdetails</h5>
   <p><strong>Umstiege:</strong> {{ connection.transfers }}</p>
   <p><strong>Plattformen:</strong> {{ connection.platforms.join(' → ') }}</p>
@@ -17,3 +19,32 @@
     </li>
   </ul>
 </div>
+-->
+
+<div class="card min-h-44 py-6 text-primary-950 text-base inline-flex flex-col justify-between items-start">
+  <div class="self-stretch h-1.5 inline-flex justify-between items-center">
+    <div class="inline-flex justify-start items-center gap-3">
+      <div class="w-10 text-right font-medium">17:30</div>
+      <div class="w-1.5 h-1.5 bg-primary-950 rounded-full"></div>
+      <div class="font-medium">Emmenbrücke</div>
+    </div>
+    <div class="text-right font-medium">Gl. 2</div>
+  </div>
+  <div class="flex inline-flex px-[54px] justify flex-1 min-h-20 gap-4">
+    <div class="w-[2px] flex-1 bg-primary-950"></div>
+    <div class="relative flex justify-center items-center gap-2 self-center">
+      <img src="/assets/icons/sbb_train.svg" alt="Sbb Train icon">
+      <div class="justify-center"><span class="font-medium">S1 </span><span>Richtung Baar</span></div>
+    </div>
+  </div>
+  <div class="self-stretch h-1.5 inline-flex justify-between items-center">
+    <div class="inline-flex justify-start items-center gap-3">
+      <div class="w-10 text-right font-medium">18:00</div>
+      <div class="w-1.5 h-1.5 bg-primary-950 rounded-full"></div>
+      <div class="">Rotkreuz</div>
+    </div>
+    <div class="text-right">Gl. 3</div>
+  </div>
+</div>
+
+
