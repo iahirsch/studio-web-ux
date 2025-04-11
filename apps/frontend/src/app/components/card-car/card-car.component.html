@@ -1,13 +1,22 @@
-<div class="card bg-primary-200 text-primary-950 my-2 inline-flex flex-col justify-start items-start gap-5">
+<div class="card my-2 inline-flex flex-col justify-start items-start gap-5"
+     [ngClass]="[bgColor(), txtColor()]">
   <diV class="self-stretch inline-flex justify-between items-center">
     <div class="inline-flex justify-start items-center gap-2">
-      <img class="w-8 h-8" src="/assets/icons/car_dark_purple.svg" alt="Train Icon">
+      <div *ngIf="bgColor()==='bg-secondary-200'; else elseBlock"><img ngSrc="/assets/icons/car_dark_green.svg"
+                                                                       alt="Darkgreen Car Icon"
+                                                                       height="32" width="32"></div>
+      <ng-template #elseBlock><img ngSrc="/assets/icons/car_dark_purple.svg" alt="Purple Car Icon"
+                                   height="32" width="32"></ng-template>
       <div>
-        <span class="text-base font-medium">Auto </span><span class="text-base font-light">Richtung Rotkreuz</span>
+        <span class="text-base font-medium">Auto </span><span class="text-base font-light">nach Rotkreuz</span>
       </div>
     </div>
     <div class="inline-flex justify-start items-center gap-1">
-      <img class="w-5 h-5" src="/assets/icons/members_dark_purple.svg" alt="Member Icon">
+      <div *ngIf="bgColor()==='bg-secondary-200'; else elseBlock"><img ngSrc="/assets/icons/members_dark_green.svg"
+                                                                       alt="Darkgreen Car Icon"
+                                                                       height="20" width="20"></div>
+      <ng-template #elseBlock><img ngSrc="/assets/icons/members_dark_purple.svg" alt="Purple Car Icon"
+                                   height="20" width="20"></ng-template>
       <div class="text-xs font-medium">
         2/4
       </div>
@@ -16,10 +25,10 @@
   <div class="self-stretch inline-flex flex-col justify-start items-start">
     <div class="text-sm font-medium self-stretch flex-1 inline-flex justify-between items-center gap-1">
       <div>13:40</div>
-      <div class="flex-1 h-[2px] relative bg-primary-950 inline-flex justify-between items-center">
-        <div class="w-1.5 h-1.5 origin-center -rotate-90 bg-primary-950 rounded-full"></div>
-        <div class="flex-1 h-[2px] relative bg-primary-950"></div>
-        <div class="w-1.5 h-1.5 origin-center -rotate-90 bg-primary-950 rounded-full"></div>
+      <div class="flex-1 h-[2px] relative  inline-flex justify-between items-center" [class]="lineColor()">
+        <div class="w-1.5 h-1.5 origin-center -rotate-90  rounded-full" [class]="lineColor()"></div>
+        <div class="flex-1 h-[2px] relative" [class]="lineColor()"></div>
+        <div class="w-1.5 h-1.5 origin-center -rotate-90  rounded-full" [class]="lineColor()"></div>
       </div>
       <div>14:00</div>
     </div>
