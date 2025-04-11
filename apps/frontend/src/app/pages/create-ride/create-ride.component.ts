@@ -10,9 +10,17 @@ import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.co
 
 @Component({
   selector: 'app-create-ride',
-  imports: [CommonModule, LocationSelectorComponent, DateTimePickerComponent, MapPinLocationComponent, AvailableSeatsComponent, PlateNumberComponent, CarInfoComponent, BtnPrimaryComponent],
+  imports: [
+    CommonModule,
+    LocationSelectorComponent,
+    DateTimePickerComponent,
+    MapPinLocationComponent,
+    AvailableSeatsComponent,
+    PlateNumberComponent,
+    CarInfoComponent,
+    BtnPrimaryComponent,
+  ],
   templateUrl: './create-ride.component.html',
-  styleUrl: './create-ride.component.css'
+  styleUrl: './create-ride.component.css',
 })
-export class CreateRideComponent {
-}
+export class CreateRideComponent {}

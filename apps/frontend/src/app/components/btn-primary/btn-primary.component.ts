@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,4 +7,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './btn-primary.component.html',
   styleUrl: './btn-primary.component.css',
 })
-export class BtnPrimaryComponent {}
+export class BtnPrimaryComponent {
+  text = input('');
+}
