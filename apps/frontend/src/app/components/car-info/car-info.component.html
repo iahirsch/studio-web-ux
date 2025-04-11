@@ -1,3 +1,7 @@
-<app-pills>
+<app-pills
+  [pillType]="'color'"
+  [pillItems]="colorPills"
+  (pillSelected)="onColorSelected($event)">
 </app-pills>
+
 <app-input-text></app-input-text>

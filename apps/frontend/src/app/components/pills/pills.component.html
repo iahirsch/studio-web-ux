@@ -1,7 +1,33 @@
-<div
-  class="px-3 py-2 rounded-[20px] outline outline-1 outline-offset-[-1px] outline-Celeste-200 inline-flex justify-start items-center gap-2">
-  <div class="w-3 h-3 bg-Celeste-950 rounded-full"></div>
-  <div class="flex justify-start items-center gap-2">
-    <div class="justify-start text-Celeste-950 text-sm font-medium font-['Lexend'] leading-none">Schwarz</div>
-  </div>
+<div class="pills-container flex flex-wrap gap-2">
+  <!-- Standort-Pills (nur Text in der Mitte) -->
+  <ng-container *ngIf="pillType() === 'location'">
+    <div *ngFor="let item of pillItems()"
+         (click)="onPillClick(item)"
+         class="pill-border"
+         [class.active]="item.isSelected"
+         [class.disabled]="disabled">
+      <div class="pill-text">{{ item.label }}</div>
+    </div>
+  </ng-container>
+
+  <!-- Farb-Pills (mit Farbpunkt links, Text rechts) -->
+  <ng-container *ngIf="pillType() === 'color'">
+    <div *ngFor="let item of pillItems()"
+         (click)="onPillClick(item)"
+         class="pill px-3 py-2 rounded-[20px] outline outline-1 outline-offset-[-1px] inline-flex justify-start items-center gap-2 cursor-pointer"
+         [class.active]="item.isSelected"
+         [class.disabled]="disabled">
+      <div class="w-3 h-3 rounded-full" [style.background-color]="item.color"></div>
+      <div class="text-sm font-medium">{{ item.label }}</div>
+    </div>
+  </ng-container>
+
+  <!-- Info-Pills (nicht klickbar, nur zur Anzeige) -->
+  <ng-container *ngIf="pillType() === 'info'">
+    <div *ngFor="let item of pillItems()"
+         class="pill px-3 py-2 rounded-[20px] outline outline-1 outline-offset-[-1px] inline-flex justify-start items-center gap-2">
+      <div *ngIf="item.color" class="w-3 h-3 rounded-full" [style.background-color]="item.color"></div>
+      <div class="text-sm font-medium">{{ item.label }}</div>
+    </div>
+  </ng-container>
 </div>

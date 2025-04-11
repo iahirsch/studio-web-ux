@@ -107,6 +107,31 @@
   .secondary-button-green {
     @apply border bg-white button text-secondary-500 border-secondary-500;
   }
+
+  .pill-text {
+    @apply justify-start text-sm text-gray-500 font-light leading-none;
+  }
+
+  .pill-border {
+    @apply px-3 py-2 bg-white rounded-[20px] outline-1 outline-offset-[-1px] outline-gray-500 inline-flex justify-center items-center gap-1 flex-wrap content-center;
+  }
+
+  .dot-green-s {
+    @apply rounded-full size-2.5 bg-secondary-300;
+  }
+
+  .dot-green-m {
+    @apply rounded-full size-4 bg-secondary-300;
+  }
+
+  .dot-purple-s {
+    @apply rounded-full size-2.5 bg-primary-300;
+  }
+
+  .dot-purple-m {
+    @apply rounded-full size-4 bg-primary-300;
+  }
+
 }
 
 @utility flex-center {

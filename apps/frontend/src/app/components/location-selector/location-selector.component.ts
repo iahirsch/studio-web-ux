@@ -10,6 +10,7 @@ import { CardTrainComponent } from '../card-train/card-train.component';
 import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
 import { CardTrainDetailsComponent } from '../card-train-details/card-train-details.component';
 import { ActivatedRoute } from '@angular/router';
+import { PillItem, PillsComponent } from '../pills/pills.component';
 
 interface TravelResults {
   requestXML: string;
@@ -39,7 +40,8 @@ interface CarRoute {
     CommonModule,
     ReactiveFormsModule,
     CardTrainComponent,
-    CardTrainDetailsComponent
+    CardTrainDetailsComponent,
+    PillsComponent
   ],
   templateUrl: './location-selector.component.html',
   styleUrl: './location-selector.component.css'
@@ -81,6 +83,9 @@ export class LocationSelectorComponent implements OnInit {
     });
   }
 
+  fromLocationPills: PillItem[] = [];
+  toLocationPills: PillItem[] = [];
+
   ngOnInit(): void {
     // Prüfe, ob Koordinaten aus einer anderen Komponente übergeben wurden
     this.route.queryParams.subscribe(params => {
@@ -88,7 +93,35 @@ export class LocationSelectorComponent implements OnInit {
         this.onLocationButtonClick(params['coordinates']);
       }
     });
+
+    // Pills aus Locations erstellen
+    this.fromLocationPills = this.locations.map(loc => ({
+      id: loc.id,
+      label: `${loc.title}`,
+      isSelected: this.selectedFromLocation?.id === loc.id
+    }));
+
+    this.toLocationPills = this.locations.map(loc => ({
+      id: loc.id,
+      label: `${loc.title}`,
+      isSelected: this.selectedToLocation?.id === loc.id
+    }));
   }
+
+  onFromPillSelected(pillItem: PillItem): void {
+    const location = this.locations.find(loc => loc.id === pillItem.id);
+    if (location) {
+      this.selectFromLocation(location);
+    }
+  }
+
+  onToPillSelected(pillItem: PillItem): void {
+    const location = this.locations.find(loc => loc.id === pillItem.id);
+    if (location) {
+      this.selectToLocation(location);
+    }
+  }
+
 
   onLocationButtonClick(coordinates: string): void {
     if (!coordinates) return;
@@ -148,18 +181,28 @@ export class LocationSelectorComponent implements OnInit {
     return deg * (Math.PI / 180);
   }
 
-// Methode zum Auswählen des Startorts
+
   selectFromLocation(location: Location): void {
     this.selectedFromLocation = location;
-    this.currentLocationLabel = `${location.title}, ${location.city}`;
+    this.currentLocationLabel = `${location.title} (${location.city})`;
     this.travelForm.patchValue({ from: location.coordinates });
+
+    // Update Pill Status
+    this.fromLocationPills.forEach(pill => {
+      pill.isSelected = pill.id === location.id;
+    });
   }
 
-  // Methode zum Auswählen des Zielorts
+
   selectToLocation(location: Location): void {
     this.selectedToLocation = location;
-    this.destinationLocationLabel = `${location.title}, ${location.city}`;
+    this.destinationLocationLabel = `${location.title} (${location.city})`;
     this.travelForm.patchValue({ to: location.coordinates });
+
+    // Update Pill Status
+    this.toLocationPills.forEach(pill => {
+      pill.isSelected = pill.id === location.id;
+    });
   }
 
 

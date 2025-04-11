@@ -1,32 +1,62 @@
 <div class="location-selector">
   <!-- Akkordeon 1: Startort -->
-  <div class="accordion mb-4">
-    <details class="bg-white rounded-lg shadow-md">
+  <div class="card">
+    <div
+      class="inline-flex items-center justify-start gap-2 self-stretch opacity-90"
+    >
+      <div class="dot-purple-m"></div>
+      <div class="justify-start text-base font-medium leading-none">
+        Aktueller Standort,
+        <span class="font-light text-gray-950"> {{ currentLocationLabel }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <details class="self-stretch inline-flex justify--between items-center">
       <summary class="p-4 cursor-pointer flex justify-between items-center">
         <div>
-          <h3 class="font-medium">Startort</h3>
-          <p class="text-sm text-gray-600">{{ currentLocationLabel }}</p>
+          <div class="dot-purple-m"></div>
+          <h3 class="font-medium">Aktueller Standort,
+            <p class="text-sm text-gray-600">{{ currentLocationLabel }}</p>
+          </h3>
+
         </div>
         <span class="arrow"></span>
       </summary>
       <div class="p-4 border-t">
-        <div class="mb-4">
-          <button type="button" class="btn btn-sm btn-outline mb-3" (click)="getCurrentLocation()">
-            Aktuellen Standort verwenden
-          </button>
+
+        <div class="flex flex-wrap gap-2 mt-2">
+          <app-pills
+            [pillType]="'location'"
+            [pillItems]="fromLocationPills"
+            (pillSelected)="onFromPillSelected($event)">
+          </app-pills>
         </div>
 
-        <h4 class="mb-2 text-sm font-medium">HSLU Standorte:</h4>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <button *ngFor="let location of locations"
-                  class="pill"
-                  [class.active]="selectedFromLocation?.id === location.id"
-                  (click)="selectFromLocation(location)">
-            {{ location.title }} ({{ location.city }})
-          </button>
-        </div>
       </div>
     </details>
+  </div>
+
+  <div class="inline-flex w-full items-start justify-start gap-4">
+    <div class="flex-1">
+      <div class="mb-1 self-stretch text-2xl font-medium leading-9">
+        Hey, <span class="text-primary-500"><br /></span>
+      </div>
+      <div
+        class="inline-flex items-center justify-start gap-2 self-stretch opacity-90"
+      >
+        <div class="dot-green-s"></div>
+        <div class="justify-start text-xs font-medium leading-none">
+          Aktueller Standort,
+          <span class="font-light text-gray-950"> Emmenbrücke</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex-none">
+      <img alt="" class="size-12 rounded-[512px]" />
+    </div>
   </div>
 
   <!-- Akkordeon 2: Zielort -->
@@ -40,15 +70,14 @@
         <span class="arrow"></span>
       </summary>
       <div class="p-4 border-t">
-        <h4 class="mb-2 text-sm font-medium">HSLU Standorte:</h4>
         <div class="flex flex-wrap gap-2 mt-2">
-          <button *ngFor="let location of locations"
-                  class="pill"
-                  [class.active]="selectedToLocation?.id === location.id"
-                  (click)="selectToLocation(location)">
-            {{ location.title }} ({{ location.city }})
-          </button>
+          <app-pills
+            [pillType]="'location'"
+            [pillItems]="toLocationPills"
+            (pillSelected)="onToPillSelected($event)">
+          </app-pills>
         </div>
+
       </div>
     </details>
   </div>
