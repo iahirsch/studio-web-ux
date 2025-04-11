@@ -1,27 +1,23 @@
 <div class="location-selector ">
-
-  <cdk-accordion class="card w-full mb-2">
+  <!-- Akkordeon 1: Aktueller Standort -->
+  <cdk-accordion class="card mb-2">
     <cdk-accordion-item #fromAccordion
                           ="cdkAccordionItem" class="accordion-item w-full">
       <button class="accordion-header w-full" (click)="fromAccordion.toggle()">
-        <!-- Wichtig: Dieser Container stellt sicher, dass der Inhalt die volle Breite nutzt -->
-        <div class="flex items-center justify-between w-full">
-          <!-- Linke Seite mit Dot und Text -->
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="dot-purple-m"></div>
+            <div class="dot-purple-m flex-none"></div>
             <div>
-              <div class="text-base font-medium leading-none">{{ currentLocationTitle }}, <span class="font-light text-gray-950">{{ currentLocationCity }} </span></div>
+              <div class="text-left font-medium leading-5">{{ currentLocationTitle }}, <span class="font-light text-gray-950">{{ currentLocationCity }} </span></div>
             </div>
           </div>
-
-          <!-- Pfeil - separates Element auf der rechten Seite -->
-          <div class="arrow-icon" [class.rotated]="fromAccordion.expanded">
-            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
+          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+               [ngClass]="fromAccordion.expanded ? 'rotate-180' : 'rotate-0'">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
           </div>
         </div>
       </button>
 
-      <!-- Accordion Inhalt -->
       <div
         class="accordion-content"
         [class.expanded]="fromAccordion.expanded"
@@ -41,22 +37,19 @@
 
 
   <!-- Akkordeon 2: Zielort -->
-  <cdk-accordion class="card w-full mb-2">
+  <cdk-accordion class="card mb-2">
     <cdk-accordion-item #toAccordion="cdkAccordionItem" class="accordion-item w-full">
       <button class="accordion-header w-full" (click)="toAccordion.toggle()">
-        <!-- Container für Inhalt mit voller Breite -->
-        <div class="flex items-center justify-between w-full">
-          <!-- Linke Seite mit Dot und Text -->
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="dot-purple-m"></div> <!-- Grüner Dot für Zielort -->
+            <div class="dot-purple-m flex-none"></div>
             <div>
               <div class="text-base font-medium leading-none">{{ destinationLocationTitle }}, <span class="font-light text-gray-950">{{ destinationLocationCity }}</span> </div>
             </div>
           </div>
-
-          <!-- Pfeil - separates Element auf der rechten Seite -->
-          <div class="arrow-icon" [class.rotated]="toAccordion.expanded">
-            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
+          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+               [ngClass]="toAccordion.expanded ? 'rotate-180' : 'rotate-0'">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
           </div>
         </div>
       </button>
