@@ -1,111 +1,81 @@
-<div class="location-selector">
-  <!-- Akkordeon 1: Startort -->
-  <div class="card">
-    <div
-      class="inline-flex items-center justify-start gap-2 self-stretch opacity-90"
-    >
-      <div class="dot-purple-m"></div>
-      <div class="justify-start text-base font-medium leading-none">
-        Aktueller Standort,
-        <span class="font-light text-gray-950"> {{ currentLocationLabel }}</span>
-      </div>
-    </div>
+<div class="location-selector ">
 
-  </div>
+  <cdk-accordion class="card w-full mb-2">
+    <cdk-accordion-item #accordionItem="cdkAccordionItem" class="accordion-item w-full">
+      <div class="accordion-header w-full" (click)="accordionItem.toggle()">
+        <!-- Wichtig: Dieser Container stellt sicher, dass der Inhalt die volle Breite nutzt -->
+        <div class="flex items-center justify-between w-full">
+          <!-- Linke Seite mit Dot und Text -->
+          <div class="flex items-center gap-2">
+            <div class="dot-purple-m"></div>
+            <div>
+              <div class="text-base font-medium leading-none">Aktueller Standort,</div>
+              <div class="font-light text-gray-950">{{ currentLocationLabel }}</div>
+            </div>
+          </div>
 
-  <div class="card">
-    <details class="self-stretch inline-flex justify--between items-center">
-      <summary class="p-4 cursor-pointer flex justify-between items-center">
-        <div>
-          <div class="dot-purple-m"></div>
-          <h3 class="font-medium">Aktueller Standort,
-            <p class="text-sm text-gray-600">{{ currentLocationLabel }}</p>
-          </h3>
-
+          <!-- Pfeil - separates Element auf der rechten Seite -->
+          <div class="arrow-icon" [class.rotated]="accordionItem.expanded">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
+          </div>
         </div>
-        <span class="arrow"></span>
-      </summary>
-      <div class="p-4 border-t">
-
-        <div class="flex flex-wrap gap-2 mt-2">
-          <app-pills
-            [pillType]="'location'"
-            [pillItems]="fromLocationPills"
-            (pillSelected)="onFromPillSelected($event)">
-          </app-pills>
-        </div>
-
       </div>
-    </details>
-  </div>
 
-  <div class="inline-flex w-full items-start justify-start gap-4">
-    <div class="flex-1">
-      <div class="mb-1 self-stretch text-2xl font-medium leading-9">
-        Hey, <span class="text-primary-500"><br /></span>
-      </div>
+      <!-- Accordion Inhalt -->
       <div
-        class="inline-flex items-center justify-start gap-2 self-stretch opacity-90"
-      >
-        <div class="dot-green-s"></div>
-        <div class="justify-start text-xs font-medium leading-none">
-          Aktueller Standort,
-          <span class="font-light text-gray-950"> Emmenbrücke</span>
+        class="accordion-content"
+        [class.expanded]="accordionItem.expanded"
+        [style.display]="accordionItem.expanded ? '' : 'none'">
+        <div>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <app-pills
+              [pillType]="'location'"
+              [pillItems]="fromLocationPills"
+              (pillSelected)="onFromPillSelected($event)">
+            </app-pills>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex-none">
-      <img alt="" class="size-12 rounded-[512px]" />
-    </div>
-  </div>
+    </cdk-accordion-item>
+  </cdk-accordion>
+
 
   <!-- Akkordeon 2: Zielort -->
-  <div class="accordion mb-4">
-    <details class="bg-white rounded-lg shadow-md">
-      <summary class="p-4 cursor-pointer flex justify-between items-center">
-        <div>
-          <h3 class="font-medium">Zielort</h3>
-          <p class="text-sm text-gray-600">{{ destinationLocationLabel }}</p>
-        </div>
-        <span class="arrow"></span>
-      </summary>
-      <div class="p-4 border-t">
-        <div class="flex flex-wrap gap-2 mt-2">
-          <app-pills
-            [pillType]="'location'"
-            [pillItems]="toLocationPills"
-            (pillSelected)="onToPillSelected($event)">
-          </app-pills>
-        </div>
+  <cdk-accordion class="card w-full mb-2">
+    <cdk-accordion-item #accordionItem2="cdkAccordionItem" class="accordion-item w-full">
+      <div class="accordion-header w-full" (click)="accordionItem2.toggle()">
+        <!-- Container für Inhalt mit voller Breite -->
+        <div class="flex items-center justify-between w-full">
+          <!-- Linke Seite mit Dot und Text -->
+          <div class="flex items-center gap-2">
+            <div class="dot-purple-m"></div> <!-- Grüner Dot für Zielort -->
+            <div>
+              <div class="text-base font-medium leading-none">Zielort</div>
+              <div class="font-light text-gray-950">{{ destinationLocationLabel }}</div>
+            </div>
+          </div>
 
+          <!-- Pfeil - separates Element auf der rechten Seite -->
+          <div class="arrow-icon" [class.rotated]="accordionItem2.expanded">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
+          </div>
+        </div>
       </div>
-    </details>
-  </div>
 
-  <!-- Formulardaten werden weiterhin über travelForm synchronisiert -->
-  <div class="form-actions mt-4">
-    <button
-      type="button"
-      class="btn btn-primary w-full"
-      [disabled]="travelForm.invalid || loading"
-      (click)="onSubmit()">
-      Verbindungen suchen
-    </button>
-  </div>
-
-  <!-- Ergebnisanzeige (wenn vorhanden) -->
-  <div *ngIf="(travelResults?.trainConnections?.length ?? 0) > 0">
-    <h3>Zugverbindungen</h3>
-    <app-card-train
-      *ngFor="let connection of travelResults?.trainConnections; let i = index"
-      [connection]="connection"
-      [index]="i"
-
-    ></app-card-train>
-
-    <app-card-train-details
-      *ngIf="selectedConnection"
-      [connection]="selectedConnection">
-    </app-card-train-details>
-  </div>
-</div>
+      <!-- Accordion Inhalt -->
+      <div
+        class="accordion-content"
+        [class.expanded]="accordionItem2.expanded"
+        [style.display]="accordionItem2.expanded ? '' : 'none'">
+        <div>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <app-pills
+              [pillType]="'location'"
+              [pillItems]="toLocationPills"
+              (pillSelected)="onToPillSelected($event)">
+            </app-pills>
+          </div>
+        </div>
+      </div>
+    </cdk-accordion-item>
+  </cdk-accordion>

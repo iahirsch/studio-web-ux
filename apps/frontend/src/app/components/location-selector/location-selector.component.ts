@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { env } from '../../../env/env';
@@ -11,6 +11,7 @@ import { HsluLocationDataService, Location } from '../../services/hslu-location/
 import { CardTrainDetailsComponent } from '../card-train-details/card-train-details.component';
 import { ActivatedRoute } from '@angular/router';
 import { PillItem, PillsComponent } from '../pills/pills.component';
+import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 
 interface TravelResults {
   requestXML: string;
@@ -41,7 +42,10 @@ interface CarRoute {
     ReactiveFormsModule,
     CardTrainComponent,
     CardTrainDetailsComponent,
-    PillsComponent
+    PillsComponent,
+    NgOptimizedImage,
+    CdkAccordion,
+    CdkAccordionItem
   ],
   templateUrl: './location-selector.component.html',
   styleUrl: './location-selector.component.css'
