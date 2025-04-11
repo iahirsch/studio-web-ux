@@ -3,7 +3,7 @@
   <cdk-accordion class="card w-full mb-2">
     <cdk-accordion-item #fromAccordion
                           ="cdkAccordionItem" class="accordion-item w-full">
-      <div class="accordion-header w-full" (click)="fromAccordion.toggle()">
+      <button class="accordion-header w-full" (click)="fromAccordion.toggle()">
         <!-- Wichtig: Dieser Container stellt sicher, dass der Inhalt die volle Breite nutzt -->
         <div class="flex items-center justify-between w-full">
           <!-- Linke Seite mit Dot und Text -->
@@ -19,7 +19,7 @@
             <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
           </div>
         </div>
-      </div>
+      </button>
 
       <!-- Accordion Inhalt -->
       <div
@@ -43,7 +43,7 @@
   <!-- Akkordeon 2: Zielort -->
   <cdk-accordion class="card w-full mb-2">
     <cdk-accordion-item #toAccordion="cdkAccordionItem" class="accordion-item w-full">
-      <div class="accordion-header w-full" (click)="toAccordion.toggle()">
+      <button class="accordion-header w-full" (click)="toAccordion.toggle()">
         <!-- Container für Inhalt mit voller Breite -->
         <div class="flex items-center justify-between w-full">
           <!-- Linke Seite mit Dot und Text -->
@@ -59,7 +59,7 @@
             <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
           </div>
         </div>
-      </div>
+      </button>
 
       <!-- Accordion Inhalt -->
       <div
