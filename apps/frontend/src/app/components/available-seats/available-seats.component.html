@@ -1,9 +1,12 @@
 <div class="card flex-col">
-  <div class="flex justify-between w-full py-2 mb-2">
+  <div class="flex justify-between w-full py-1 mb-3 items-center">
     <h3>Freie Sitzplätze</h3>
-    <h3>
-      - 4 +
-    </h3>
+    <div class="inline-flex items-center gap-1">
+      <button (click)="decrement()"><img ngSrc="/assets/icons/remove_circle.svg" alt="remove" height="32" width="32">
+      </button>
+      <h3 class="w-6 text-center">{{ passengers() }}</h3>
+      <button (click)="increment()"><img ngSrc="/assets/icons/add_circle.svg" alt="add" height="32" width="32"></button>
+    </div>
   </div>
   <app-input-textarea></app-input-textarea>
 </div>
