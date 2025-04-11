@@ -3,10 +3,18 @@
   <ng-container *ngIf="pillType() === 'location'">
     <div *ngFor="let item of pillItems()"
          (click)="onPillClick(item)"
-         class="pill-border"
-         [class.active]="item.isSelected"
-         [class.disabled]="disabled">
-      <div class="pill-text">{{ item.label }}</div>
+         [ngClass]="{
+       'bg-primary-300': item.isSelected,
+       'bg-white': !item.isSelected
+     }"
+         class="pill-border transition-colors duration-200">
+
+      <div class="pill-text" [ngClass]="{
+         'text-sm font-medium text-gray-950': item.isSelected,
+         'text-sm font-light text-gray-500': !item.isSelected
+       }">
+        {{ item.label }}
+      </div>
     </div>
   </ng-container>
 

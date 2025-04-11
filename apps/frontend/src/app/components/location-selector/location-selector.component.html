@@ -1,21 +1,21 @@
 <div class="location-selector ">
 
   <cdk-accordion class="card w-full mb-2">
-    <cdk-accordion-item #accordionItem="cdkAccordionItem" class="accordion-item w-full">
-      <div class="accordion-header w-full" (click)="accordionItem.toggle()">
+    <cdk-accordion-item #fromAccordion
+                          ="cdkAccordionItem" class="accordion-item w-full">
+      <div class="accordion-header w-full" (click)="fromAccordion.toggle()">
         <!-- Wichtig: Dieser Container stellt sicher, dass der Inhalt die volle Breite nutzt -->
         <div class="flex items-center justify-between w-full">
           <!-- Linke Seite mit Dot und Text -->
           <div class="flex items-center gap-2">
             <div class="dot-purple-m"></div>
             <div>
-              <div class="text-base font-medium leading-none">Aktueller Standort,</div>
-              <div class="font-light text-gray-950">{{ currentLocationLabel }}</div>
+              <div class="text-base font-medium leading-none">{{ currentLocationTitle }}, <span class="font-light text-gray-950">{{ currentLocationCity }} </span></div>
             </div>
           </div>
 
           <!-- Pfeil - separates Element auf der rechten Seite -->
-          <div class="arrow-icon" [class.rotated]="accordionItem.expanded">
+          <div class="arrow-icon" [class.rotated]="fromAccordion.expanded">
             <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
           </div>
         </div>
@@ -24,8 +24,8 @@
       <!-- Accordion Inhalt -->
       <div
         class="accordion-content"
-        [class.expanded]="accordionItem.expanded"
-        [style.display]="accordionItem.expanded ? '' : 'none'">
+        [class.expanded]="fromAccordion.expanded"
+        [style.display]="fromAccordion.expanded ? '' : 'none'">
         <div>
           <div class="flex flex-wrap gap-2 mt-5">
             <app-pills
@@ -42,21 +42,20 @@
 
   <!-- Akkordeon 2: Zielort -->
   <cdk-accordion class="card w-full mb-2">
-    <cdk-accordion-item #accordionItem2="cdkAccordionItem" class="accordion-item w-full">
-      <div class="accordion-header w-full" (click)="accordionItem2.toggle()">
+    <cdk-accordion-item #toAccordion="cdkAccordionItem" class="accordion-item w-full">
+      <div class="accordion-header w-full" (click)="toAccordion.toggle()">
         <!-- Container für Inhalt mit voller Breite -->
         <div class="flex items-center justify-between w-full">
           <!-- Linke Seite mit Dot und Text -->
           <div class="flex items-center gap-2">
             <div class="dot-purple-m"></div> <!-- Grüner Dot für Zielort -->
             <div>
-              <div class="text-base font-medium leading-none">Zielort</div>
-              <div class="font-light text-gray-950">{{ destinationLocationLabel }}</div>
+              <div class="text-base font-medium leading-none">{{ destinationLocationTitle }}, <span class="font-light text-gray-950">{{ destinationLocationCity }}</span> </div>
             </div>
           </div>
 
           <!-- Pfeil - separates Element auf der rechten Seite -->
-          <div class="arrow-icon" [class.rotated]="accordionItem2.expanded">
+          <div class="arrow-icon" [class.rotated]="toAccordion.expanded">
             <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32">
           </div>
         </div>
@@ -65,8 +64,8 @@
       <!-- Accordion Inhalt -->
       <div
         class="accordion-content"
-        [class.expanded]="accordionItem2.expanded"
-        [style.display]="accordionItem2.expanded ? '' : 'none'">
+        [class.expanded]="toAccordion.expanded"
+        [style.display]="toAccordion.expanded ? '' : 'none'">
         <div>
           <div class="flex flex-wrap gap-2 mt-5">
             <app-pills
