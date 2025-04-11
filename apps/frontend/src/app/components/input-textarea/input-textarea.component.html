@@ -1,1 +1,9 @@
-<input type="text" placeholder="Input text" class="input-text" />
+<div class="relative">
+  <textarea
+    placeholder="Bemerkung"
+    class="input-text h-[6.25rem] resize-none"
+    maxlength="500"
+    (input)="onInput($event)"
+  ></textarea>
+  <span *ngIf="isInfoVisible" class="absolute right-4 top-4 text-xs text-gray-200">Max 500 Zeichen</span>
+</div>
