@@ -76,7 +76,7 @@
   }
 
   button {
-    @apply rounded-big px-4 py-2 hover:cursor-pointer;
+    @apply hover:cursor-pointer;
   }
 }
 
@@ -87,9 +87,9 @@
 
   .input-text {
     @apply block w-full p-4 pl-6 bg-background rounded-small outline-none leading-none
-    placeholder:opacity-100
-    focus:ring-2 focus:text-primary-500 focus:border-primary-500
-    disabled:text-gray-500;
+    placeholder:opacity-100 placeholder-black
+    focus:ring-2 focus:placeholder-primary-500 focus:text-black focus:ring-primary-500
+    disabled:placeholder-gray-500;
   }
 
   .primary-button-purple {
