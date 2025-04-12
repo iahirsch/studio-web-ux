@@ -24,7 +24,7 @@
             (click)="onPillClick(item)"
             class="pill px-3 py-2 rounded-big outline outline-offset-[-1px] inline-flex justify-start items-center gap-2"
             [class.active]="item.isSelected"
-            [class.disabled]="disabled">
+            [class.disabled]="disabled()">
       <div class="w-3 h-3 rounded-full" [style.background-color]="item.color"></div>
       <div class="text-sm font-medium">{{ item.label }}</div>
     </button>
