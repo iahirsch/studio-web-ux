@@ -1,82 +1,73 @@
-<div class="location-selector">
-  <!-- Akkordeon 1: Startort -->
-  <div class="accordion mb-4">
-    <details class="bg-white rounded-lg shadow-md">
-      <summary class="p-4 cursor-pointer flex justify-between items-center">
-        <div>
-          <h3 class="font-medium">Startort</h3>
-          <p class="text-sm text-gray-600">{{ currentLocationLabel }}</p>
+<div class="location-selector ">
+  <!-- Akkordeon 1: Aktueller Standort -->
+  <cdk-accordion class="card mb-2">
+    <cdk-accordion-item #fromAccordion
+                          ="cdkAccordionItem" class="accordion-item w-full">
+      <button class="accordion-header w-full" (click)="fromAccordion.toggle()">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="dot-purple-m flex-none"></div>
+            <div>
+              <div class="text-left font-medium leading-5">{{ currentLocationTitle }}, <span class="font-light text-gray-950">{{ currentLocationCity }} </span></div>
+            </div>
+          </div>
+          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+               [ngClass]="fromAccordion.expanded ? 'rotate-180' : 'rotate-0'">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
+          </div>
         </div>
-        <span class="arrow"></span>
-      </summary>
-      <div class="p-4 border-t">
-        <div class="mb-4">
-          <button type="button" class="btn btn-sm btn-outline mb-3" (click)="getCurrentLocation()">
-            Aktuellen Standort verwenden
-          </button>
-        </div>
+      </button>
 
-        <h4 class="mb-2 text-sm font-medium">HSLU Standorte:</h4>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <button *ngFor="let location of locations"
-                  class="pill"
-                  [class.active]="selectedFromLocation?.id === location.id"
-                  (click)="selectFromLocation(location)">
-            {{ location.title }} ({{ location.city }})
-          </button>
+      <div
+        class="accordion-content"
+        [class.expanded]="fromAccordion.expanded"
+        [style.display]="fromAccordion.expanded ? '' : 'none'">
+        <div>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <app-pills
+              [pillType]="'location'"
+              [pillItems]="fromLocationPills"
+              (pillSelected)="onFromPillSelected($event)">
+            </app-pills>
+          </div>
         </div>
       </div>
-    </details>
-  </div>
+    </cdk-accordion-item>
+  </cdk-accordion>
+
 
   <!-- Akkordeon 2: Zielort -->
-  <div class="accordion mb-4">
-    <details class="bg-white rounded-lg shadow-md">
-      <summary class="p-4 cursor-pointer flex justify-between items-center">
-        <div>
-          <h3 class="font-medium">Zielort</h3>
-          <p class="text-sm text-gray-600">{{ destinationLocationLabel }}</p>
+  <cdk-accordion class="card mb-2">
+    <cdk-accordion-item #toAccordion="cdkAccordionItem" class="accordion-item w-full">
+      <button class="accordion-header w-full" (click)="toAccordion.toggle()">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="dot-purple-m flex-none"></div>
+            <div>
+              <div class="text-base font-medium leading-none">{{ destinationLocationTitle }}, <span class="font-light text-gray-950">{{ destinationLocationCity }}</span> </div>
+            </div>
+          </div>
+          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+               [ngClass]="toAccordion.expanded ? 'rotate-180' : 'rotate-0'">
+            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
+          </div>
         </div>
-        <span class="arrow"></span>
-      </summary>
-      <div class="p-4 border-t">
-        <h4 class="mb-2 text-sm font-medium">HSLU Standorte:</h4>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <button *ngFor="let location of locations"
-                  class="pill"
-                  [class.active]="selectedToLocation?.id === location.id"
-                  (click)="selectToLocation(location)">
-            {{ location.title }} ({{ location.city }})
-          </button>
+      </button>
+
+      <!-- Accordion Inhalt -->
+      <div
+        class="accordion-content"
+        [class.expanded]="toAccordion.expanded"
+        [style.display]="toAccordion.expanded ? '' : 'none'">
+        <div>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <app-pills
+              [pillType]="'location'"
+              [pillItems]="toLocationPills"
+              (pillSelected)="onToPillSelected($event)">
+            </app-pills>
+          </div>
         </div>
       </div>
-    </details>
-  </div>
-
-  <!-- Formulardaten werden weiterhin über travelForm synchronisiert -->
-  <div class="form-actions mt-4">
-    <button
-      type="button"
-      class="btn btn-primary w-full"
-      [disabled]="travelForm.invalid || loading"
-      (click)="onSubmit()">
-      Verbindungen suchen
-    </button>
-  </div>
-
-  <!-- Ergebnisanzeige (wenn vorhanden) -->
-  <div *ngIf="(travelResults?.trainConnections?.length ?? 0) > 0">
-    <h3>Zugverbindungen</h3>
-    <app-card-train
-      *ngFor="let connection of travelResults?.trainConnections; let i = index"
-      [connection]="connection"
-      [index]="i"
-
-    ></app-card-train>
-
-    <app-card-train-details
-      *ngIf="selectedConnection"
-      [connection]="selectedConnection">
-    </app-card-train-details>
-  </div>
-</div>
+    </cdk-accordion-item>
+  </cdk-accordion>

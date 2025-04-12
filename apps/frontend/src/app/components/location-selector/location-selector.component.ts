@@ -1,15 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { env } from '../../../env/env';
 import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
-import { CardTrainComponent } from '../card-train/card-train.component';
 import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
-import { CardTrainDetailsComponent } from '../card-train-details/card-train-details.component';
 import { ActivatedRoute } from '@angular/router';
+import { PillItem, PillsComponent } from '../pills/pills.component';
+import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
+import { GeolocationService } from '../../services/geolocation/geolocation.service';
 
 interface TravelResults {
   requestXML: string;
@@ -32,14 +33,17 @@ interface CarRoute {
   steps: string[];
 }
 
+
 @Component({
   selector: 'app-location-selector',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    CardTrainComponent,
-    CardTrainDetailsComponent
+    PillsComponent,
+    NgOptimizedImage,
+    CdkAccordion,
+    CdkAccordionItem
   ],
   templateUrl: './location-selector.component.html',
   styleUrl: './location-selector.component.css'
@@ -49,14 +53,14 @@ export class LocationSelectorComponent implements OnInit {
   private ojpSdkService = inject(OjpSdkService);
   private geoUtilsService = inject(GeoUtilsService);
   private httpClient = inject(HttpClient);
-  private locationService = inject(HsluLocationDataService);
-  private route = inject(ActivatedRoute);
-
-  locations: Location[] = this.locationService.getHsluLocations();
+  private hsluLocationDataService = inject(HsluLocationDataService);
+  locations: Location[] = this.hsluLocationDataService.getHsluLocations();
   selectedFromLocation: Location | null = null;
   selectedToLocation: Location | null = null;
-  currentLocationLabel = 'Bitte wählen Sie einen Startort';
-  destinationLocationLabel = 'Bitte wählen Sie einen Zielort';
+  currentLocationTitle = 'Aktueller Standort';
+  currentLocationCity = 'Auswählen';
+  destinationLocationTitle = 'Zielort';
+  destinationLocationCity = 'Auswählen';
   nearbyHsluLocation: Location | null = null;
 
   selectedConnection: TrainConnections | null = null;
@@ -71,7 +75,16 @@ export class LocationSelectorComponent implements OnInit {
   mapLocations: any[] = [];
   mapGeometry: GeoJSON.Feature[] = [];
 
-  constructor() {
+  fromLocationPills: PillItem[] = [];
+  toLocationPills: PillItem[] = [];
+
+  @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
+  @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
+
+
+  constructor(private route: ActivatedRoute,
+              private geoService: GeolocationService
+  ) {
     this.travelForm = this.fb.group({
       from: ['', Validators.required],
       to: ['', Validators.required],
@@ -81,87 +94,122 @@ export class LocationSelectorComponent implements OnInit {
     });
   }
 
+
   ngOnInit(): void {
-    // Prüfe, ob Koordinaten aus einer anderen Komponente übergeben wurden
+    // Alle HSLU-Standorte als Pills laden
+    const locations = this.hsluLocationDataService.getHsluLocations();
+
+    // Pills für beide Selektoren vorbereiten
+    this.fromLocationPills = locations.map(loc => ({
+      id: loc.id,
+      label: `${loc.title}`,
+      isSelected: false
+    }));
+
+    this.toLocationPills = locations.map(loc => ({
+      id: loc.id,
+      label: `${loc.title}`,
+      isSelected: false
+    }));
+
+    // URL-Parameter für ausgewählte Koordinaten prüfen
     this.route.queryParams.subscribe(params => {
       if (params['coordinates']) {
-        this.onLocationButtonClick(params['coordinates']);
+        // Standort anhand der Koordinaten finden und als Zielort setzen
+        const coordinates = params['coordinates'];
+        const location = locations.find(loc => loc.coordinates === coordinates);
+
+        if (location) {
+          this.setDestinationLocation(location);
+        }
       }
     });
+
+    // Aktuellen Standort per Geolocation ermitteln (wenn verfügbar)
+    this.detectCurrentLocation();
   }
 
-  onLocationButtonClick(coordinates: string): void {
-    if (!coordinates) return;
+  // Ermittelt den aktuellen Standort und findet den nächsten HSLU-Standort
+  private detectCurrentLocation() {
+    this.geoService.getCurrentPosition().subscribe(
+      position => {
+        const nearestLocation = this.hsluLocationDataService.findNearestLocation(
+          position.coords.latitude,
+          position.coords.longitude
+        );
 
-    const [latitude, longitude] = coordinates.split(',').map(parseFloat);
+        if (nearestLocation) {
+          this.setCurrentLocation(nearestLocation);
+        }
+      },
+      error => {
+        console.error('Geolocation error:', error);
+      }
+    );
+  }
 
-    // Prüfe, ob ein HSLU-Standort in der Nähe ist
-    this.nearbyHsluLocation = this.checkNearbyHsluLocation(latitude, longitude);
+// Setzt den aktuellen Standort
+  private setCurrentLocation(location: Location) {
+    this.selectedFromLocation = location;
+    this.currentLocationTitle = location.title;
+    this.currentLocationCity = location.city;
 
-    if (this.nearbyHsluLocation) {
-      // Wenn ein HSLU-Standort in der Nähe ist, wähle diesen als Startort
-      this.selectFromLocation(this.nearbyHsluLocation);
-    } else {
-      // Ansonsten setze die Koordinaten direkt als Startpunkt
-      const locationStr = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
-      this.travelForm.patchValue({ from: locationStr });
-      this.currentLocationLabel = 'Benutzerdefinierter Standort';
-    }
+    this.travelForm.get('from')?.setValue(location.id);
+
+    // Entsprechende Pill als ausgewählt markieren
+    this.fromLocationPills.forEach(pill => {
+      pill.isSelected = pill.id === location.id;
+    });
+
+
   }
 
 
-  private checkNearbyHsluLocation(latitude: number, longitude: number): Location | null {
-    const MAX_DISTANCE_KM = 1; // 1 Kilometer Umkreis
+  // Setzt den Zielort
+  private setDestinationLocation(location: Location) {
+    this.selectedToLocation = location;
+    this.destinationLocationTitle = location.title;
+    this.destinationLocationCity = location.city;
 
-    // Gehe alle HSLU-Standorte durch
-    for (const location of this.locations) {
-      const [locLat, locLng] = location.coordinates.split(',').map(parseFloat);
+    this.travelForm.get('to')?.setValue(location.id);
 
-      // Berechne Entfernung (Haversine-Formel)
-      const distance = this.calculateDistance(latitude, longitude, locLat, locLng);
+    // Entsprechende Pill als ausgewählt markieren
+    this.toLocationPills.forEach(pill => {
+      pill.isSelected = pill.id === location.id;
+    });
 
-      if (distance <= MAX_DISTANCE_KM) {
-        return location;
+
+  }
+
+
+  // Event-Handler für die Auswahl des Start-Standorts
+  onFromPillSelected(pill: PillItem) {
+    const selectedLocation = this.locations.find(loc => loc.id === pill.id);
+
+    if (selectedLocation) {
+      this.setCurrentLocation(selectedLocation);
+      // Akkordeon schließen
+      if (this.fromAccordion) {
+        this.fromAccordion.close();
       }
     }
 
-    return null;
+
   }
 
-  // Haversine-Formel zur Berechnung der Entfernung zwischen zwei Koordinaten
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Erdradius in km
-    const dLat = this.deg2rad(lat2 - lat1);
-    const dLon = this.deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Entfernung in km
-    return distance;
+  // Event-Handler für die Auswahl des Ziel-Standorts
+  onToPillSelected(pill: PillItem) {
+    const selectedLocation = this.locations.find(loc => loc.id === pill.id);
+
+    if (selectedLocation) {
+      this.setDestinationLocation(selectedLocation);
+      // Akkordeon schließen
+      if (this.toAccordion) {
+        this.toAccordion.close();
+      }
+    }
+
   }
-
-
-  // Hilfsfunktion für die Berechnung des Abstands (falls noch nicht vorhanden)
-  private deg2rad(deg: number): number {
-    return deg * (Math.PI / 180);
-  }
-
-// Methode zum Auswählen des Startorts
-  selectFromLocation(location: Location): void {
-    this.selectedFromLocation = location;
-    this.currentLocationLabel = `${location.title}, ${location.city}`;
-    this.travelForm.patchValue({ from: location.coordinates });
-  }
-
-  // Methode zum Auswählen des Zielorts
-  selectToLocation(location: Location): void {
-    this.selectedToLocation = location;
-    this.destinationLocationLabel = `${location.title}, ${location.city}`;
-    this.travelForm.patchValue({ to: location.coordinates });
-  }
-
 
   // Koordinaten-Konvertierung und Formatierung
   private normalizeCoordinates(coordinates: string): string {
@@ -176,77 +224,6 @@ export class LocationSelectorComponent implements OnInit {
 
     return coordinates;
   }
-
-
-  getCurrentLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position: GeolocationPosition) => {
-          const coordinates = `${position.coords.latitude},${position.coords.longitude}`;
-
-          // Überprüfe, ob der aktuelle Standort in der Nähe eines HSLU-Standorts liegt
-          this.nearbyHsluLocation = this.checkNearbyHsluLocation(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-
-          if (this.nearbyHsluLocation) {
-            // Wenn in der Nähe eines HSLU-Standorts, nutze diesen als Startort
-            this.selectFromLocation(this.nearbyHsluLocation);
-          } else {
-            // Sonst verwende die genauen Koordinaten
-            this.travelForm.patchValue({ from: coordinates });
-            this.selectedFromLocation = null;
-            this.currentLocationLabel = 'Ihr Standort';
-          }
-
-          // Aktualisiere Kartenmarkierungen
-          this.updateMapLocations(
-            position.coords.longitude,
-            position.coords.latitude,
-            'Aktueller Standort'
-          );
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          this.error = 'Standort konnte nicht abgerufen werden';
-        }
-      );
-    } else {
-      console.error('Geolocation is not supported');
-      this.error = 'Standortermittlung wird nicht unterstützt';
-    }
-  }
-
-  // Überarbeitete Methode für Standort-Button-Klick (von Dashboard)
-  handleLocationSelection(coordinates: string): void {
-    try {
-      // Normalisiere Koordinaten
-      const normalizedCoords = this.normalizeCoordinates(coordinates);
-      const [latitude, longitude] = normalizedCoords.split(',').map(parseFloat);
-
-      // Finde den HSLU-Standort, der diesen Koordinaten entspricht
-      const matchingLocation = this.locations.find(
-        loc => loc.coordinates === normalizedCoords
-      );
-
-      if (matchingLocation) {
-        // Setze diesen als Zielort
-        this.selectToLocation(matchingLocation);
-      } else {
-        // Falls kein direkter Match, setze einfach die Koordinaten
-        this.travelForm.patchValue({ to: normalizedCoords });
-        this.selectedToLocation = null;
-        this.destinationLocationLabel = 'Ausgewählter Ort';
-      }
-
-      // Aktualisiere Kartenmarkierungen
-      this.updateMapLocations(longitude, latitude, 'Zielort');
-    } catch (error) {
-      console.error('Error converting coordinates:', error);
-    }
-  }
-
 
   private updateMapLocations(
     longitude: number,
