@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { TrainConnections } from '../train_connections/train-connections.entity';
 import { CarConnections } from '../car_connections/car-connections.entity';
+import { CarInfo } from '../car-info/car-info.entity';
 
 @Entity()
 export class User {
@@ -24,4 +25,7 @@ export class User {
 
   @OneToMany(() => CarConnections, (carConnections) => carConnections.id)
   carConnections: CarConnections[];
+
+  @OneToMany(() => CarInfo, (carInfo) => carInfo.id)
+  carInfo: CarInfo[];
 }
