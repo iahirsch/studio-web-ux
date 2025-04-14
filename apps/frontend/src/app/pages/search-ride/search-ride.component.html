@@ -1,7 +1,34 @@
 <h2>Fahrgemeinschaft finden</h2>
 <h4>Meine Strecke</h4>
-<app-location-selector></app-location-selector>
-<app-date-time-picker></app-date-time-picker>
+<app-location-selector
+  (fromLocationSelected)="onFromLocationSelected($event)"
+  (toLocationSelected)="onToLocationSelected($event)">
+</app-location-selector>
+
+<app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)">
+</app-date-time-picker>
+
+
 <h4>(Output date)</h4>
+
+<div *ngIf="loading" class="my-4 text-center">
+  <p>Verbindungen werden gesucht...</p>
+</div>
+<div *ngIf="error" class="my-4 text-center text-red-500">
+  <p>{{ error }}</p>
+</div>
+
 <app-card-car></app-card-car>
-<app-card-train></app-card-train>
+
+<div class="space-y-4">
+  <div *ngFor="let connection of trainConnections">
+    <app-card-train [connection]="connection"></app-card-train>
+  </div>
+</div>
+
+<div *ngIf="!loading && trainConnections.length === 0 && !error" class="my-8 text-center">
+  <p class="text-lg">Bitte wähle Start- und Zielort aus, um Verbindungen zu suchen.</p>
+</div>
+
+
+

@@ -1,9 +1,7 @@
 import { Component, inject, OnInit, output, ViewChild } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { env } from '../../../env/env';
-import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
 import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
@@ -62,24 +60,13 @@ export class LocationSelectorComponent implements OnInit {
   currentLocationCity = 'Auswählen';
   destinationLocationTitle = 'Zielort';
   destinationLocationCity = 'Auswählen';
-  nearbyHsluLocation: Location | null = null;
-
-  selectedConnection: TrainConnections | null = null;
-
-  trainConnections: TrainConnections[] = [];
-  carRoute: null | CarRoute = null;
-
-  travelForm: FormGroup;
-  travelResults: TravelResults | null = null;
-  loading = false;
   error: string | null = null;
-  mapLocations: any[] = [];
-  mapGeometry: GeoJSON.Feature[] = [];
 
   fromLocationPills: PillItem[] = [];
   toLocationPills: PillItem[] = [];
 
   fromLocationSelected = output<any>();
+  toLocationSelected = output<any>();
 
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
@@ -88,13 +75,6 @@ export class LocationSelectorComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private geoService: GeolocationService
   ) {
-    this.travelForm = this.fb.group({
-      from: ['', Validators.required],
-      to: ['', Validators.required],
-      mode: ['train', Validators.required],
-      date: [this.formatDate(new Date()), Validators.required],
-      time: [this.formatTime(new Date()), Validators.required]
-    });
   }
 
 
@@ -151,9 +131,6 @@ export class LocationSelectorComponent implements OnInit {
         );
 
         if (nearestLocation) {
-          console.log('Nächstgelegener Standort gefunden:', nearestLocation);
-          this.setCurrentLocation(nearestLocation);
-
           // Optional: Nach kurzem Timeout nochmal überprüfen, ob alles korrekt übernommen wurde
           setTimeout(() => {
             console.log('Status nach Timeout:', {
@@ -171,7 +148,6 @@ export class LocationSelectorComponent implements OnInit {
   }
 
   setCurrentLocation(location: Location): void {
-    console.log('setCurrentLocation aufgerufen mit:', location);
 
     // Internen Zustand aktualisieren
     this.selectedFromLocation = location;
@@ -183,10 +159,9 @@ export class LocationSelectorComponent implements OnInit {
       pill.isSelected = pill.id === location.id;
     });
     this.updateMapWithSelectedLocation(location);
-    console.log('[DEBUG] Event sollte in setCurrentLocation emittiert worden sein');
+
 
   }
-
 
   // Setzt den Zielort
   private setDestinationLocation(location: Location) {
@@ -194,16 +169,11 @@ export class LocationSelectorComponent implements OnInit {
     this.destinationLocationTitle = location.title;
     this.destinationLocationCity = location.city;
 
-    this.travelForm.get('to')?.setValue(location.id);
-
     // Entsprechende Pill als ausgewählt markieren
     this.toLocationPills.forEach(pill => {
       pill.isSelected = pill.id === location.id;
     });
-
-
   }
-
 
   // Event-Handler für die Auswahl des Start-Standorts
   onFromPillSelected(pill: PillItem) {
@@ -214,10 +184,7 @@ export class LocationSelectorComponent implements OnInit {
       // Akkordeon schließen
       if (this.fromAccordion) {
         this.fromAccordion.close();
-
       }
-      this.updateMapWithSelectedLocation(selectedLocation);
-
     }
   }
 
@@ -273,151 +240,4 @@ export class LocationSelectorComponent implements OnInit {
     console.log('Emitting location to update map:', locationToEmit);
     this.fromLocationSelected.emit(locationToEmit);
   }
-
-
-  onSubmit(): void {
-    if (this.travelForm.invalid) {
-      return;
-    }
-
-    this.loading = true;
-    this.error = null;
-    this.travelResults = null;
-    this.mapGeometry = [];
-
-    const formData = this.travelForm.value;
-    const dateTimeStr = `${formData.date}T${formData.time}:00`;
-    const departureDate = new Date(dateTimeStr);
-
-    // Extrahiere und normalisiere Koordinaten
-    const [fromLatitude, fromLongitude] = this.normalizeCoordinates(
-      formData.from
-    )
-      .split(',')
-      .map(parseFloat);
-    const [toLatitude, toLongitude] = this.normalizeCoordinates(formData.to)
-      .split(',')
-      .map(parseFloat);
-
-    // Aktualisiere Kartenmarkierungen für Start und Ziel
-    this.mapLocations = [
-      {
-        longitude: fromLongitude,
-        latitude: fromLatitude,
-        label: 'Start'
-      },
-      {
-        longitude: toLongitude,
-        latitude: toLatitude,
-        label: 'Destination'
-      }
-    ];
-
-    this.ojpSdkService
-      .searchTrip(
-        `${fromLongitude},${fromLatitude}`, // OJP erwartet Longitude,Latitude
-        `${toLongitude},${toLatitude}`,
-        departureDate,
-        formData.mode
-      )
-      .then((result) => {
-        const trainConnections: TrainConnections[] = [];
-        let carRoute: CarRoute | null = null;
-        const tripGeometry: GeoJSON.Feature[] = [];
-
-        if (result.trips && result.trips.length > 0) {
-          // Verarbeite alle Trips
-          result.trips.forEach((trip) => {
-            if (formData.mode === 'train') {
-              // Extrahiere Zugstrecke
-              trip.legs.forEach((leg) => {
-                if (leg.legTrack && leg.legTrack.trackSections) {
-                  leg.legTrack.trackSections.forEach((section) => {
-                    if (section.linkProjection) {
-                      const feature = section.linkProjection.asGeoJSONFeature();
-                      if (feature) {
-                        tripGeometry.push(feature);
-                      }
-                    }
-                  });
-                }
-              });
-
-              // Formatiere die Verbindung und füge sie hinzu
-              trainConnections.push(
-                this.ojpSdkService.formatTripForDisplay(trip)
-              );
-            }
-
-            if (formData.mode === 'car') {
-              // Extrahiere Autostrecke
-              trip.legs.forEach((leg) => {
-                if (leg.legTrack && leg.legTrack.trackSections) {
-                  leg.legTrack.trackSections.forEach((section) => {
-                    if (section.linkProjection) {
-                      const feature = section.linkProjection.asGeoJSONFeature();
-                      if (feature) {
-                        tripGeometry.push(feature);
-                      }
-                    }
-                  });
-                }
-              });
-
-              // Formatiere die Autostrecke
-              carRoute = this.ojpSdkService.formatCarRouteForDisplay(trip);
-            }
-          });
-        }
-
-        // Speichere die Ergebnisse
-        this.travelResults = {
-          requestXML: result.requestXML,
-          trainConnections,
-          carRoute,
-          tripGeometry
-        };
-
-        this.trainConnections = trainConnections;
-        this.carRoute = carRoute;
-        console.log('Trip Results:', this.travelResults);
-
-        // Setze Geometrie für Kartendarstellung
-        this.mapGeometry = tripGeometry;
-
-        this.loading = false;
-      })
-      .catch((err: Error) => {
-        this.error = `Failed to retrieve travel data: ${err.message}`;
-        console.error('Error fetching travel data:', err);
-        this.loading = false;
-      });
-  }
-
-// Formatierungshilfe für Datum
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
-
-  // Formatierungshilfe für Zeit
-  private formatTime(date: Date): string {
-    return date.toTimeString().slice(0, 5);
-  }
-
-
-  saveJourney() {
-    console.log('TrainConnection 1: ', this.trainConnections[0]);
-
-    this.httpClient
-      .post(`${env.api}/saveJourney`, this.trainConnections[0])
-      .subscribe({
-        next: (response) =>
-          console.log('Journey saved successfully:', response),
-        error: (err) => console.error('Error saving journey:', err)
-      });
-  }
-
-  journey$ = this.httpClient
-    .get<{ message: string }>(`${env.api}/getJourney`)
-    .pipe(map((res) => res.message));
 }
