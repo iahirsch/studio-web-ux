@@ -131,7 +131,6 @@
   .dot-purple-m {
     @apply rounded-full size-4 bg-primary-300;
   }
-
 }
 
 @utility flex-center {

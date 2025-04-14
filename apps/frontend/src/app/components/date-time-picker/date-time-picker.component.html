@@ -1,1 +1,24 @@
-<p>date-time-picker works!</p>
+<div class="card flex-col">
+  <label for="date" class="font-medium mb-2">Datum</label>
+  <input
+    id="date"
+    type="date"
+    class="input-text w-full mb-4"
+    [(ngModel)]="selectedDate"
+  />
+
+  <label for="time" class="font-medium mb-2">Uhrzeit</label>
+  <input
+    id="time"
+    type="time"
+    class="input-text w-full"
+    [(ngModel)]="selectedTime"
+  />
+
+  <button
+    class="primary-button-purple mt-4"
+    (click)="onDateTimeSelected()"
+  >
+    Bestätigen
+  </button>
+</div>

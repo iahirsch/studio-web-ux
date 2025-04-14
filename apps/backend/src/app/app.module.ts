@@ -13,6 +13,8 @@ import { TrainConnectionsService } from './train_connections/train-connections.s
 import { TrainConnectionsModule } from './train_connections/train-connections.module';
 import { CarConnectionsModule } from './car_connections/car-connections.module';
 import { CarConnectionsService } from './car_connections/car-connections.service';
+import { CarInfoModule } from './car-info/car-info.module';
+import { CarInfoService } from './car-info/car-info.service';
 
 @Module({
   imports: [
@@ -26,17 +28,23 @@ import { CarConnectionsService } from './car_connections/car-connections.service
         type: 'postgres',
         url: configService.get('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: true
+        synchronize: true,
       }),
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     UsersModule,
     TrainConnectionsModule,
-    CarConnectionsModule
+    CarConnectionsModule,
+    CarInfoModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService, TrainConnectionsService, CarConnectionsService],
-  exports: [JwtModule]
+  providers: [
+    AppService,
+    UserService,
+    TrainConnectionsService,
+    CarConnectionsService,
+    CarInfoService,
+  ],
+  exports: [JwtModule],
 })
-export class AppModule {
-}
+export class AppModule {}

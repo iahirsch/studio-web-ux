@@ -10,25 +10,16 @@ export class CarInfo {
   availableSeats: number;
 
   @Column({ type: 'varchar', length: 200 })
-  comment: string;
-
-  @Column({ type: 'timestamptz' })
-  date: Date;
-
-  @Column({ type: 'time' })
-  departure: string;
-
-  @Column({ type: 'time' })
-  arrival: string;
+  seatComment: string;
 
   @Column()
-  duration: number;
-
-  @Column('simple-array')
-  names: string[];
+  numberPlate: number;
 
   @Column()
-  passengers: number;
+  color: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  description: string;
 
   @ManyToOne(() => User, (user) => user.id)
   user: string;

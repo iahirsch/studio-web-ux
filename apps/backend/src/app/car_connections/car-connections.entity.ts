@@ -3,7 +3,6 @@ import { User } from '../user/user.entity';
 
 @Entity()
 export class CarConnections {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -23,10 +22,10 @@ export class CarConnections {
   arrival: string;
 
   @Column('simple-array')
-  names: string[];
+  passengers: string[];
 
   @Column()
-  passengers: number;
+  availableSeats: number;
   length: 4;
 
   @ManyToOne(() => User, (user) => user.id)

@@ -1,11 +1,21 @@
-<h2>Fahrt erstellen</h2>
-<h4>Meine Strecke</h4>
-<app-location-selector></app-location-selector>
-<app-date-time-picker></app-date-time-picker>
-<h4>Organisation</h4>
-<app-map-pin-location></app-map-pin-location>
-<app-available-seats></app-available-seats>
-<h4>Mein Fahrzeug</h4>
-<app-plate-number></app-plate-number>
-<app-car-info></app-car-info>
-<app-btn-primary text="Fahrt aufschalten"></app-btn-primary>
+<div class="flex flex-col gap-4">
+  <h2>Fahrt erstellen</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h4>Meine Strecke</h4>
+    <app-location-selector></app-location-selector>
+    <app-date-time-picker></app-date-time-picker>
+    <h4>Organisation</h4>
+    <app-map-pin-location></app-map-pin-location>
+    <ng-container formGroupName="carInfo">
+      <app-available-seats formControlName="availableSeats"></app-available-seats>
+    </ng-container>
+    <h4>Mein Fahrzeug</h4>
+    <app-plate-number></app-plate-number>
+    <app-car-info></app-car-info>
+    <app-btn-primary type="submit" text="Fahrt aufschalten"></app-btn-primary>
+  </form>
+  @if (submitted) {
+    <h3>Submitted Data:</h3>
+    <pre>{{ formData | json }}</pre>
+  }
+</div>

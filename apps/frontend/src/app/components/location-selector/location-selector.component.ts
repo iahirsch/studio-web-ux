@@ -1,16 +1,25 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { env } from '../../../env/env';
 import { map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
-import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
+import {
+  HsluLocationDataService,
+  Location,
+} from '../../services/hslu-location/hslu-location.service';
 import { ActivatedRoute } from '@angular/router';
 import { PillItem, PillsComponent } from '../pills/pills.component';
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 import { GeolocationService } from '../../services/geolocation/geolocation.service';
+import * as console from 'node:console';
 
 interface TravelResults {
   requestXML: string;
@@ -33,7 +42,6 @@ interface CarRoute {
   steps: string[];
 }
 
-
 @Component({
   selector: 'app-location-selector',
   standalone: true,
@@ -43,10 +51,17 @@ interface CarRoute {
     PillsComponent,
     NgOptimizedImage,
     CdkAccordion,
-    CdkAccordionItem
+    CdkAccordionItem,
   ],
+  /*providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: LocationSelectorComponent,
+    },
+  ],*/
   templateUrl: './location-selector.component.html',
-  styleUrl: './location-selector.component.css'
+  styleUrl: './location-selector.component.css',
 })
 export class LocationSelectorComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -81,43 +96,44 @@ export class LocationSelectorComponent implements OnInit {
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
 
-
-  constructor(private route: ActivatedRoute,
-              private geoService: GeolocationService
+  constructor(
+    private route: ActivatedRoute,
+    private geoService: GeolocationService
   ) {
     this.travelForm = this.fb.group({
       from: ['', Validators.required],
       to: ['', Validators.required],
       mode: ['train', Validators.required],
       date: [this.formatDate(new Date()), Validators.required],
-      time: [this.formatTime(new Date()), Validators.required]
+      time: [this.formatTime(new Date()), Validators.required],
     });
   }
-
 
   ngOnInit(): void {
     // Alle HSLU-Standorte als Pills laden
     const locations = this.hsluLocationDataService.getHsluLocations();
 
     // Pills für beide Selektoren vorbereiten
-    this.fromLocationPills = locations.map(loc => ({
+    this.fromLocationPills = locations.map((loc) => ({
       id: loc.id,
       label: `${loc.title}`,
-      isSelected: false
+      isSelected: false,
     }));
 
-    this.toLocationPills = locations.map(loc => ({
+    this.toLocationPills = locations.map((loc) => ({
       id: loc.id,
       label: `${loc.title}`,
-      isSelected: false
+      isSelected: false,
     }));
 
     // URL-Parameter für ausgewählte Koordinaten prüfen
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       if (params['coordinates']) {
         // Standort anhand der Koordinaten finden und als Zielort setzen
         const coordinates = params['coordinates'];
-        const location = locations.find(loc => loc.coordinates === coordinates);
+        const location = locations.find(
+          (loc) => loc.coordinates === coordinates
+        );
 
         if (location) {
           this.setDestinationLocation(location);
@@ -132,23 +148,24 @@ export class LocationSelectorComponent implements OnInit {
   // Ermittelt den aktuellen Standort und findet den nächsten HSLU-Standort
   private detectCurrentLocation() {
     this.geoService.getCurrentPosition().subscribe(
-      position => {
-        const nearestLocation = this.hsluLocationDataService.findNearestLocation(
-          position.coords.latitude,
-          position.coords.longitude
-        );
+      (position) => {
+        const nearestLocation =
+          this.hsluLocationDataService.findNearestLocation(
+            position.coords.latitude,
+            position.coords.longitude
+          );
 
         if (nearestLocation) {
           this.setCurrentLocation(nearestLocation);
         }
       },
-      error => {
+      (error) => {
         console.error('Geolocation error:', error);
       }
     );
   }
 
-// Setzt den aktuellen Standort
+  // Setzt den aktuellen Standort
   private setCurrentLocation(location: Location) {
     this.selectedFromLocation = location;
     this.currentLocationTitle = location.title;
@@ -157,13 +174,10 @@ export class LocationSelectorComponent implements OnInit {
     this.travelForm.get('from')?.setValue(location.id);
 
     // Entsprechende Pill als ausgewählt markieren
-    this.fromLocationPills.forEach(pill => {
+    this.fromLocationPills.forEach((pill) => {
       pill.isSelected = pill.id === location.id;
     });
-
-
   }
-
 
   // Setzt den Zielort
   private setDestinationLocation(location: Location) {
@@ -174,17 +188,14 @@ export class LocationSelectorComponent implements OnInit {
     this.travelForm.get('to')?.setValue(location.id);
 
     // Entsprechende Pill als ausgewählt markieren
-    this.toLocationPills.forEach(pill => {
+    this.toLocationPills.forEach((pill) => {
       pill.isSelected = pill.id === location.id;
     });
-
-
   }
-
 
   // Event-Handler für die Auswahl des Start-Standorts
   onFromPillSelected(pill: PillItem) {
-    const selectedLocation = this.locations.find(loc => loc.id === pill.id);
+    const selectedLocation = this.locations.find((loc) => loc.id === pill.id);
 
     if (selectedLocation) {
       this.setCurrentLocation(selectedLocation);
@@ -193,13 +204,11 @@ export class LocationSelectorComponent implements OnInit {
         this.fromAccordion.close();
       }
     }
-
-
   }
 
   // Event-Handler für die Auswahl des Ziel-Standorts
   onToPillSelected(pill: PillItem) {
-    const selectedLocation = this.locations.find(loc => loc.id === pill.id);
+    const selectedLocation = this.locations.find((loc) => loc.id === pill.id);
 
     if (selectedLocation) {
       this.setDestinationLocation(selectedLocation);
@@ -208,7 +217,6 @@ export class LocationSelectorComponent implements OnInit {
         this.toAccordion.close();
       }
     }
-
   }
 
   // Koordinaten-Konvertierung und Formatierung
@@ -234,8 +242,8 @@ export class LocationSelectorComponent implements OnInit {
       {
         longitude,
         latitude,
-        label
-      }
+        label,
+      },
     ];
   }
 
@@ -268,13 +276,13 @@ export class LocationSelectorComponent implements OnInit {
       {
         longitude: fromLongitude,
         latitude: fromLatitude,
-        label: 'Start'
+        label: 'Start',
       },
       {
         longitude: toLongitude,
         latitude: toLatitude,
-        label: 'Destination'
-      }
+        label: 'Destination',
+      },
     ];
 
     this.ojpSdkService
@@ -339,7 +347,7 @@ export class LocationSelectorComponent implements OnInit {
           requestXML: result.requestXML,
           trainConnections,
           carRoute,
-          tripGeometry
+          tripGeometry,
         };
 
         this.trainConnections = trainConnections;
@@ -358,7 +366,7 @@ export class LocationSelectorComponent implements OnInit {
       });
   }
 
-// Formatierungshilfe für Datum
+  // Formatierungshilfe für Datum
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -368,7 +376,6 @@ export class LocationSelectorComponent implements OnInit {
     return date.toTimeString().slice(0, 5);
   }
 
-
   saveJourney() {
     console.log('TrainConnection 1: ', this.trainConnections[0]);
 
@@ -377,11 +384,40 @@ export class LocationSelectorComponent implements OnInit {
       .subscribe({
         next: (response) =>
           console.log('Journey saved successfully:', response),
-        error: (err) => console.error('Error saving journey:', err)
+        error: (err) => console.error('Error saving journey:', err),
       });
   }
 
   journey$ = this.httpClient
     .get<{ message: string }>(`${env.api}/getJourney`)
     .pipe(map((res) => res.message));
+
+  // ControlValueAccessor
+  /*  value: object = {
+      from: this.currentLocationCity,
+      to: this.destinationLocationCity,
+    };
+    onChange: OnChangeFn<object> = () => {};
+    onTouch: OnTouchFn = () => {};
+
+    writeValue(obj: object): void {
+      if (obj === null) return;
+      this.value = obj;
+    }
+
+    registerOnChange(fn: OnChangeFn<object>): void {
+      this.onChange = fn;
+    }
+
+    registerOnTouched(fn: OnTouchFn): void {
+      this.onTouch = fn;
+    }
+
+    @HostListener('focusout')
+    onFocusOut() {
+      this.onTouch();
+    }*/
 }
+
+/*type OnChangeFn<T> = (value: T) => void;
+type OnTouchFn = () => void;*/

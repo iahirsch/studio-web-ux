@@ -7,6 +7,7 @@ import { AvailableSeatsComponent } from '../../components/available-seats/availa
 import { PlateNumberComponent } from '../../components/plate-number/plate-number.component';
 import { CarInfoComponent } from '../../components/car-info/car-info.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-create-ride',
@@ -19,8 +20,45 @@ import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.co
     PlateNumberComponent,
     CarInfoComponent,
     BtnPrimaryComponent,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './create-ride.component.html',
-  styleUrl: './create-ride.component.css',
+  styleUrl: './create-ride.component.css'
 })
-export class CreateRideComponent {}
+export class CreateRideComponent {
+  form: FormGroup;
+  submitted = false;
+  formData: any;
+
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      carInfo: this.fb.group({
+        availableSeats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
+        seatComment: [''],
+        numberPlate: ['', Validators.required],
+        color: [''],
+        description: ['']
+      }),
+      carConnection: this.fb.group({
+        from: ['', Validators.required],
+        to: ['', Validators.required],
+        date: [this.formatDate(new Date()), Validators.required],
+        departure: [this.formatTime(new Date()), Validators.required]
+      })
+    });
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  private formatTime(date: Date): string {
+    return date.toTimeString().slice(0, 5);
+  }
+
+  onSubmit() {
+    this.formData = this.form.value;
+    console.log(this.formData);
+  }
+}
