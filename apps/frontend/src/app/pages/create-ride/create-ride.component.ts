@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
@@ -27,8 +27,9 @@ export class CreateRideComponent implements OnInit {
   fromLocation?: MapLocation;
   meetingPoint?: MapLocation;
 
-  constructor() {
-  }
+  @ViewChild(LocationSelectorComponent) locationSelector!: LocationSelectorComponent;
+  @ViewChild(MapPinLocationComponent) mapPinLocation!: MapPinLocationComponent;
+
 
   ngOnInit(): void {
     // Lifecycle-Methode wird derzeit nicht benötigt, kann aber später für die Initialisierung verwendet werden
@@ -37,14 +38,21 @@ export class CreateRideComponent implements OnInit {
 
   // Event-Handler für die LocationSelector-Komponente
   onFromLocationSelected(location: any) {
+    console.log('Standort ausgewählt:', location);
+
     // Konvertiere die Location aus dem LocationSelector in das MapLocation-Format
     if (location?.geoPosition) {
       this.fromLocation = {
         longitude: location.geoPosition.longitude,
         latitude: location.geoPosition.latitude
       };
+      console.log('Konvertierte MapLocation:', this.fromLocation); // Zum Debugging hinzufügen
+    } else {
+      console.error('Ungültiges Location-Format empfangen:', location);
     }
+
   }
+
 
   // Event-Handler für die MapPinLocation-Komponente
   onMeetingPointSelected(location: MapLocation) {

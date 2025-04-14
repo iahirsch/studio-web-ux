@@ -7,9 +7,10 @@
 <app-card-members></app-card-members>
 <app-chat></app-chat>
 <h4>Treffpunkt</h4>
-<app-map-pin-location
-  [meetingPoint]="meetingPoint"
-  [mode]="'display'">
+<app-map-pin-location [mode]="'display'"
+                      [meetingPoint]="meetingPoint"
+                      [meetingDateTime]="meetingTime">
+  >
 </app-map-pin-location>
 
 <app-btn-primary text="Zurück zum Dashboard"></app-btn-primary>
