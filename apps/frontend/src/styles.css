@@ -109,11 +109,11 @@
   }
 
   .pill-text {
-    @apply justify-start text-sm text-gray-500 font-light leading-none;
+    @apply justify-start text-sm text-gray-500 font-light leading-4;
   }
 
   .pill-border {
-    @apply px-3 py-2 bg-white rounded-[20px] outline-1 outline-offset-[-1px] outline-gray-500 inline-flex justify-center items-center gap-1 flex-wrap content-center;
+    @apply px-3 py-2 bg-white rounded-big outline-1 outline-offset-[-1px] outline-gray-500 inline-flex justify-center items-center gap-1 flex-wrap content-center;
   }
 
   .dot-green-s {
