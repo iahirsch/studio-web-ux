@@ -1,1 +1,23 @@
-<p>map works!</p>
+<!-- map-pin-location.component.html -->
+<div class="map-container mb-4">
+  <div class="map-header flex items-center p-3 bg-white rounded-t-lg">
+    <div class="icon-container mr-3">
+      <img *ngIf="mode() === 'select'" class="w-8 h-8" src="/assets/icons/pickup_light_purple.svg" alt="Pickup Icon">
+      <img *ngIf="mode() === 'display'" alt="Calendar Icon" class="w-8 h-8"
+           src="/assets/icons/calendar_light_purple.svg">
+    </div>
+    <div>
+      <span *ngIf="mode() === 'select'">Pinne deinen Treffpunkt</span>
+      <span *ngIf="mode() === 'display'" class="flex flex-col">
+        <span *ngIf="meetingDateTime()" class="text-sm text-gray-600">
+          <span
+            class=font-medium>{{ formatDateOnly(meetingDateTime()!) }}</span> um {{ formatTimeOnly(meetingDateTime()!) }}
+          Uhr
+        </span>
+      </span>
+
+    </div>
+  </div>
+
+  <div #mapContainer class="h-64 rounded-b-lg"></div>
+</div>
