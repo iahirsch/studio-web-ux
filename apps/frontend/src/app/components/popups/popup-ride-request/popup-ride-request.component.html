@@ -1,9 +1,15 @@
-<h2>Noch eine Nachricht an Jack?</h2>
-<app-member-item></app-member-item>
-<h3>Deine Mitfahrtsanfrage wurde erfolgreich gesendet und wird vom Fahrer geprüft. Du wirst benachrichtigt, sobald eine
-  Entscheidung getroffen wurde. Du kannst dem Fahrer hier eine relevante Mitteilung zur Fahrt senden.</h3>
-<app-input-textarea></app-input-textarea>
-<div>
-  <app-btn-secondary text="keine Nachricht"></app-btn-secondary>
-  <app-btn-primary text="Absenden"></app-btn-primary>
+<div class="card inline-flex flex-col justify-start gap-8">
+  <div class="self-stretch inline-flex justify-between items-start gap-4">
+    <h2 class="self-stretch justify-start">Noch eine Nachricht an Jack?</h2>
+    <img class="w-6 h-6 " src="/assets/icons/close.svg" alt="close icon">
+  </div>
+  <app-member-item></app-member-item>
+  <h3 class="font-light">Deine Mitfahrtsanfrage wurde erfolgreich gesendet und wird vom Fahrer geprüft. Du wirst
+    benachrichtigt, sobald eine Entscheidung getroffen wurde. Du kannst dem Fahrer hier eine relevante Mitteilung zur
+    Fahrt senden.</h3>
+  <app-input-textarea></app-input-textarea>
+  <div class="self-stretch inline-flex justify-start items-start gap-4">
+    <app-btn-secondary class="flex-1" text="keine Nachricht"></app-btn-secondary>
+    <app-btn-primary class="flex-1" text="Absenden"></app-btn-primary>
+  </div>
 </div>
