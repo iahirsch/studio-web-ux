@@ -12,8 +12,6 @@ import {
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { Router, RouterLink } from '@angular/router';
-import { PopupFeedbackCarRideComponent } from '../../components/popups/popup-feedback-car-ride/popup-feedback-car-ride.component';
-import { PopupRideRequestComponent } from '../../components/popups/popup-ride-request/popup-ride-request.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,8 +22,7 @@ import { PopupRideRequestComponent } from '../../components/popups/popup-ride-re
     CardGreetingComponent,
     BtnPrimaryComponent,
     RouterLink,
-    PopupFeedbackCarRideComponent,
-    PopupRideRequestComponent,
+
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
