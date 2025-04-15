@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, output, ViewChild } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   FormBuilder,
@@ -69,6 +69,8 @@ export class LocationSelectorComponent implements OnInit {
   private geoUtilsService = inject(GeoUtilsService);
   private httpClient = inject(HttpClient);
   private hsluLocationDataService = inject(HsluLocationDataService);
+  private currentPosition: { latitude: number; longitude: number } | null =
+    null;
   locations: Location[] = this.hsluLocationDataService.getHsluLocations();
   selectedFromLocation: Location | null = null;
   selectedToLocation: Location | null = null;
@@ -92,6 +94,8 @@ export class LocationSelectorComponent implements OnInit {
 
   fromLocationPills: PillItem[] = [];
   toLocationPills: PillItem[] = [];
+
+  fromLocationSelected = output<any>();
 
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
@@ -147,8 +151,17 @@ export class LocationSelectorComponent implements OnInit {
 
   // Ermittelt den aktuellen Standort und findet den nächsten HSLU-Standort
   private detectCurrentLocation() {
-    this.geoService.getCurrentPosition().subscribe(
-      (position) => {
+    this.geoService.getCurrentPosition().subscribe({
+      next: (position) => {
+        console.log('Aktuelle Position ermittelt:', position.coords);
+
+        // Aktuelle Position speichern (falls später benötigt)
+        this.currentPosition = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        // Nächstgelegenen HSLU-Standort finden
         const nearestLocation =
           this.hsluLocationDataService.findNearestLocation(
             position.coords.latitude,
@@ -156,27 +169,43 @@ export class LocationSelectorComponent implements OnInit {
           );
 
         if (nearestLocation) {
+          console.log('Nächstgelegener Standort gefunden:', nearestLocation);
           this.setCurrentLocation(nearestLocation);
+
+          // Optional: Nach kurzem Timeout nochmal überprüfen, ob alles korrekt übernommen wurde
+          setTimeout(() => {
+            console.log('Status nach Timeout:', {
+              selectedFromLocation: this.selectedFromLocation,
+              fromLocationPills: this.fromLocationPills.filter(
+                (p) => p.isSelected
+              ),
+            });
+            this.setCurrentLocation(nearestLocation);
+          }, 500);
         }
       },
-      (error) => {
-        console.error('Geolocation error:', error);
-      }
-    );
+      error: (err) => {
+        console.error('Geolocation error:', err);
+      },
+    });
   }
 
-  // Setzt den aktuellen Standort
-  private setCurrentLocation(location: Location) {
+  setCurrentLocation(location: Location): void {
+    console.log('setCurrentLocation aufgerufen mit:', location);
+
+    // Internen Zustand aktualisieren
     this.selectedFromLocation = location;
     this.currentLocationTitle = location.title;
-    this.currentLocationCity = location.city;
-
-    this.travelForm.get('from')?.setValue(location.id);
+    this.currentLocationCity = location.city || '';
 
     // Entsprechende Pill als ausgewählt markieren
     this.fromLocationPills.forEach((pill) => {
       pill.isSelected = pill.id === location.id;
     });
+    this.updateMapWithSelectedLocation(location);
+    console.log(
+      '[DEBUG] Event sollte in setCurrentLocation emittiert worden sein'
+    );
   }
 
   // Setzt den Zielort
@@ -203,6 +232,7 @@ export class LocationSelectorComponent implements OnInit {
       if (this.fromAccordion) {
         this.fromAccordion.close();
       }
+      this.updateMapWithSelectedLocation(selectedLocation);
     }
   }
 
@@ -233,18 +263,30 @@ export class LocationSelectorComponent implements OnInit {
     return coordinates;
   }
 
-  private updateMapLocations(
-    longitude: number,
-    latitude: number,
-    label = 'Location'
-  ) {
-    this.mapLocations = [
-      {
-        longitude,
-        latitude,
-        label,
-      },
-    ];
+  // Fügen Sie diese Methode hinzu
+  private updateMapWithSelectedLocation(location: Location): void {
+    // Konvertiere die coordinates in ein geoPosition-Objekt
+    let geoPosition;
+
+    if (location.coordinates) {
+      // Split die Koordinaten, die als String vorliegen ('lat,lng')
+      const coords = location.coordinates.split(',');
+      if (coords.length === 2) {
+        geoPosition = {
+          latitude: parseFloat(coords[0]),
+          longitude: parseFloat(coords[1]),
+        };
+      }
+    }
+
+    // Emittiere ein Objekt mit der geoPosition
+    const locationToEmit = {
+      ...location,
+      geoPosition: geoPosition,
+    };
+
+    console.log('Emitting location to update map:', locationToEmit);
+    this.fromLocationSelected.emit(locationToEmit);
   }
 
   onSubmit(): void {

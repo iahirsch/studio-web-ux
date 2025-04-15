@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-card-train',
   imports: [CommonModule],
   templateUrl: './card-train.component.html',
-  styleUrl: './card-train.component.css',
+  styleUrl: './card-train.component.css'
 })
 export class CardTrainComponent {
   @Input() connection: any;

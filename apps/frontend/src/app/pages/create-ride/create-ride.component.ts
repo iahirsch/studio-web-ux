@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
-import { MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
+import { MapLocation, MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
 import { AvailableSeatsComponent } from '../../components/available-seats/available-seats.component';
 import { PlateNumberComponent } from '../../components/plate-number/plate-number.component';
 import { CarInfoComponent } from '../../components/car-info/car-info.component';
@@ -29,8 +29,9 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './create-ride.component.html',
   styleUrl: './create-ride.component.css'
+  styleUrl: './create-ride.component.css'
 })
-export class CreateRideComponent {
+export class CreateRideComponent implements OnInit{
   form: FormGroup;
   submitted = false;
   formData: any;
@@ -39,6 +40,16 @@ export class CreateRideComponent {
   popupMessage = '';
   isSuccess = true;
   isLoading = false;
+  fromLocation?: MapLocation;
+  meetingPoint?: MapLocation;
+
+  @ViewChild(LocationSelectorComponent) locationSelector!: LocationSelectorComponent;
+  @ViewChild(MapPinLocationComponent) mapPinLocation!: MapPinLocationComponent;
+
+  ngOnInit(): void {
+    // Lifecycle-Methode wird derzeit nicht benötigt, kann aber später für die Initialisierung verwendet werden
+    console.log('CreateRideComponent initialisiert');
+  }
 
   constructor(private fb: FormBuilder, private carInfoService: CarInfoService, private router: Router) {
     this.form = this.fb.group({
@@ -113,5 +124,29 @@ export class CreateRideComponent {
 
   closePopup() {
     this.submitted = false;
+  }
+
+  // Event-Handler für die LocationSelector-Komponente
+  onFromLocationSelected(location: any) {
+    console.log('Standort ausgewählt:', location);
+
+    // Konvertiere die Location aus dem LocationSelector in das MapLocation-Format
+    if (location?.geoPosition) {
+      this.fromLocation = {
+        longitude: location.geoPosition.longitude,
+        latitude: location.geoPosition.latitude
+      };
+      console.log('Konvertierte MapLocation:', this.fromLocation); // Zum Debugging hinzufügen
+    } else {
+      console.error('Ungültiges Location-Format empfangen:', location);
+    }
+
+  }
+
+  // Event-Handler für die MapPinLocation-Komponente
+  onMeetingPointSelected(location: MapLocation) {
+    this.meetingPoint = location;
+    console.log('Treffpunkt ausgewählt:', location);
+    // Hier kannst du den Treffpunkt speichern
   }
 }
