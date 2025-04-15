@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
+import { CarInfo } from '../car-info/car-info.entity';
 
 @Entity()
 export class CarConnections {
@@ -28,6 +29,9 @@ export class CarConnections {
   availableSeats: number;
   length: 4;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.carConnections)
   user: User;
+
+  @ManyToOne(() => CarInfo, (carInfo) => carInfo.carConnections)
+  carInfo: CarInfo;
 }

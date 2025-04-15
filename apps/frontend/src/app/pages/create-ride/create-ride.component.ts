@@ -8,6 +8,9 @@ import { PlateNumberComponent } from '../../components/plate-number/plate-number
 import { CarInfoComponent } from '../../components/car-info/car-info.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CarInfoService } from '../../services/car-info/car-info.service';
+import { PopupFeedbackCarRideComponent } from '../../components/popups/popup-feedback-car-ride/popup-feedback-car-ride.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-ride',
@@ -21,7 +24,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
     CarInfoComponent,
     BtnPrimaryComponent,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PopupFeedbackCarRideComponent
   ],
   templateUrl: './create-ride.component.html',
   styleUrl: './create-ride.component.css'
@@ -30,8 +34,13 @@ export class CreateRideComponent {
   form: FormGroup;
   submitted = false;
   formData: any;
+  showFeedbackPopup = false;
+  popupTitle = '';
+  popupMessage = '';
+  isSuccess = true;
+  isLoading = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private carInfoService: CarInfoService, private router: Router) {
     this.form = this.fb.group({
       carInfo: this.fb.group({
         availableSeats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
@@ -59,6 +68,50 @@ export class CreateRideComponent {
 
   onSubmit() {
     this.formData = this.form.value;
-    console.log(this.formData);
+
+    // Check carInfo validation state
+    const carInfo = this.form.get('carInfo');
+
+    if (!carInfo) {
+      console.log('carInfo form group is missing');
+      return;
+    }
+
+    if (carInfo.invalid) {
+      console.log('carInfo validation errors:');
+
+      // Log specific field errors - with proper null checks
+      const availableSeats = carInfo.get('availableSeats');
+      if (availableSeats && availableSeats.invalid) {
+        console.log('availableSeats error:', availableSeats.errors);
+      }
+
+      const numberPlate = carInfo.get('numberPlate');
+      if (numberPlate && numberPlate.invalid) {
+        console.log('numberPlate error:', numberPlate.errors);
+      }
+
+      return;
+    }
+
+    console.log('Valid: ', this.formData);
+    this.isLoading = true;
+
+    this.carInfoService.createCarInfo(this.formData).subscribe({
+      next: (response) => {
+        console.log('Ride created successfully:', response);
+        this.submitted = true;
+        this.isLoading = false;
+
+      },
+      error: (error) => {
+        console.error('Error creating ride:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  closePopup() {
+    this.submitted = false;
   }
 }

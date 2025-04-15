@@ -1,7 +1,7 @@
 <div class="self-stretch inline-flex justify-start items-center gap-3">
-  <img class="size-12 rounded-[512px]" src="https://placehold.co/48x48" alt="Proifle Picture" />
+  <img class="size-12 rounded-[512px]" ngSrc="{{ userPicture() }}" height="48" width="48" alt="Proifle Picture" />
   <div class="flex justify-start items-center gap-2">
-    <h3>Josie Stampfli</h3>
-    <p>BA, Animation</p>
+    <h3 class="text-primary-500">{{ name() }}</h3>
+    <p>BA, Digital Ideation</p>
   </div>
 </div>

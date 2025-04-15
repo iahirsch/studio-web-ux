@@ -20,12 +20,12 @@ export class User {
   @Column()
   picture: string;
 
-  @OneToMany(() => TrainConnections, (trainConnections) => trainConnections.id)
+  @OneToMany(() => TrainConnections, (trainConnections) => trainConnections.user)
   trainConnections: TrainConnections[];
 
-  @OneToMany(() => CarConnections, (carConnections) => carConnections.id)
+  @OneToMany(() => CarConnections, (carConnections) => carConnections.user)
   carConnections: CarConnections[];
 
-  @OneToMany(() => CarInfo, (carInfo) => carInfo.id)
+  @OneToMany(() => CarInfo, (carInfo) => carInfo.user)
   carInfo: CarInfo[];
 }

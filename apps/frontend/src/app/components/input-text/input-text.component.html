@@ -1,1 +1,6 @@
-<input type="text" placeholder="Input text" class="input-text" />
+<input
+  type="text"
+  [placeholder]="placeholder"
+  class="input-text"
+  [value]="value"
+  (input)="onInputChange($event)" />
