@@ -1,6 +1,17 @@
-<h2>Mitfahrtsanfrage</h2>
-<app-member-item></app-member-item>
-<app-card-car></app-card-car>
-<h3>Du hast noch (Platz Abfrage) freie Plätze, möchtest du Josie Stampfli auf deiner Autofahrt mitnehmen?</h3>
-<app-btn-primary text="Mitnehmen"></app-btn-primary>
-<app-btn-secondary text="Ablehnen"></app-btn-secondary>
+<div class="card inline-flex flex-col justify-start gap-8">
+  <div class="self-stretch inline-flex justify-between items-start gap-4">
+    <h2 class="self-stretch justify-start">Mitfahrtsanfrage</h2>
+    <img class="w-6 h-6 " src="/assets/icons/close.svg" alt="close icon">
+  </div>
+  <div class="self-stretch inline-flex flex-col justify-start items-start gap-4">
+    <app-member-item></app-member-item>
+    <app-card-car class="self-stretch"></app-card-car>
+  </div>
+  <h3 class="font-light">Du hast noch (Platz Abfrage) freie Plätze, möchtest du Josie Stampfli auf deiner Autofahrt
+    mitnehmen?</h3>
+  <app-input-textarea></app-input-textarea>
+  <div class="self-stretch inline-flex justify-start items-start gap-4">
+    <app-btn-secondary class="flex-1" text="Ablehnen"></app-btn-secondary>
+    <app-btn-primary class="flex-1" text="Mitnehmen"></app-btn-primary>
+  </div>
+</div>

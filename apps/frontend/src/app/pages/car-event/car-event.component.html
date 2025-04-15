@@ -1,5 +1,5 @@
 <h2>Fahrgemeinschaft</h2>
-<app-card-car></app-card-car>
+<app-card-car bgColor="bg-secondary-200" txtColor="text-secondary-950" lineColor="bg-secondary-950"></app-card-car>
 <h4>Fahrer & Fahrzeug</h4>
 <app-rider-item></app-rider-item>
 <app-car-details></app-car-details>
@@ -7,6 +7,11 @@
 <app-card-members></app-card-members>
 <app-chat></app-chat>
 <h4>Treffpunkt</h4>
-<app-map-pin-location></app-map-pin-location>
+<app-map-pin-location [mode]="'display'"
+                      [meetingPoint]="meetingPoint"
+                      [meetingDateTime]="meetingTime">
+  >
+</app-map-pin-location>
+
 <app-btn-primary text="Zurück zum Dashboard"></app-btn-primary>
 <app-btn-secondary text="Bei Fahrgemeinschaft austragen"></app-btn-secondary>
