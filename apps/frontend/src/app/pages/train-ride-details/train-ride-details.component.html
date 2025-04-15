@@ -1,18 +1,24 @@
 <h2>Details</h2>
-<div *ngIf="trainConnections().length > 0" class="connections-section flex flex-col gap-2">
-  <div *ngFor="let connection of trainConnections()">
+
+<div class="container">
+  @if (selectedConnection(); as connection) {
     <app-card-train
+      [isClickable]="false"
+      [serviceName]="connection.serviceName"
+      [destinationName]="connection.destinationName"
       [departure]="connection.departure"
       [arrival]="connection.arrival"
       [duration]="connection.duration"
       [transfers]="connection.transfers"
-      [platforms]="connection.platforms"
-      [serviceName]="connection.serviceName"
-      [destinationName]="connection.destinationName"
-      [tripDetails]="connection.tripDetails">
+      [platforms]="connection.platforms">
     </app-card-train>
-  </div>
+  }
+
 </div>
+@for (leg of trainLegs(); track leg) {
+  <app-card-train-details [leg]="leg"></app-card-train-details>
+}
+
 
 <h4>Mitfahrende</h4>
 <app-card-members></app-card-members>
