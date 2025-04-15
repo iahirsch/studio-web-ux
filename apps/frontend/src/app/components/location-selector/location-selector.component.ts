@@ -1,35 +1,11 @@
 import { Component, inject, OnInit, output, ViewChild } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
-import { HttpClient } from '@angular/common/http';
-import { GeoUtilsService } from '../../services/geoUtils/geo-utils.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HsluLocationDataService, Location } from '../../services/hslu-location/hslu-location.service';
 import { ActivatedRoute } from '@angular/router';
 import { PillItem, PillsComponent } from '../pills/pills.component';
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
 import { GeolocationService } from '../../services/geolocation/geolocation.service';
-
-interface TravelResults {
-  requestXML: string;
-  trainConnections: TrainConnections[] | null;
-  carRoute: CarRoute | null;
-  tripGeometry?: GeoJSON.Feature[];
-}
-
-interface TrainConnections {
-  arrival: string;
-  departure: string;
-  duration: string;
-  platforms: string[];
-  transfers: number;
-}
-
-interface CarRoute {
-  distance: string;
-  duration: string;
-  steps: string[];
-}
 
 
 @Component({
@@ -47,10 +23,7 @@ interface CarRoute {
   styleUrl: './location-selector.component.css'
 })
 export class LocationSelectorComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private ojpSdkService = inject(OjpSdkService);
-  private geoUtilsService = inject(GeoUtilsService);
-  private httpClient = inject(HttpClient);
+
   private hsluLocationDataService = inject(HsluLocationDataService);
   private currentPosition: { latitude: number, longitude: number } | null = null;
   locations: Location[] = this.hsluLocationDataService.getHsluLocations();
@@ -65,16 +38,25 @@ export class LocationSelectorComponent implements OnInit {
   fromLocationPills: PillItem[] = [];
   toLocationPills: PillItem[] = [];
 
-  fromLocationSelected = output<any>();
-  toLocationSelected = output<any>();
+  locationForm: FormGroup;
+  fromSuggestions: Location[] = [];
+  toSuggestions: Location[] = [];
+  isLoadingFrom = false;
+  isLoadingTo = false;
+
+
+  fromLocationSelected = output<Location>();
+  toLocationSelected = output<Location>();
 
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
 
 
-  constructor(private route: ActivatedRoute,
+  constructor(private fb: FormBuilder,
+              private route: ActivatedRoute,
               private geoService: GeolocationService
   ) {
+    this.locationForm = this.fb.group({ from: ['', Validators.required], to: ['', Validators.required] });
   }
 
 
@@ -159,8 +141,11 @@ export class LocationSelectorComponent implements OnInit {
       pill.isSelected = pill.id === location.id;
     });
     this.updateMapWithSelectedLocation(location);
+    this.locationForm.get('from')?.setValue(location.coordinates);
+    this.fromSuggestions = [];
 
-
+    // Emittieren des ausgewählten Standorts an search-ride component
+    this.fromLocationSelected.emit(this.selectedFromLocation);
   }
 
   // Setzt den Zielort
@@ -173,6 +158,13 @@ export class LocationSelectorComponent implements OnInit {
     this.toLocationPills.forEach(pill => {
       pill.isSelected = pill.id === location.id;
     });
+
+    this.locationForm.get('to')?.setValue(location.coordinates);
+    this.toSuggestions = [];
+
+    // Emittieren des ausgewählten Standorts an search-ride component
+    this.toLocationSelected.emit(this.selectedToLocation);
+
   }
 
   // Event-Handler für die Auswahl des Start-Standorts
@@ -240,4 +232,18 @@ export class LocationSelectorComponent implements OnInit {
     console.log('Emitting location to update map:', locationToEmit);
     this.fromLocationSelected.emit(locationToEmit);
   }
+
+  // Beim Absenden des Formulars die ausgewählten Standorte emittieren
+  onSubmit(): void {
+    if (this.locationForm.valid) {
+      if (this.selectedFromLocation) {
+        this.fromLocationSelected.emit(this.selectedFromLocation);
+      }
+
+      if (this.selectedToLocation) {
+        this.toLocationSelected.emit(this.selectedToLocation);
+      }
+    }
+  }
+
 }

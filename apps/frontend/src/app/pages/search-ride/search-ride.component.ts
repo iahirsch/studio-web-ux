@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
@@ -8,14 +8,15 @@ import { OjpSdkService } from '../../services/ojp/ojp-sdk.service';
 import { Trip } from 'ojp-sdk';
 import { RouterModule } from '@angular/router';
 
+// Definition der TrainConnection-Schnittstelle für typsichere Verbindungen
 interface TrainConnection {
-  trainNumber: string;
-  trainEndLocation: string;
   departure: string;
   arrival: string;
   duration: string;
   transfers: number;
   platforms: string[];
+  serviceName: string;
+  destinationName: string;
   legs?: any[];
   tripDetails?: Trip;
 }
@@ -34,37 +35,60 @@ interface TrainConnection {
   templateUrl: './search-ride.component.html',
   styleUrl: './search-ride.component.css'
 })
-export class SearchRideComponent implements OnInit {
-  fromLocation: string = '';
-  toLocation: string = '';
-  selectedDateTime: Date = new Date();
-  trainConnections: TrainConnection[] = [];
-  loading: boolean = false;
-  error: string | null = null;
-  selectedConnection: TrainConnection | null = null;
+export class SearchRideComponent {
+  // Signals für reaktive Programmierung
+  fromLocation = signal<string | null>(null);
+  toLocation = signal<string | null>(null);
+  selectedDateTime = signal<Date>(new Date());
+  loading = signal(false);
+  error = signal<string | null>(null);
+  trainConnections = signal<TrainConnection[]>([]); // Hier das fehlende Signal
 
-  constructor(
-    private ojpSdkService: OjpSdkService
-  ) {
-  }
+  // Flags als Signals für den Bereitschaftsstatus
+  fromLocationSelected = signal(false);
+  toLocationSelected = signal(false);
+  dateTimeSelected = signal(false);
 
-  ngOnInit(): void {
-    // Initialisierung - z.B. Standardwerte setzen
-  }
+  // Injektion des Services
+  private ojpSdkService = inject(OjpSdkService);
 
   onFromLocationSelected(location: any): void {
-    this.fromLocation = `${location.latitude},${location.longitude}`;
-    this.searchConnections();
+    console.log('Von Location empfangen:', location);
+    if (location.coordinates) {
+      this.fromLocation.set(location.coordinates);
+      this.fromLocationSelected.set(true);
+      this.checkAndSearchConnections();
+    } else {
+      console.error('Keine Koordinaten im Location-Objekt gefunden:', location);
+    }
+
   }
 
   onToLocationSelected(location: any): void {
-    this.toLocation = `${location.latitude},${location.longitude}`;
-    this.searchConnections();
+    console.log('Zu Location empfangen:', location);
+    if (location.coordinates) {
+      this.toLocation.set(location.coordinates);
+      this.toLocationSelected.set(true);
+      this.checkAndSearchConnections();
+    } else {
+      console.error('Keine Koordinaten im Location-Objekt gefunden:', location);
+    }
+
   }
 
   onDateTimeSelected(dateTime: Date): void {
-    this.selectedDateTime = dateTime;
-    this.searchConnections();
+    console.log('Datum/Zeit ausgewählt:', dateTime);
+    this.selectedDateTime.set(dateTime);
+    this.dateTimeSelected.set(true);
+    this.checkAndSearchConnections();
+  }
+
+  // Diese Methode überprüft, ob alle erforderlichen Daten vorhanden sind
+  private checkAndSearchConnections(): void {
+    if (this.fromLocationSelected() && this.toLocationSelected() && this.dateTimeSelected()) {
+      console.log('Alle Daten vorhanden, starte Suche...');
+      this.searchConnections();
+    }
   }
 
   private formatTime(date: Date): string {
@@ -73,54 +97,77 @@ export class SearchRideComponent implements OnInit {
 
   private searchConnections(): void {
     // Nur suchen, wenn beide Standorte ausgewählt wurden
-    if (!this.fromLocation || !this.toLocation) {
+    if (!this.fromLocation() || !this.toLocation()) {
       return;
     }
 
-    this.loading = true;
-    this.error = null;
-    this.trainConnections = []; // Leere aktuelle Verbindungen
+    this.loading.set(true);
+    this.error.set(null);
+    this.trainConnections.set([]); // Leere aktuelle Verbindungen
+    const fromCoords = this.ensureCoordinateFormat(this.fromLocation()!);
+    const toCoords = this.ensureCoordinateFormat(this.toLocation()!);
+
 
     this.ojpSdkService.searchTrip(
-      this.fromLocation,
-      this.toLocation,
-      this.selectedDateTime,
+      fromCoords,
+      toCoords,
+      this.selectedDateTime(),
       'train'
-    ).then(result => {
-      if (result.trips && result.trips.length > 0) {
-        this.trainConnections = result.trips.map(trip => {
-          const tripInfo = this.ojpSdkService.formatTripForDisplay(trip);
+    )
+      .then(result => {
+        console.log('OJP-Antwort erhalten:', result);
 
-          // Zugdetails aus dem ersten TimedLeg extrahieren
-          const firstTimedLeg = trip.legs.find(leg => leg.legType === 'TimedLeg');
-          let trainNumber = 'Zug';
-          let trainEndLocation = 'Unbekannt';
+        if (result.trips && result.trips.length > 0) {
+          const limitedTrips = result.trips.slice(0, 5);
+          const connections = limitedTrips.map(trip => {
+            const tripInfo = this.ojpSdkService.formatTripForDisplay(trip);
 
-          if (firstTimedLeg && 'service' in firstTimedLeg) {
-            trainNumber = firstTimedLeg.service?.name || 'Zug';
-            trainEndLocation = firstTimedLeg.toStopPoint?.name || 'Unbekannt';
-          }
+            // Die zurückgegebenen serviceName und destinationName verwenden
+            return {
+              departure: tripInfo.departure,
+              arrival: tripInfo.arrival,
+              duration: tripInfo.duration,
+              transfers: tripInfo.transfers,
+              platforms: tripInfo.platforms,
+              serviceName: tripInfo.serviceName || 'Zug',         // Statt trainNumber
+              destinationName: tripInfo.destinationName || 'Unbekannt', // Statt trainEndLocation
+              legs: trip.legs,
+              tripDetails: trip
+            };
+          });
 
-          return {
-            trainNumber: trainNumber,
-            trainEndLocation: trainEndLocation,
-            departure: tripInfo.departure,
-            arrival: tripInfo.arrival,
-            duration: tripInfo.duration,
-            transfers: tripInfo.transfers,
-            platforms: tripInfo.platforms,
-            tripDetails: trip
-          };
-        });
-      } else {
-        this.error = 'Keine Verbindungen gefunden';
-      }
-      this.loading = false;
-      console.log('Gefundene Zugverbindungen:', this.trainConnections);
-    }).catch(error => {
-      this.error = `Fehler bei der Suche: ${error.message || 'Unbekannter Fehler'}`;
-      this.loading = false;
-      console.error('Fehler bei der Verbindungssuche:', error);
+          this.trainConnections.set(connections);
+          console.log('Verbindungen gefunden:', connections.length);
+        } else {
+          this.error.set('Keine Verbindungen gefunden');
+          console.log('Keine Verbindungen in der Antwort gefunden');
+        }
+        this.loading.set(false);
+      }).catch(error => {
+      console.error('Error searching connections:', error);
+      this.error.set('Fehler bei der Suche nach Verbindungen');
+      this.loading.set(false);
     });
   }
+
+  // Hilfsmethode für das Koordinatenformat
+  private ensureCoordinateFormat(coordinates: string): string {
+    // Prüfe, ob die Koordinaten im Format "lat,lon" vorliegen
+    if (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(coordinates)) {
+      return coordinates; // Format ist bereits korrekt
+    }
+
+    // Falls die Koordinaten im Format "lon,lat" vorliegen (GeoJSON)
+    if (/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(coordinates)) {
+      const [lon, lat] = coordinates.split(',').map(c => parseFloat(c.trim()));
+      if (!isNaN(lon) && !isNaN(lat)) {
+        return `${lat},${lon}`; // Konvertiere zu "lat,lon"
+      }
+    }
+
+    // Falls das Format nicht erkannt wird, gib das Original zurück
+    console.warn('Unbekanntes Koordinatenformat:', coordinates);
+    return coordinates;
+  }
+
 }

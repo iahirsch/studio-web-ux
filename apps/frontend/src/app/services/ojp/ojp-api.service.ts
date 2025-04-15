@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Location, LocationInformationRequest, TripLocationPoint, TripRequest } from 'ojp-sdk';
+import { Location, LocationInformationRequest, Trip, TripLocationPoint, TripRequest } from 'ojp-sdk';
+
 import { env } from '../../../env/env';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OjpApiService {
+  constructor(private http: HttpClient) {
+  }
 
   async searchLocation(locationName: string): Promise<Location[]> {
     try {
@@ -57,7 +62,7 @@ export class OjpApiService {
 
       // Create trip request based on mode
       let tripRequest;
-      if (mode === 'car') {
+      if (mode === 'train') {
         const fromTripLocation = new TripLocationPoint(fromLocation);
         const toTripLocation = new TripLocationPoint(toLocation);
 
@@ -76,21 +81,6 @@ export class OjpApiService {
           null, // numberOfResultsBefore
           null  // numberOfResultsAfter
         );
-      } else {
-        tripRequest = TripRequest.initWithLocationsAndDate(
-          env.ojp,
-          'de',
-          fromLocation,
-          toLocation,
-          departureDate,
-          'Dep'
-        );
-
-        // Für Zug-Routen zusätzliche Konfigurationen direkt setzen
-        if (tripRequest) {
-          tripRequest.numberOfResults = 5;
-          tripRequest.includeLegProjection = true;
-        }
       }
 
       if (!tripRequest) {
@@ -110,4 +100,40 @@ export class OjpApiService {
       throw error;
     }
   }
+
+
+  async getTripById(id: string): Promise<Trip | null> {
+    try {
+      const endpoint = `${env.api}/trips/${id}`;
+      const response = await firstValueFrom(this.http.get<{ data: any }>(endpoint));
+
+      if (response && response.data) {
+        // Überprüfen und transformieren der Daten, falls nötig
+        // Beispiel:
+        const tripData = this.mapResponseToTripData(response.data);
+        return tripData as Trip;
+
+
+      }
+      return null;
+    } catch (error) {
+      console.error('Fehler beim Abrufen des Trips:', error);
+      throw new Error(`Trip mit ID ${id} konnte nicht abgerufen werden`);
+    }
+  }
+
+// Hilfsmethode zum Mapping der Response-Daten in das für Trip erwartete Format
+  private mapResponseToTripData(data: any): any {
+    // Hier die Daten entsprechend transformieren
+    // Beispiel:
+    return {
+      id: data.id,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      duration: data.duration,
+      transfers: data.transfers
+      // weitere relevante Eigenschaften
+    };
+  }
 }
+

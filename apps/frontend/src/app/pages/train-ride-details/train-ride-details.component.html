@@ -1,6 +1,19 @@
 <h2>Details</h2>
-<app-card-train></app-card-train>
-<app-card-train-details></app-card-train-details>
+<div *ngIf="trainConnections().length > 0" class="connections-section flex flex-col gap-2">
+  <div *ngFor="let connection of trainConnections()">
+    <app-card-train
+      [departure]="connection.departure"
+      [arrival]="connection.arrival"
+      [duration]="connection.duration"
+      [transfers]="connection.transfers"
+      [platforms]="connection.platforms"
+      [serviceName]="connection.serviceName"
+      [destinationName]="connection.destinationName"
+      [tripDetails]="connection.tripDetails">
+    </app-card-train>
+  </div>
+</div>
+
 <h4>Mitfahrende</h4>
 <app-card-members></app-card-members>
 <app-btn-primary text="Für Verbindung eintragen"></app-btn-primary>

@@ -8,27 +8,29 @@
 <app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)">
 </app-date-time-picker>
 
+<div class="container flex flex-col gap-2">
+  <app-card-car></app-card-car>
 
-<h4>(Output date)</h4>
 
-<div *ngIf="loading" class="my-4 text-center">
-  <p>Verbindungen werden gesucht...</p>
-</div>
-<div *ngIf="error" class="my-4 text-center text-red-500">
-  <p>{{ error }}</p>
-</div>
-
-<app-card-car></app-card-car>
-
-<div class="space-y-4">
-  <div *ngFor="let connection of trainConnections">
-    <app-card-train [connection]="connection"></app-card-train>
+  <!-- Anzeige der gefundenen Verbindungen -->
+  <div *ngIf="trainConnections().length > 0" class="connections-section flex flex-col gap-2">
+    <div *ngFor="let connection of trainConnections()">
+      <app-card-train
+        [departure]="connection.departure"
+        [arrival]="connection.arrival"
+        [duration]="connection.duration"
+        [transfers]="connection.transfers"
+        [platforms]="connection.platforms"
+        [serviceName]="connection.serviceName"
+        [destinationName]="connection.destinationName"
+        [tripDetails]="connection.tripDetails">
+      </app-card-train>
+    </div>
   </div>
 </div>
 
-<div *ngIf="!loading && trainConnections.length === 0 && !error" class="my-8 text-center">
-  <p class="text-lg">Bitte wähle Start- und Zielort aus, um Verbindungen zu suchen.</p>
-</div>
+
+
 
 
 

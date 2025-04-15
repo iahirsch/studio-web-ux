@@ -1,9 +1,11 @@
-<div class="card text-primary-950 my-2 inline-flex flex-col justify-start items-start gap-5" *ngIf="connection">
+<button class="card text-primary-950 inline-flex flex-col justify-start items-start gap-5"
+        [class.expanded]="expanded()" (click)="navigateToDetails()">
   <diV class="self-stretch inline-flex justify-between items-center">
     <div class="inline-flex justify-start items-center gap-2">
       <img class="w-8 h-8" src="/assets/icons/train_light_purple.svg" alt="Train Icon">
       <div>
-        <span class="text-base font-medium">{{ connection.trainNumber }} </span><span class="text-base font-light">Richtung {{ connection.trainEndLocation }}</span>
+        <span class="text-base font-medium">{{ serviceName() }} </span><span
+        class="text-base font-light">Richtung {{ destinationName() }}</span>
       </div>
     </div>
     <div class="inline-flex justify-start items-center gap-1">
@@ -15,18 +17,18 @@
   </diV>
   <div class="self-stretch inline-flex flex-col justify-start items-start">
     <div class="text-sm font-medium self-stretch flex-1 inline-flex justify-between items-center gap-1">
-      <div>{{ connection.departure }}</div>
+      <div>{{ departure() }}</div>
       <div class="flex-1 h-[2px] relative bg-primary-950 inline-flex justify-between items-center">
         <div class="w-1.5 h-1.5 origin-center -rotate-90 bg-primary-950 rounded-full"></div>
         <div class="flex-1 h-[2px] relative bg-primary-950"></div>
         <div class="w-1.5 h-1.5 origin-center -rotate-90 bg-primary-950 rounded-full"></div>
       </div>
 
-      <div>{{ connection.arrival }}</div>
+      <div>{{ arrival() }}</div>
     </div>
     <div class="text-sm font-light self-stretch inline-flex justify-between items-center">
       <div>Abfahrtsort</div>
-      <div>{{ connection.duration }}</div>
+      <div>{{ duration() }}</div>
     </div>
   </div>
-</div>
+</button>

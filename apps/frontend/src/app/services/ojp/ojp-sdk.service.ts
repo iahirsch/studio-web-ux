@@ -9,7 +9,10 @@ interface TripConnection {
   duration: string;
   transfers: number;
   platforms: string[];
+  serviceName?: string;
+  destinationName?: string;
 }
+
 
 interface CarRoute {
   distance: string;
@@ -23,6 +26,7 @@ interface TripSearchResult {
   error?: unknown;
 }
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,18 +38,9 @@ export class OjpSdkService {
     try {
       console.log('Search Trip Input:', { from, to, dateTime, mode });
 
-      // Stelle sicher, dass Koordinaten im richtigen Format sind (Longitude, Latitude)
-      const normalizeCoordinates = (coord: string) => {
-        const [lat, lon] = coord.split(',').map(p => parseFloat(p.trim()));
-        return `${lon},${lat}`;
-      };
+      const fromLocations = await this.ojpApiService.searchLocation(from);
+      const toLocations = await this.ojpApiService.searchLocation(to);
 
-      const normalizedFrom = normalizeCoordinates(from);
-      const normalizedTo = normalizeCoordinates(to);
-
-      // Suche Standorte
-      const fromLocations = await this.ojpApiService.searchLocation(normalizedFrom);
-      const toLocations = await this.ojpApiService.searchLocation(normalizedTo);
 
       if (fromLocations.length === 0 || toLocations.length === 0) {
         throw new Error(`Could not find locations for '${from}' or '${to}'`);
@@ -75,6 +70,9 @@ export class OjpSdkService {
   formatTripForDisplay(trip: Trip): TripConnection {
     const departureTime = trip.computeDepartureTime();
     const arrivalTime = trip.computeArrivalTime();
+    const serviceName = '';
+    const destinationName = 'Unbekannt';
+
 
     const platforms = trip.legs
       .filter(leg => leg.legType === 'TimedLeg')
@@ -88,9 +86,12 @@ export class OjpSdkService {
       arrival: arrivalTime ? this.formatDateTime(arrivalTime) : 'Unknown',
       duration: trip.stats.duration.formatDuration(),
       transfers: trip.stats.transferNo,
-      platforms: platforms
+      platforms: platforms,
+      serviceName: serviceName,
+      destinationName: destinationName
     };
   }
+
 
   formatCarRouteForDisplay(trip: Trip): CarRoute {
     // Extract route steps from path guidance if available
@@ -119,12 +120,37 @@ export class OjpSdkService {
 
   private formatDateTime(date: Date): string {
     const options: Intl.DateTimeFormatOptions = {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
       hour: '2-digit',
       minute: '2-digit'
     };
     return date.toLocaleString('en-de', options);
   }
+
+  private cachedTrips: Trip[] = [];
+
+  getTripById(id: string): Promise<Trip | null> {
+    return new Promise((resolve, reject) => {
+      // Zuerst im Cache suchen
+      const cachedTrip = this.cachedTrips.find(trip => trip.id === id);
+      if (cachedTrip) {
+        resolve(cachedTrip);
+        return;
+      }
+
+      // Wenn nicht im Cache, dann vom Service holen
+      this.ojpApiService.getTripById(id)
+        .then(response => {
+          // Zum Cache hinzufügen
+          if (response) {
+            this.cachedTrips.push(response);
+          }
+          resolve(response);
+        })
+        .catch(error => {
+          console.error('Fehler beim Laden des Trips:', error);
+          reject(error);
+        });
+    });
+  }
+
 }
