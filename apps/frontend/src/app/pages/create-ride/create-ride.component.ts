@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CarInfoService } from '../../services/car-info/car-info.service';
 import { PopupFeedbackCarRideComponent } from '../../components/popups/popup-feedback-car-ride/popup-feedback-car-ride.component';
 import { Router } from '@angular/router';
+import { CarConnectionService } from '../../services/car-connection/car-connection.service';
 
 @Component({
   selector: 'app-create-ride',
@@ -29,19 +30,17 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './create-ride.component.html',
   styleUrl: './create-ride.component.css'
-  styleUrl: './create-ride.component.css'
 })
-export class CreateRideComponent implements OnInit{
+export class CreateRideComponent implements OnInit {
   form: FormGroup;
   submitted = false;
   formData: any;
-  showFeedbackPopup = false;
-  popupTitle = '';
-  popupMessage = '';
-  isSuccess = true;
   isLoading = false;
   fromLocation?: MapLocation;
   meetingPoint?: MapLocation;
+  
+  createdCarInfo: any;
+  createdConnection: any;
 
   @ViewChild(LocationSelectorComponent) locationSelector!: LocationSelectorComponent;
   @ViewChild(MapPinLocationComponent) mapPinLocation!: MapPinLocationComponent;
@@ -51,7 +50,10 @@ export class CreateRideComponent implements OnInit{
     console.log('CreateRideComponent initialisiert');
   }
 
-  constructor(private fb: FormBuilder, private carInfoService: CarInfoService, private router: Router) {
+  constructor(private fb: FormBuilder,
+              private carInfoService: CarInfoService,
+              private carConnectionService: CarConnectionService,
+              private router: Router) {
     this.form = this.fb.group({
       carInfo: this.fb.group({
         availableSeats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
@@ -80,40 +82,34 @@ export class CreateRideComponent implements OnInit{
   onSubmit() {
     this.formData = this.form.value;
 
-    // Check carInfo validation state
-    const carInfo = this.form.get('carInfo');
-
-    if (!carInfo) {
-      console.log('carInfo form group is missing');
+    if (this.form.invalid) {
+      console.log('Validation errors:');
       return;
     }
 
-    if (carInfo.invalid) {
-      console.log('carInfo validation errors:');
-
-      // Log specific field errors - with proper null checks
-      const availableSeats = carInfo.get('availableSeats');
-      if (availableSeats && availableSeats.invalid) {
-        console.log('availableSeats error:', availableSeats.errors);
-      }
-
-      const numberPlate = carInfo.get('numberPlate');
-      if (numberPlate && numberPlate.invalid) {
-        console.log('numberPlate error:', numberPlate.errors);
-      }
-
-      return;
-    }
-
-    console.log('Valid: ', this.formData);
+    console.log(this.formData);
     this.isLoading = true;
 
+    // First create the car info
     this.carInfoService.createCarInfo(this.formData).subscribe({
       next: (response) => {
         console.log('Ride created successfully:', response);
-        this.submitted = true;
-        this.isLoading = false;
 
+        this.createdCarInfo = response.carData;
+        this.formData.carConnection.carInfoId = response.carData.id;
+
+        this.carConnectionService.createCarConnection(this.formData).subscribe({
+          next: (connectionResponse) => {
+            console.log('Connection created successfully:', connectionResponse);
+            this.createdConnection = connectionResponse.connectionData;
+            this.submitted = true;
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error creating connection:', error);
+            this.isLoading = false;
+          }
+        });
       },
       error: (error) => {
         console.error('Error creating ride:', error);
@@ -130,6 +126,11 @@ export class CreateRideComponent implements OnInit{
   onFromLocationSelected(location: any) {
     console.log('Standort ausgewählt:', location);
 
+    if (this.form?.get('carConnection')) {
+      const carConnection = this.form.get('carConnection');
+      carConnection?.get('from')?.setValue(location);
+    }
+
     // Konvertiere die Location aus dem LocationSelector in das MapLocation-Format
     if (location?.geoPosition) {
       this.fromLocation = {
@@ -140,7 +141,13 @@ export class CreateRideComponent implements OnInit{
     } else {
       console.error('Ungültiges Location-Format empfangen:', location);
     }
+  }
 
+  onToLocationSelected(location: any) {
+    if (this.form?.get('carConnection')) {
+      const carConnection = this.form.get('carConnection');
+      carConnection?.get('to')?.setValue(location);
+    }
   }
 
   // Event-Handler für die MapPinLocation-Komponente

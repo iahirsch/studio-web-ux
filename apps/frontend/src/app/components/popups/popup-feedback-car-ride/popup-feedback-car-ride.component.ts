@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardCarComponent } from '../../card-car/card-car.component';
 import { MemberItemComponent } from '../../member-item/member-item.component';
@@ -12,6 +12,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './popup-feedback-car-ride.component.css'
 })
 export class PopupFeedbackCarRideComponent {
+  @Input() carInfo: any;
+  @Input() carConnection: any;
   @Output() popupClosed = new EventEmitter<void>();
 
   closePopup() {

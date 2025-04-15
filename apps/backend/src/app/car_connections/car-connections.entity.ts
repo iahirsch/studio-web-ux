@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 import { CarInfo } from '../car-info/car-info.entity';
 
@@ -7,27 +7,24 @@ export class CarConnections {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  from: string;
+  @Column('jsonb')
+  from: object;
 
-  @Column()
-  to: string;
+  @Column('jsonb')
+  to: object;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamp' })
   date: Date;
 
   @Column({ type: 'time' })
   departure: string;
 
-  @Column({ type: 'time' })
+  @Column({ type: 'time', nullable: true })
   arrival: string;
 
-  @Column('simple-array')
-  passengers: string[];
-
-  @Column()
-  availableSeats: number;
-  length: 4;
+  @ManyToMany(() => User)
+  @JoinTable()
+  passengers: User[];
 
   @ManyToOne(() => User, (user) => user.carConnections)
   user: User;

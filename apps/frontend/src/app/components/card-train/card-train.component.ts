@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './card-train.component.css'
 })
 export class CardTrainComponent {
-  @Input() connection: any;
+  @Input() connection: any = {};
   @Input() index = 0;
   @Output() detailsRequested = new EventEmitter<any>();
 

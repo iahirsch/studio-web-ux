@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { TrainConnectionsService } from './train_connections/train-connections.service';
@@ -71,5 +71,61 @@ export class AppController {
     });
 
     return { message: 'CarInfo saved', carData };
+  }
+
+  @Post('saveCarConnection')
+  @UseGuards(AuthGuard('jwt'))
+  async saveCarConnection(@Body() formData, @Req() req) {
+
+    const carConnection = formData.carConnection;
+    const user = await this.userRepository.findOne({ where: { id: req.user.sub } });
+    const carInfoId = formData.carInfo?.id || carConnection.carInfoId;
+    const carInfo = await this.carInfoService.findById(carInfoId);
+
+    if (!carInfo) {
+      throw new NotFoundException(`CarInfo with ID ${carInfoId} not found`);
+    }
+    if (!carConnection) {
+      return {
+        success: false,
+        message: 'No car connection provided'
+      };
+    }
+    if (!user) {
+      throw new NotFoundException(`User with ID ${req.user.sub} not found`);
+    }
+
+    console.log(carConnection);
+    console.log(user);
+    console.log(carInfo);
+
+    const connectionData = await this.carConnectionsService.saveCarConnection({
+      from: carConnection.from,
+      to: carConnection.to,
+      date: carConnection.date,
+      departure: carConnection.departure,
+      user: user,
+      passengers: [user],
+      carInfo: carInfo
+    });
+
+    return { message: 'CarConnection saved', connectionData };
+  }
+
+  @Post('joinRide/:connectionId')
+  @UseGuards(AuthGuard('jwt'))
+  async joinRide(@Param('connectionId') connectionId: number, @Req() req) {
+    const user = await this.userRepository.findOne({ where: { id: req.user.sub } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${req.user.sub} not found`);
+    }
+
+    const connection = await this.carConnectionsService.addPassenger(connectionId, user);
+
+    return {
+      message: 'Successfully joined the ride',
+      connection
+    };
   }
 }

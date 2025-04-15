@@ -1,0 +1,32 @@
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { env } from '../../../env/env';
+import { HttpClient } from '@angular/common/http';
+
+export interface CarConnectionDto {
+  from: object;
+  to: object;
+  date: Date;
+  departure: Date;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CarConnectionService {
+  private apiUrl = `${env.api}/saveCarConnection`;
+
+  constructor(private http: HttpClient) {}
+
+  createCarConnection(carConnection: CarConnectionDto): Observable<any> {
+    return this.http.post<any>(this.apiUrl, carConnection);
+  }
+
+  updateCarConnection(id: string, carConnection: CarConnectionDto): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, carConnection);
+  }
+
+  getCarConnection(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+}
