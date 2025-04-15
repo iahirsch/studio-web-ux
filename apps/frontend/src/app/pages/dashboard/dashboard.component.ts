@@ -22,7 +22,6 @@ import { Router, RouterLink } from '@angular/router';
     CardGreetingComponent,
     BtnPrimaryComponent,
     RouterLink,
-
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
