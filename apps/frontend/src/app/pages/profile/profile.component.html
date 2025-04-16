@@ -1,4 +1,15 @@
-<h2>Profile</h2>
-<app-card-greeting class="card" name="{{ userName }}"></app-card-greeting>
-<app-profile-settings></app-profile-settings>
-<app-btn-primary text="Logout" (click)="logout()"></app-btn-primary>
+<div class="container flex flex-col mt-10 gap-5">
+  <div class="items-center">
+    <button class="absolute left-2 top-8.5" (click)="goBack()">
+      <img
+        src="/assets/icons/keyboard_arrow_down.svg"
+        alt="arrow"
+        class="rotate-90"
+      />
+    </button>
+    <h2 class="flex justify-center">Profil</h2>
+  </div>
+  <app-card-greeting class="card" name="{{ userName }}"></app-card-greeting>
+  <app-profile-settings></app-profile-settings>
+  <app-btn-primary text="Logout" (click)="logout()"></app-btn-primary>
+</div>

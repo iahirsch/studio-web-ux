@@ -283,6 +283,6 @@ export class CreateRideComponent implements OnInit {
   };
 
   goBack(): void {
-      this.location.back();
-    }
+    this.location.back();
+  }
 }
