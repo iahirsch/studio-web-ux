@@ -3,7 +3,7 @@
     <img alt="" class="size-12 rounded-full" src="{{ driver()?.picture || userPicture() }}" />
     <div class="flex flex-col">
       <h3 class="font-medium text-gray-950">{{ userName() }}</h3>
-      <h4 class="font-light text-gray-950">{{ displayComment() || '(Keine Bemerkung)' }}</h4>
+      <p class="font-light text-gray-950 text-sm">«{{ displayComment() || '(Keine Bemerkung)' }}»</p>
     </div>
   </div>
 </div>

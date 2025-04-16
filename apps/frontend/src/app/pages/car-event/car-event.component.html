@@ -1,43 +1,62 @@
-@if (isLoading) {
-  <div class="loading-container">
-    <p>Loading car connection details...</p>
-  </div>
-} @else if (error) {
-  <div class="error-container">
-    <p>{{ error }}</p>
-  </div>
-} @else {
-  <h2>Fahrgemeinschaft</h2>
-  <app-card-car
-    [carConnection]="carConnection"
-    [carInfo]="carInfo"
-    bgColor="bg-secondary-200"
-    txtColor="text-secondary-950"
-    lineColor="bg-secondary-950">
-  </app-card-car>
+<div class="container flex flex-col mt-10 gap-5">
+  @if (isLoading) {
+    <div class="loading-container">
+      <p>Loading car connection details...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <p>{{ error }}</p>
+    </div>
+  } @else {
+    <div class="items-center">
+      <button class="absolute left-2 top-8.5" (click)="goBack()">
+        <img
+          src="/assets/icons/keyboard_arrow_down.svg"
+          alt="arrow"
+          class="rotate-90"
+        />
+      </button>
+      <h2 class="flex justify-center">Fahrgemeinschaft</h2>
+    </div>
+    <app-card-car
+      [carConnection]="carConnection"
+      [carInfo]="carInfo"
+      bgColor="bg-secondary-200"
+      txtColor="text-secondary-950"
+      lineColor="bg-secondary-950">
+    </app-card-car>
 
-  <h4>Fahrer & Fahrzeug</h4>
-  <!-- If RiderItem only accepts 'name' -->
-  <app-rider-item [name]="carConnection?.user?.name" [seatComment]="carInfo?.seatComment"></app-rider-item>
-  <div class="card">
-    <app-car-details
-      [carNumber]="carInfo?.numberPlate"
-      [carBrand]="carInfo?.description"
-      [carColor]="carInfo?.color">
-    </app-car-details>
-  </div>
+    <div class="flex flex-col gap-2">
+      <h4>Fahrer & Fahrzeug</h4>
+      <!-- If RiderItem only accepts 'name' -->
+      <app-rider-item [name]="carConnection?.user?.name" [seatComment]="carInfo?.seatComment"></app-rider-item>
+      <div class="card">
+        <app-car-details
+          [carNumber]="carInfo?.numberPlate"
+          [carBrand]="carInfo?.description"
+          [carColor]="carInfo?.color">
+        </app-car-details>
+      </div>
+    </div>
 
-  <h4>Chat</h4>
-  <app-card-members></app-card-members>
-  <app-chat></app-chat>
+    <div class="flex flex-col gap-2">
+      <h4>Chat</h4>
+      <app-card-members></app-card-members>
+      <app-chat></app-chat>
+    </div>
 
-  <h4>Treffpunkt</h4>
-  <app-map-pin-location
-    [mode]="'display'"
-    [meetingPoint]="meetingPoint"
-    [meetingDateTime]="meetingTime">
-  </app-map-pin-location>
+    <div class="flex flex-col gap-2">
+      <h4>Treffpunkt</h4>
+      <app-map-pin-location
+        [mode]="'display'"
+        [meetingPoint]="meetingPoint"
+        [meetingDateTime]="meetingTime">
+      </app-map-pin-location>
+    </div>
 
-  <app-btn-primary text="Zurück zum Dashboard" routerLink="/dashboard"></app-btn-primary>
-  <app-btn-secondary text="Bei Fahrgemeinschaft austragen"></app-btn-secondary>
-}
+    <div class="flex flex-col gap-2">
+      <app-btn-primary text="Zurück zum Dashboard" routerLink="/dashboard"></app-btn-primary>
+      <app-btn-secondary text="Von Fahrgemeinschaft austragen"></app-btn-secondary>
+    </div>
+  }
+</div>

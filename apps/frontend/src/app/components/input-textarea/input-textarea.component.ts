@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, input, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -17,6 +17,8 @@ import { ControlValueAccessor, FormGroup, NG_VALUE_ACCESSOR } from '@angular/for
 })
 export class InputTextareaComponent implements ControlValueAccessor {
   @Input() commentForm!: FormGroup;
+  placeholder = input('Bemerkung');
+  maxSymbols = input('200');
 
   text = '';
   isInfoVisible = true;

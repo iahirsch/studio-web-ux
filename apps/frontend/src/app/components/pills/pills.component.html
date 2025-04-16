@@ -54,7 +54,7 @@
   <ng-container *ngIf="pillType() === 'info'">
     <div
       *ngFor="let item of pillItems()"
-      class="pill px-3 py-2 rounded-big outline outline-offset-[-1px] inline-flex justify-start items-center gap-2"
+      class="pill px-3 py-2 rounded-big ring-1 ring-gray-100 inline-flex justify-start items-center gap-2"
     >
       <div
         *ngIf="item.color"

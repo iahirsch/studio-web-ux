@@ -1,11 +1,11 @@
 import { Component, input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { PillItem, PillsComponent } from '../pills/pills.component';
 
 @Component({
   selector: 'app-car-details',
   standalone: true,
-  imports: [CommonModule, PillsComponent],
+  imports: [CommonModule, PillsComponent, NgOptimizedImage],
   templateUrl: './car-details.component.html',
   styleUrl: './car-details.component.css'
 })
