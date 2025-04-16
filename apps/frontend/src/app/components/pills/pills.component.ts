@@ -18,11 +18,11 @@ export interface PillItem {
   styleUrl: './pills.component.css'
 })
 export class PillsComponent {
-  pillType = input<string>('location'); // Standard-Typ ist 'location'
+  pillType = input<'location' | 'color' | 'info'>('location'); // Standard-Typ ist 'location'
   pillItems = input<PillItem[]>();
   disabled = input<boolean>(false); // Für Car-Details nicht klickbar
   pillSelected = output<PillItem>();
-
+  selectColor = input<string>(''); // Für Farbauswahl
   onPillClick(pillItem: PillItem): void {
     if (this.disabled()) return;
 

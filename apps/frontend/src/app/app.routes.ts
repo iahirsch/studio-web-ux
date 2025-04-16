@@ -17,7 +17,7 @@ export const appRoutes: Route[] = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'create-ride', component: CreateRideComponent },
   { path: 'search-ride', component: SearchRideComponent },
-  { path: 'train-ride-details', component: TrainRideDetailsComponent },
+  { path: 'train-ride-details/:id', component: TrainRideDetailsComponent },
   { path: 'car-ride-details', component: CarRideDetailsComponent },
   { path: 'car-event', component: CarEventComponent },
   { path: 'profile', component: ProfileComponent },

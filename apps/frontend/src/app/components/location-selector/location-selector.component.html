@@ -1,19 +1,34 @@
-<div class="location-selector ">
+<div class="location-selector">
   <!-- Akkordeon 1: Aktueller Standort -->
   <cdk-accordion class="card mb-2">
-    <cdk-accordion-item #fromAccordion
-                          ="cdkAccordionItem" class="accordion-item w-full">
+    <cdk-accordion-item
+      #fromAccordion="cdkAccordionItem"
+      class="accordion-item w-full"
+    >
       <button class="accordion-header w-full" (click)="fromAccordion.toggle()">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="dot-purple-m flex-none"></div>
+            <div class="dot-green-m flex-none"></div>
             <div>
-              <div class="text-left font-medium leading-5">{{ currentLocationTitle }}, <span class="font-light text-gray-950">{{ currentLocationCity }} </span></div>
+              <div class="text-left font-medium leading-5">
+                {{ currentLocationTitle }},
+                <span class="font-light text-gray-950"
+                  >{{ currentLocationCity }}
+                </span>
+              </div>
             </div>
           </div>
-          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
-               [ngClass]="fromAccordion.expanded ? 'rotate-180' : 'rotate-0'">
-            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
+          <div
+            class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+            [ngClass]="fromAccordion.expanded ? 'rotate-180' : 'rotate-0'"
+          >
+            <img
+              ngSrc="/assets/icons/keyboard_arrow_down.svg"
+              alt="toggle"
+              height="32"
+              width="32"
+              class="scale-90 -my-2"
+            />
           </div>
         </div>
       </button>
@@ -21,13 +36,16 @@
       <div
         class="accordion-content"
         [class.expanded]="fromAccordion.expanded"
-        [style.display]="fromAccordion.expanded ? '' : 'none'">
+        [style.display]="fromAccordion.expanded ? '' : 'none'"
+      >
         <div>
           <div class="flex flex-wrap gap-2 mt-5">
             <app-pills
               [pillType]="'location'"
               [pillItems]="fromLocationPills"
-              (pillSelected)="onFromPillSelected($event)">
+              [selectColor]="'bg-secondary-300'"
+              (pillSelected)="onFromPillSelected($event)"
+            >
             </app-pills>
           </div>
         </div>
@@ -35,21 +53,36 @@
     </cdk-accordion-item>
   </cdk-accordion>
 
-
   <!-- Akkordeon 2: Zielort -->
   <cdk-accordion class="card mb-2">
-    <cdk-accordion-item #toAccordion="cdkAccordionItem" class="accordion-item w-full">
+    <cdk-accordion-item
+      #toAccordion="cdkAccordionItem"
+      class="accordion-item w-full"
+    >
       <button class="accordion-header w-full" (click)="toAccordion.toggle()">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <div class="dot-purple-m flex-none"></div>
             <div>
-              <div class="text-left font-medium leading-none">{{ destinationLocationTitle }}, <span class="font-light text-gray-950">{{ destinationLocationCity }}</span> </div>
+              <div class="text-left font-medium leading-5">
+                {{ destinationLocationTitle }},
+                <span class="font-light text-gray-950">{{
+                  destinationLocationCity
+                }}</span>
+              </div>
             </div>
           </div>
-          <div class="transform transition-transform duration-300 h-6 flex items-center justify-center"
-               [ngClass]="toAccordion.expanded ? 'rotate-180' : 'rotate-0'">
-            <img ngSrc="/assets/icons/keyboard_arrow_down.svg" alt="toggle" height="32" width="32" class="scale-90 -my-2">
+          <div
+            class="transform transition-transform duration-300 h-6 flex items-center justify-center"
+            [ngClass]="toAccordion.expanded ? 'rotate-180' : 'rotate-0'"
+          >
+            <img
+              ngSrc="/assets/icons/keyboard_arrow_down.svg"
+              alt="toggle"
+              height="32"
+              width="32"
+              class="scale-90 -my-2"
+            />
           </div>
         </div>
       </button>
@@ -58,16 +91,20 @@
       <div
         class="accordion-content"
         [class.expanded]="toAccordion.expanded"
-        [style.display]="toAccordion.expanded ? '' : 'none'">
+        [style.display]="toAccordion.expanded ? '' : 'none'"
+      >
         <div>
           <div class="flex flex-wrap gap-2 mt-5">
             <app-pills
               [pillType]="'location'"
               [pillItems]="toLocationPills"
-              (pillSelected)="onToPillSelected($event)">
+              [selectColor]="'bg-primary-300'"
+              (pillSelected)="onToPillSelected($event)"
+            >
             </app-pills>
           </div>
         </div>
       </div>
     </cdk-accordion-item>
   </cdk-accordion>
+</div>

@@ -1,3 +1,29 @@
+
+<div class="date-time-picker p-4 bg-white rounded-lg mb-4">
+  <div class="flex flex-col sm:flex-row gap-4">
+    <div class="w-full sm:w-1/2">
+      <label for="date-input" class="block text-sm font-medium text-gray-700 mb-1">Datum</label>
+      <input
+        type="date"
+        id="date-input"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        [(ngModel)]="selectedDate"
+        (change)="onDateTimeChange()"
+      >
+    </div>
+
+    <div class="w-full sm:w-1/2">
+      <label for="time-input" class="block text-sm font-medium text-gray-700 mb-1">Zeit</label>
+      <input
+        type="time"
+        id="time-input"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        [(ngModel)]="selectedTime"
+        (change)="onDateTimeChange()"
+      >
+    </div>
+
+ <!-- Design Vorlage
 <div class="card flex-col">
   <div class="flex w-full pb-4">
   <div class="flex-1 self-stretch flex justify-start items-center gap-3">
@@ -48,5 +74,7 @@
     <p>25</p>
   </div>
 </div>
+-->
+
   </div>
 </div>
