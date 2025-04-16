@@ -141,13 +141,14 @@ export class LocationSelectorComponent implements OnInit {
       pill.isSelected = pill.id === location.id;
     });
     this.updateMapWithSelectedLocation(location);
+
     this.locationForm.get('from')?.setValue(location.coordinates);
     this.fromSuggestions = [];
 
     // Emittieren des ausgewählten Standorts an search-ride component
     this.fromLocationSelected.emit(this.selectedFromLocation);
-  }
 
+  }
   // Setzt den Zielort
   private setDestinationLocation(location: Location) {
     this.selectedToLocation = location;
@@ -221,6 +222,7 @@ export class LocationSelectorComponent implements OnInit {
           longitude: parseFloat(coords[1])
         };
       }
+
     }
 
     // Emittiere ein Objekt mit der geoPosition

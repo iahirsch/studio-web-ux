@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
 import { MapLocation, MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
@@ -37,6 +37,7 @@ export class CreateRideComponent implements OnInit {
   submitted = false;
   formData: any;
   isLoading = false;
+  private location = inject(Location);
   fromLocation?: MapLocation;
   meetingPoint?: MapLocation;
   selectedDateTime = signal<Date>(new Date());
@@ -280,4 +281,8 @@ export class CreateRideComponent implements OnInit {
     const [lat, lon] = coord.split(',').map(p => parseFloat(p.trim()));
     return `${lon},${lat}`;
   };
+
+  goBack(): void {
+      this.location.back();
+    }
 }
