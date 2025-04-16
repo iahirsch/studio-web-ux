@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
 import { MapLocation, MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
@@ -24,6 +24,7 @@ import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.co
   styleUrl: './create-ride.component.css'
 })
 export class CreateRideComponent implements OnInit {
+  private location = inject(Location);
   fromLocation?: MapLocation;
   meetingPoint?: MapLocation;
 
@@ -61,5 +62,7 @@ export class CreateRideComponent implements OnInit {
     // Hier kannst du den Treffpunkt speichern
   }
 
-
+  goBack(): void {
+    this.location.back();
+  }
 }
