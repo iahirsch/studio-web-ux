@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ProfileSettingsComponent } from '../../components/profile-settings/profile-settings.component';
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
@@ -12,14 +12,18 @@ import { Router } from '@angular/router';
     CommonModule,
     ProfileSettingsComponent,
     CardGreetingComponent,
-    BtnPrimaryComponent,
+    BtnPrimaryComponent
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css',
+  styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
   private oauthService = inject(OAuthService);
   private router = inject(Router);
+  private location = inject(Location);
+
+  userInfo = this.oauthService.getIdentityClaims();
+  userName = this.userInfo['name'];
 
   logout(): void {
     this.oauthService.logOut();
@@ -27,5 +31,9 @@ export class ProfileComponent {
     localStorage.clear();
     sessionStorage.clear();
     this.router.navigate(['/login']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
