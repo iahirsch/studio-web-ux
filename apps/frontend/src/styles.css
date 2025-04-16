@@ -72,7 +72,7 @@
   }
 
   h4 {
-    @apply text-[0.875rem];
+    @apply text-[0.875rem] mx-2;
   }
 
   button {

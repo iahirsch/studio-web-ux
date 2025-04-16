@@ -56,9 +56,9 @@ export class CreateRideComponent implements OnInit {
   }
 
   constructor(private fb: FormBuilder,
-    private carInfoService: CarInfoService,
-    private carConnectionService: CarConnectionService,
-    private router: Router) {
+              private carInfoService: CarInfoService,
+              private carConnectionService: CarConnectionService,
+              private router: Router) {
     this.form = this.fb.group({
       carInfo: this.fb.group({
         availableSeats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
@@ -201,12 +201,10 @@ export class CreateRideComponent implements OnInit {
           }
         }
       }
-      const normalizedFrom = this.normalizeCoordinates(fromCoords);
-      const normalizedTo = this.normalizeCoordinates(toCoords);
 
       this.ojpSdkService.searchTrip(
-        normalizedFrom,
-        normalizedTo,
+        fromCoords,
+        toCoords,
         this.selectedDateTime(),
         'car'
       ).then(result => {
@@ -276,11 +274,6 @@ export class CreateRideComponent implements OnInit {
     console.warn('Unbekanntes Koordinatenformat:', coordinates);
     return coordinates;
   }
-
-  private normalizeCoordinates = (coord: string) => {
-    const [lat, lon] = coord.split(',').map(p => parseFloat(p.trim()));
-    return `${lon},${lat}`;
-  };
 
   goBack(): void {
     this.location.back();

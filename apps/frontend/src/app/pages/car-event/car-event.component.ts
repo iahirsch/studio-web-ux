@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { CardCarComponent } from '../../components/card-car/card-car.component';
 import { RiderItemComponent } from '../../components/rider-item/rider-item.component';
 import { CarDetailsComponent } from '../../components/car-details/car-details.component';
@@ -23,6 +23,7 @@ export class CarEventComponent implements OnInit {
   carInfo: any = null;
   isLoading = true;
   error: string | null = null;
+  private location = inject(Location);
 
   meetingPoint: MapLocation = {
     longitude: 8.277735,
@@ -79,5 +80,9 @@ export class CarEventComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
