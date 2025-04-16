@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { LocationSelectorComponent } from '../../components/location-selector/location-selector.component';
 import { DateTimePickerComponent } from '../../components/date-time-picker/date-time-picker.component';
 import { CardCarComponent } from '../../components/card-car/card-car.component';
@@ -36,6 +36,7 @@ interface TrainConnection {
   styleUrl: './search-ride.component.css'
 })
 export class SearchRideComponent {
+  private location = inject(Location);
   // Signals für reaktive Programmierung
   fromLocation = signal<string | null>(null);
   toLocation = signal<string | null>(null);
@@ -168,6 +169,10 @@ export class SearchRideComponent {
     // Falls das Format nicht erkannt wird, gib das Original zurück
     console.warn('Unbekanntes Koordinatenformat:', coordinates);
     return coordinates;
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
 }

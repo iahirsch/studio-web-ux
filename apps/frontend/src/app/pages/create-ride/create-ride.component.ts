@@ -37,12 +37,12 @@ export class CreateRideComponent implements OnInit {
   submitted = false;
   formData: any;
   isLoading = false;
-  private location = inject(Location);
   fromLocation?: MapLocation;
   meetingPoint?: MapLocation;
   selectedDateTime = signal<Date>(new Date());
   dateTimeSelected = signal(false);
 
+  private location = inject(Location);
   private ojpSdkService = inject(OjpSdkService);
 
   createdCarInfo: any;
@@ -56,9 +56,9 @@ export class CreateRideComponent implements OnInit {
   }
 
   constructor(private fb: FormBuilder,
-              private carInfoService: CarInfoService,
-              private carConnectionService: CarConnectionService,
-              private router: Router) {
+    private carInfoService: CarInfoService,
+    private carConnectionService: CarConnectionService,
+    private router: Router) {
     this.form = this.fb.group({
       carInfo: this.fb.group({
         availableSeats: [1, [Validators.required, Validators.min(1), Validators.max(9)]],
@@ -283,6 +283,6 @@ export class CreateRideComponent implements OnInit {
   };
 
   goBack(): void {
-      this.location.back();
-    }
+    this.location.back();
+  }
 }

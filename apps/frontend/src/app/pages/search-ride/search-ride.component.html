@@ -1,34 +1,48 @@
-<h2>Fahrgemeinschaft finden</h2>
-<h4>Meine Strecke</h4>
-<app-location-selector
-  (fromLocationSelected)="onFromLocationSelected($event)"
-  (toLocationSelected)="onToLocationSelected($event)"
->
-</app-location-selector>
+<div class="container flex flex-col mt-10 gap-5">
+  <div class="items-center">
+    <button class="absolute left-2 top-8.5" (click)="goBack()">
+      <img
+        src="/assets/icons/keyboard_arrow_down.svg"
+        alt="arrow"
+        class="rotate-90"
+      />
+    </button>
+    <h2 class="flex justify-center">Fahrgemeinschaft finden</h2>
+  </div>
+  <div class="flex flex-col gap-2">
+    <h4 class="mx-2">Meine Strecke</h4>
+    <app-location-selector
+      (fromLocationSelected)="onFromLocationSelected($event)"
+      (toLocationSelected)="onToLocationSelected($event)"
+    >
+    </app-location-selector>
+    <app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)">
+    </app-date-time-picker>
+  </div>
+  <div class="container flex flex-col gap-2">
+    <h4 class="mx-2" *ngIf="selectedDateTime()">
+      {{ selectedDateTime() | date : 'EEEE dd.MM.yyyy' }}
+    </h4>
+    <app-card-car></app-card-car>
 
-<app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)">
-</app-date-time-picker>
-
-<div class="container flex flex-col gap-2">
-  <app-card-car></app-card-car>
-
-  <!-- Anzeige der gefundenen Verbindungen -->
-  <div
-    *ngIf="trainConnections().length > 0"
-    class="connections-section flex flex-col gap-2"
-  >
-    <div *ngFor="let connection of trainConnections()">
-      <app-card-train
-        [departure]="connection.departure"
-        [arrival]="connection.arrival"
-        [duration]="connection.duration"
-        [transfers]="connection.transfers"
-        [platforms]="connection.platforms"
-        [serviceName]="connection.serviceName"
-        [destinationName]="connection.destinationName"
-        [tripDetails]="connection.tripDetails"
-      >
-      </app-card-train>
+    <!-- Anzeige der gefundenen Zug Verbindungen -->
+    <div
+      *ngIf="trainConnections().length > 0"
+      class="connections-section flex flex-col gap-2"
+    >
+      <div *ngFor="let connection of trainConnections()">
+        <app-card-train
+          [departure]="connection.departure"
+          [arrival]="connection.arrival"
+          [duration]="connection.duration"
+          [transfers]="connection.transfers"
+          [platforms]="connection.platforms"
+          [serviceName]="connection.serviceName"
+          [destinationName]="connection.destinationName"
+          [tripDetails]="connection.tripDetails"
+        >
+        </app-card-train>
+      </div>
     </div>
   </div>
 </div>
