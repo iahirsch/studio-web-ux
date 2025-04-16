@@ -62,7 +62,7 @@ export class OjpApiService {
 
       // Create trip request based on mode
       let tripRequest;
-      if (mode === 'train') {
+      if (mode === 'train' || mode === 'car') {
         const fromTripLocation = new TripLocationPoint(fromLocation);
         const toTripLocation = new TripLocationPoint(toLocation);
 
@@ -122,7 +122,7 @@ export class OjpApiService {
     }
   }
 
-// Hilfsmethode zum Mapping der Response-Daten in das für Trip erwartete Format
+  // Hilfsmethode zum Mapping der Response-Daten in das für Trip erwartete Format
   private mapResponseToTripData(data: any): any {
     // Hier die Daten entsprechend transformieren
     // Beispiel:

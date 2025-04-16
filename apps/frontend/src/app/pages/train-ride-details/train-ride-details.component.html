@@ -1,7 +1,7 @@
 <h2>Details</h2>
-
-<div class="container">
-  @if (selectedConnection(); as connection) {
+<div class="container flex flex-col gap-2">
+  <div class="container">
+    @if (selectedConnection(); as connection) {
     <app-card-train
       [isClickable]="false"
       [serviceName]="connection.serviceName"
@@ -10,16 +10,16 @@
       [arrival]="connection.arrival"
       [duration]="connection.duration"
       [transfers]="connection.transfers"
-      [platforms]="connection.platforms">
+      [platforms]="connection.platforms"
+      [tripDetails]="connection.tripDetails"
+    >
     </app-card-train>
-  }
-
-</div>
-@for (leg of trainLegs(); track leg) {
+    }
+  </div>
+  @for (leg of trainLegs(); track leg) {
   <app-card-train-details [leg]="leg"></app-card-train-details>
-}
-
-
+  }
+</div>
 <h4>Mitfahrende</h4>
 <app-card-members></app-card-members>
 <app-btn-primary text="Für Verbindung eintragen"></app-btn-primary>

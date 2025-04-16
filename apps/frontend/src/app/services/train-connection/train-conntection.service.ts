@@ -1,7 +1,7 @@
 // train-connection.service.ts - Interface hinzufügen
 import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { Trip } from 'ojp-sdk';
+import { Trip, TripTimedLeg } from 'ojp-sdk';
 
 export interface TrainConnection {
   departure: string;
@@ -11,8 +11,9 @@ export interface TrainConnection {
   platforms: string[];
   serviceName: string;
   destinationName: string;
-  legs?: any[];
+  legs?: TripTimedLeg[];
   tripDetails?: Trip;
+
 }
 
 @Injectable({

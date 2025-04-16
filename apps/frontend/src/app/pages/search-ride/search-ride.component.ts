@@ -85,7 +85,7 @@ export class SearchRideComponent {
 
   // Diese Methode überprüft, ob alle erforderlichen Daten vorhanden sind
   private checkAndSearchConnections(): void {
-    if (this.fromLocationSelected() && this.toLocationSelected() && this.dateTimeSelected()) {
+    if (this.fromLocationSelected() && this.toLocationSelected()) {
       console.log('Alle Daten vorhanden, starte Suche...');
       this.searchConnections();
     }
@@ -144,10 +144,10 @@ export class SearchRideComponent {
         }
         this.loading.set(false);
       }).catch(error => {
-      console.error('Error searching connections:', error);
-      this.error.set('Fehler bei der Suche nach Verbindungen');
-      this.loading.set(false);
-    });
+        console.error('Error searching connections:', error);
+        this.error.set('Fehler bei der Suche nach Verbindungen');
+        this.loading.set(false);
+      });
   }
 
   // Hilfsmethode für das Koordinatenformat
