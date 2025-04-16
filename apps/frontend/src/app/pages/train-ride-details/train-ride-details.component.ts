@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { CardTrainComponent } from '../../components/card-train/card-train.component';
 import { CardMembersComponent } from '../../components/card-members/card-members.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
   styleUrl: './train-ride-details.component.css'
 })
 export class TrainRideDetailsComponent implements OnInit {
+  private location = inject(Location);
   public router = inject(Router);
   private trainConnectionService = inject(TrainConnectionService);
 
@@ -27,5 +28,7 @@ export class TrainRideDetailsComponent implements OnInit {
     this.selectedConnection.set(connection);
     this.trainLegs.set(connection?.legs ?? []);
   }
-
+  goBack(): void {
+    this.location.back();
+  }
 }

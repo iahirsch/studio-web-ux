@@ -22,13 +22,13 @@ export class CarInfoComponent implements ControlValueAccessor {
   @Input() seatsForm?: FormGroup;
 
   colorPills: PillItem[] = [
-    { id: 'white', label: 'Weiss', color: '#FFFFFF' },
-    { id: 'grau', label: 'Grau', color: '#C0C0C0' },
-    { id: 'black', label: 'Schwarz', color: '#000000' },
-    { id: 'red', label: 'Rot', color: '#FF0000' },
-    { id: 'blue', label: 'Blau', color: '#0000FF' },
-    { id: 'yellow', label: 'Gelb', color: '#E7BC46' },
-    { id: 'other', label: 'andere' }
+    { id: 'Weiss', label: 'Weiss', color: '#FFFFFF' },
+    { id: 'Grau', label: 'Grau', color: '#C0C0C0' },
+    { id: 'Schwarz', label: 'Schwarz', color: '#000000' },
+    { id: 'Rot', label: 'Rot', color: '#FF0000' },
+    { id: 'Blau', label: 'Blau', color: '#0000FF' },
+    { id: 'Gelb', label: 'Gelb', color: '#E7BC46' },
+    { id: 'andere', label: 'andere' }
   ];
 
   selectedColor = 'black';

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { CardCarComponent } from '../../components/card-car/card-car.component';
 import { RiderItemComponent } from '../../components/rider-item/rider-item.component';
 import { MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
@@ -13,4 +13,10 @@ import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.co
   styleUrl: './car-ride-details.component.css'
 })
 export class CarRideDetailsComponent {
+  private location = inject(Location);
+
+  goBack(): void {
+    this.location.back();
+  }
+
 }

@@ -1,25 +1,38 @@
-<h2>Details</h2>
-<div class="container flex flex-col gap-2">
-  <div class="container">
-    @if (selectedConnection(); as connection) {
-    <app-card-train
-      [isClickable]="false"
-      [serviceName]="connection.serviceName"
-      [destinationName]="connection.destinationName"
-      [departure]="connection.departure"
-      [arrival]="connection.arrival"
-      [duration]="connection.duration"
-      [transfers]="connection.transfers"
-      [platforms]="connection.platforms"
-      [tripDetails]="connection.tripDetails"
-    >
-    </app-card-train>
+<div class="container flex flex-col mt-10 gap-5">
+  <div class="items-center">
+    <button class="absolute left-2 top-8.5" (click)="goBack()">
+      <img
+        src="/assets/icons/keyboard_arrow_down.svg"
+        alt="arrow"
+        class="rotate-90"
+      />
+    </button>
+    <h2 class="flex justify-center">Details</h2>
+  </div>
+  <div class="container flex flex-col gap-2">
+    <div class="container">
+      @if (selectedConnection(); as connection) {
+      <app-card-train
+        [isClickable]="false"
+        [serviceName]="connection.serviceName"
+        [destinationName]="connection.destinationName"
+        [departure]="connection.departure"
+        [arrival]="connection.arrival"
+        [duration]="connection.duration"
+        [transfers]="connection.transfers"
+        [platforms]="connection.platforms"
+        [tripDetails]="connection.tripDetails"
+      >
+      </app-card-train>
+      }
+    </div>
+    @for (leg of trainLegs(); track leg) {
+    <app-card-train-details [leg]="leg"></app-card-train-details>
     }
   </div>
-  @for (leg of trainLegs(); track leg) {
-  <app-card-train-details [leg]="leg"></app-card-train-details>
-  }
+  <div class="flex flex-col gap-2">
+    <h4>Mitfahrende</h4>
+    <app-card-members></app-card-members>
+  </div>
+  <app-btn-primary text="Für Verbindung eintragen"></app-btn-primary>
 </div>
-<h4>Mitfahrende</h4>
-<app-card-members></app-card-members>
-<app-btn-primary text="Für Verbindung eintragen"></app-btn-primary>
