@@ -78,7 +78,7 @@ export class CardTrainDetailsComponent {
 
   getVehicleIconPath(): string {
     return this.getVehicleType() === 'bus'
-      ? '/assets/icons/sbb_bus.svg'
-      : '/assets/icons/sbb_train.svg';
+      ? 'assets/icons/sbb_bus.svg'
+      : 'assets/icons/sbb_train.svg';
   }
 }

@@ -108,8 +108,8 @@ export class CardTrainComponent {
 
   getVehicleIconPath(): string {
     return this.getVehicleType() === 'bus'
-      ? '/assets/icons/bus_icon.svg'
-      : '/assets/icons/train_light_purple.svg';
+      ? 'assets/icons/bus_icon.svg'
+      : 'assets/icons/train_light_purple.svg';
   }
 
   onCardClick(): void {
