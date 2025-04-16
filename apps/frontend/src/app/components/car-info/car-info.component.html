@@ -1,11 +1,15 @@
-<app-pills
-  [pillType]="'color'"
-  [pillItems]="colorPills"
-  (pillSelected)="onColorSelected($event)">
-</app-pills>
+<div class="card flex flex-col gap-4">
+  <app-pills
+    [pillType]="'color'"
+    [pillItems]="colorPills"
+    (pillSelected)="onColorSelected($event)"
+  >
+  </app-pills>
 
-<app-input-text
-  placeholder="Input text"
-  [value]="description"
-  (valueChange)="onDescriptionChange($event)">
-</app-input-text>
+  <app-input-text
+    placeholder="Beschreibe dein Auto"
+    [value]="description"
+    (valueChange)="onDescriptionChange($event)"
+  >
+  </app-input-text>
+</div>

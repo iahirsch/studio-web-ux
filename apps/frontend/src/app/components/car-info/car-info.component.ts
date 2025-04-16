@@ -22,12 +22,13 @@ export class CarInfoComponent implements ControlValueAccessor {
   @Input() seatsForm?: FormGroup;
 
   colorPills: PillItem[] = [
-    { id: 'black', label: 'Schwarz', color: '#000000' },
     { id: 'white', label: 'Weiss', color: '#FFFFFF' },
-    { id: 'silver', label: 'Silber', color: '#C0C0C0' },
+    { id: 'grau', label: 'Grau', color: '#C0C0C0' },
+    { id: 'black', label: 'Schwarz', color: '#000000' },
     { id: 'red', label: 'Rot', color: '#FF0000' },
     { id: 'blue', label: 'Blau', color: '#0000FF' },
-    { id: 'green', label: 'Grün', color: '#008000' }
+    { id: 'yellow', label: 'Gelb', color: '#E7BC46' },
+    { id: 'other', label: 'andere' }
   ];
 
   selectedColor = 'black';
@@ -67,9 +68,9 @@ export class CarInfoComponent implements ControlValueAccessor {
   //ControlValueAccessor
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onChange = (_value: any) => {};
+  onChange = (_value: any) => { };
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTouch = () => {};
+  onTouch = () => { };
 
   writeValue(obj: any): void {
     if (obj) {

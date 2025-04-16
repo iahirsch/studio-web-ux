@@ -4,7 +4,7 @@
 
 @theme {
   /*Fonts*/
-  --font-lexend: "Lexend", sans-serif;
+  --font-lexend: 'Lexend', sans-serif;
   --text-base: 1rem;
 
   /*Border Radius*/
@@ -13,41 +13,41 @@
 
   /*Colors*/
   --color-black: var(--color-gray-950);
-  --color-white: #FBFBFB;
-  --color-background: #F1F1F1;
+  --color-white: #fbfbfb;
+  --color-background: #f1f1f1;
 
-  --color-primary-50: #F5F3FF;
-  --color-primary-100: #EDE8FF;
-  --color-primary-200: #DBD5FF;
-  --color-primary-300: #B3A1FF;
-  --color-primary-400: #A388FD;
-  --color-primary-500: #8658FA;
-  --color-primary-600: #7835F2;
-  --color-primary-700: #6923DE;
-  --color-primary-800: #571DBA;
-  --color-primary-900: #491A98;
-  --color-primary-950: #2C0E67;
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede8ff;
+  --color-primary-200: #dbd5ff;
+  --color-primary-300: #b3a1ff;
+  --color-primary-400: #a388fd;
+  --color-primary-500: #8658fa;
+  --color-primary-600: #7835f2;
+  --color-primary-700: #6923de;
+  --color-primary-800: #571dba;
+  --color-primary-900: #491a98;
+  --color-primary-950: #2c0e67;
 
-  --color-secondary-50: #F0FDF0;
-  --color-secondary-100: #DCFCDD;
-  --color-secondary-200: #A4F5A6;
-  --color-secondary-300: #85F089;
-  --color-secondary-400: #49DF4F;
-  --color-secondary-500: #21C628;
-  --color-secondary-600: #15A41B;
-  --color-secondary-700: #14811A;
-  --color-secondary-800: #15661A;
-  --color-secondary-950: #052E09;
+  --color-secondary-50: #f0fdf0;
+  --color-secondary-100: #dcfcdd;
+  --color-secondary-200: #a4f5a6;
+  --color-secondary-300: #85f089;
+  --color-secondary-400: #49df4f;
+  --color-secondary-500: #21c628;
+  --color-secondary-600: #15a41b;
+  --color-secondary-700: #14811a;
+  --color-secondary-800: #15661a;
+  --color-secondary-950: #052e09;
 
-  --color-gray-50: #F6F7F6;
-  --color-gray-100: #E2E5E2;
-  --color-gray-200: #CED2CE;
-  --color-gray-300: #A0A8A0;
-  --color-gray-400: #7C857D;
-  --color-gray-500: #626A63;
-  --color-gray-600: #4D544D;
-  --color-gray-900: #2F3230;
-  --color-gray-950: #181B19;
+  --color-gray-50: #f6f7f6;
+  --color-gray-100: #e2e5e2;
+  --color-gray-200: #ced2ce;
+  --color-gray-300: #a0a8a0;
+  --color-gray-400: #7c857d;
+  --color-gray-500: #626a63;
+  --color-gray-600: #4d544d;
+  --color-gray-900: #2f3230;
+  --color-gray-950: #181b19;
 }
 
 @layer base {
@@ -117,7 +117,7 @@
   }
 
   .pill-border {
-    @apply px-3 py-2 bg-white rounded-big outline-1 outline-offset-[-1px] outline-gray-500 inline-flex justify-center items-center gap-1 flex-wrap content-center;
+    @apply px-3 py-2 bg-white rounded-big outline-1 outline-offset-[-1px] outline-gray-200 inline-flex justify-center items-center gap-1 flex-wrap content-center;
   }
 
   .dot-green-s {

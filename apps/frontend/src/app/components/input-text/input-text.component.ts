@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, output, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,9 +8,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './input-text.component.css'
 })
 export class InputTextComponent {
-  @Input() placeholder = 'Input text';
-  @Input() value = '';
-  @Output() valueChange = new EventEmitter<string>();
+  placeholder = input('Input text');
+  value = input('');
+  valueChange = output<string>();
 
   onInputChange(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value;
