@@ -35,6 +35,7 @@
       },
       "configurations": {
         "production": {
+          "baseHref": "/studio-web-ux/",
           "budgets": [
             {
               "type": "initial",
@@ -48,7 +49,6 @@
             }
           ],
           "outputHashing": "all",
-          "baseHref": "/studio-web-ux/",
           "fileReplacements": [
             {
               "replace": "apps/frontend/src/env/env.ts",
