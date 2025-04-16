@@ -2,7 +2,8 @@
 <h4>Meine Strecke</h4>
 <app-location-selector
   (fromLocationSelected)="onFromLocationSelected($event)"
-  (toLocationSelected)="onToLocationSelected($event)">
+  (toLocationSelected)="onToLocationSelected($event)"
+>
 </app-location-selector>
 
 <app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)">
@@ -11,9 +12,11 @@
 <div class="container flex flex-col gap-2">
   <app-card-car></app-card-car>
 
-
   <!-- Anzeige der gefundenen Verbindungen -->
-  <div *ngIf="trainConnections().length > 0" class="connections-section flex flex-col gap-2">
+  <div
+    *ngIf="trainConnections().length > 0"
+    class="connections-section flex flex-col gap-2"
+  >
     <div *ngFor="let connection of trainConnections()">
       <app-card-train
         [departure]="connection.departure"
@@ -23,14 +26,9 @@
         [platforms]="connection.platforms"
         [serviceName]="connection.serviceName"
         [destinationName]="connection.destinationName"
-        [tripDetails]="connection.tripDetails">
+        [tripDetails]="connection.tripDetails"
+      >
       </app-card-train>
     </div>
   </div>
 </div>
-
-
-
-
-
-
