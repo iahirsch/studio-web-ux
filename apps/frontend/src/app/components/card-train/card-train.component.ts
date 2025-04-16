@@ -10,7 +10,8 @@ import { TrainConnectionService } from '../../services/train-connection/train-co
   standalone: true,
   imports: [CommonModule],
   templateUrl: './card-train.component.html',
-  styleUrls: ['./card-train.component.css']
+  styleUrl: './card-train.component.css'
+
 })
 export class CardTrainComponent {
   public router = inject(Router);

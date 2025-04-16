@@ -38,6 +38,7 @@ export class LocationSelectorComponent implements OnInit {
   fromLocationPills: PillItem[] = [];
   toLocationPills: PillItem[] = [];
 
+
   locationForm: FormGroup;
   fromSuggestions: Location[] = [];
   toSuggestions: Location[] = [];
@@ -47,6 +48,7 @@ export class LocationSelectorComponent implements OnInit {
 
   fromLocationSelected = output<Location>();
   toLocationSelected = output<Location>();
+
 
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
@@ -113,6 +115,7 @@ export class LocationSelectorComponent implements OnInit {
         );
 
         if (nearestLocation) {
+
           // Optional: Nach kurzem Timeout nochmal überprüfen, ob alles korrekt übernommen wurde
           setTimeout(() => {
             console.log('Status nach Timeout:', {
@@ -131,6 +134,7 @@ export class LocationSelectorComponent implements OnInit {
 
   setCurrentLocation(location: Location): void {
 
+
     // Internen Zustand aktualisieren
     this.selectedFromLocation = location;
     this.currentLocationTitle = location.title;
@@ -141,11 +145,13 @@ export class LocationSelectorComponent implements OnInit {
       pill.isSelected = pill.id === location.id;
     });
     this.updateMapWithSelectedLocation(location);
+
     this.locationForm.get('from')?.setValue(location.coordinates);
     this.fromSuggestions = [];
 
     // Emittieren des ausgewählten Standorts an search-ride component
     this.fromLocationSelected.emit(this.selectedFromLocation);
+
   }
 
   // Setzt den Zielort
@@ -176,7 +182,9 @@ export class LocationSelectorComponent implements OnInit {
       // Akkordeon schließen
       if (this.fromAccordion) {
         this.fromAccordion.close();
+
       }
+
     }
   }
 
@@ -221,6 +229,7 @@ export class LocationSelectorComponent implements OnInit {
           longitude: parseFloat(coords[1])
         };
       }
+
     }
 
     // Emittiere ein Objekt mit der geoPosition

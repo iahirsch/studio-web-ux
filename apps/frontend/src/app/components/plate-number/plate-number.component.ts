@@ -6,6 +6,6 @@ import { InputTextComponent } from '../input-text/input-text.component';
   selector: 'app-plate-number',
   imports: [CommonModule, InputTextComponent],
   templateUrl: './plate-number.component.html',
-  styleUrl: './plate-number.component.css',
+  styleUrl: './plate-number.component.css'
 })
 export class PlateNumberComponent {}
