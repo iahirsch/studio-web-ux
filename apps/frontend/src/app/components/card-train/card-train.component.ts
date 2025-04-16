@@ -14,6 +14,9 @@ import { TrainConnectionService } from '../../services/train-connection/train-co
 
 })
 export class CardTrainComponent {
+  @Input() connection: any = {};
+  @Input() index = 0;
+  @Output() detailsRequested = new EventEmitter<any>();
   public router = inject(Router);
   private trainConnectionService = inject(TrainConnectionService);
 
@@ -136,7 +139,6 @@ export class CardTrainComponent {
       this.router.navigate(['/train-ride-details', this.tripDetails()?.id]);
     } else {
       this.router.navigate(['/train-ride-details']);
-
     }
   }
 }

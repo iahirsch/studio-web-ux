@@ -108,6 +108,10 @@
     @apply border bg-white button text-secondary-500 border-secondary-500;
   }
 
+  .popup {
+    @apply fixed top-0 left-0 w-full h-full z-1000 bg-[rgba(0,0,0,0.5)] flex-center;
+  }
+
   .pill-text {
     @apply justify-start text-sm text-gray-500 font-light leading-4;
   }
@@ -131,7 +135,6 @@
   .dot-purple-m {
     @apply rounded-full size-4 bg-primary-300;
   }
-
 }
 
 @utility flex-center {

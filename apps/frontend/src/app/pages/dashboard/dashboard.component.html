@@ -1,5 +1,19 @@
 <div class="mt-20 flex flex-col gap-6">
   <app-card-greeting class="card" name="{{userName}}" routerLink="/profile"></app-card-greeting>
+
+  @if (userCarConnections.length > 0) {
+    @for (connection of userCarConnections; track connection.id) {
+      <app-card-car
+        [carConnection]="connection"
+        [carInfo]="connection.carInfo"
+        bgColor="bg-secondary-200"
+        txtColor="text-secondary-950"
+        lineColor="bg-secondary-950"
+        class="cursor-pointer"
+        [routerLink]="['/car-event', connection.id]">>
+      </app-card-car>
+    }
+  }
   <div>
     <h2 class="mb-4">Wohin geht's?</h2>
     <div class="input-locations">

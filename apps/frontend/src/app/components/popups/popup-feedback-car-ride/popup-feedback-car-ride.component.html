@@ -1,15 +1,32 @@
 <div class="card inline-flex flex-col justify-start gap-8">
   <div class="self-stretch inline-flex justify-between items-start gap-4">
     <h2 class="self-stretch justify-start">Deine Fahrt wurde aufgeschaltet!</h2>
-    <img class="w-6 h-6 " src="/assets/icons/close.svg" alt="close icon">
+    <button (click)="closePopup()">
+      <img
+        class="w-7 h-7 relative"
+        src="/assets/icons/close.svg"
+        alt="close icon"
+      />
+    </button>
   </div>
-  <app-card-car bgColor="bg-secondary-200" txtColor="text-secondary-950" lineColor="bg-secondary-950"></app-card-car>
-  <div class="self-stretch inline-flex flex-col justify-start items-start gap-4">
-    <app-member-item></app-member-item>
-    <h3 class="font-light">Wenn jemand bei dir mitfahren will, bekommst du eine Benachrichtigung in der du die Mitfahrt
-      an- oder ablehnen
-      kannst.</h3>
+  <app-card-car
+    [carConnection]="carConnection"
+    [carInfo]="carInfo"
+    bgColor="bg-secondary-200"
+    txtColor="text-secondary-950"
+    lineColor="bg-secondary-950"
+  ></app-card-car>
+  <div
+    class="self-stretch inline-flex flex-col justify-start items-start gap-4"
+  >
+    <app-member-item name="Du"></app-member-item>
+    <h3 class="font-light">
+      Wenn jemand bei dir mitfahren will, bekommst du eine Benachrichtigung in
+      der du die Mitfahrt an- oder ablehnen kannst.
+    </h3>
   </div>
-  <app-btn-primary text="Zurück zum Dashboard"></app-btn-primary>
+  <app-btn-primary
+    text="Zurück zum Dashboard"
+    routerLink="/dashboard"
+  ></app-btn-primary>
 </div>
-

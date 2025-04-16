@@ -4,4 +4,8 @@
   (pillSelected)="onColorSelected($event)">
 </app-pills>
 
-<app-input-text></app-input-text>
+<app-input-text
+  placeholder="Input text"
+  [value]="description"
+  (valueChange)="onDescriptionChange($event)">
+</app-input-text>

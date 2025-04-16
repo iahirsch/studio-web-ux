@@ -4,16 +4,28 @@ import { ProfileSettingsComponent } from '../../components/profile-settings/prof
 import { CardGreetingComponent } from '../../components/card-greeting/card-greeting.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, ProfileSettingsComponent, CardGreetingComponent, BtnPrimaryComponent],
+  imports: [
+    CommonModule,
+    ProfileSettingsComponent,
+    CardGreetingComponent,
+    BtnPrimaryComponent,
+  ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrl: './profile.component.css',
 })
 export class ProfileComponent {
-
   private oauthService = inject(OAuthService);
+  private router = inject(Router);
 
-  logout = () => this.oauthService.logOut();
+  logout(): void {
+    this.oauthService.logOut();
+    this.oauthService.revokeTokenAndLogout();
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/login']);
+  }
 }

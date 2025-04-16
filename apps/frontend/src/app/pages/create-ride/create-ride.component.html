@@ -10,11 +10,13 @@
     <h2 class="flex justify-center">Fahrt erstellen</h2>
   </div>
   <div class="flex flex-col gap-2">
+    <form [formGroup]="form">
     <h4 class="mx-2">Meine Strecke</h4>
     <app-location-selector
       (fromLocationSelected)="onFromLocationSelected($event)"
+      (toLocationSelected)="onToLocationSelected($event)"
     ></app-location-selector>
-    <app-date-time-picker></app-date-time-picker>
+    <app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)"></app-date-time-picker>
   </div>
   <div class="flex flex-col gap-2">
     <h4 class="mx-2">Organisation</h4>
@@ -23,12 +25,26 @@
       [locationFromSelector]="fromLocation"
       [(meetingPoint)]="meetingPoint"
     ></app-map-pin-location>
-    <app-available-seats></app-available-seats>
-  </div>
-  <div>
+    <app-available-seats [seatsForm]="form"></app-available-seats>
     <h4>Mein Fahrzeug</h4>
-    <app-plate-number></app-plate-number>
-    <app-car-info></app-car-info>
-  </div>
-  <app-btn-primary text="Fahrt aufschalten"></app-btn-primary>
+    <ng-container formGroupName="carInfo">
+      <app-plate-number formControlName="numberPlate"></app-plate-number>
+    </ng-container>
+    <app-car-info [seatsForm]="form"></app-car-info>
+    <app-btn-primary
+      (click)="onSubmit()"
+      text="Fahrt aufschalten"
+    ></app-btn-primary>
+  </form>
+
+  @if (submitted) {
+    <div class="popup">
+      <app-popup-feedback-car-ride
+        class="mx-4"
+        [carInfo]="createdCarInfo"
+        [carConnection]="createdConnection"
+        (popupClosed)="closePopup()"
+      ></app-popup-feedback-car-ride>
+    </div>
+  }
 </div>

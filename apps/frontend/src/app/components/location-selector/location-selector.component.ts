@@ -38,7 +38,6 @@ export class LocationSelectorComponent implements OnInit {
   fromLocationPills: PillItem[] = [];
   toLocationPills: PillItem[] = [];
 
-
   locationForm: FormGroup;
   fromSuggestions: Location[] = [];
   toSuggestions: Location[] = [];
@@ -48,7 +47,6 @@ export class LocationSelectorComponent implements OnInit {
 
   fromLocationSelected = output<Location>();
   toLocationSelected = output<Location>();
-
 
   @ViewChild('fromAccordion') fromAccordion!: CdkAccordionItem;
   @ViewChild('toAccordion') toAccordion!: CdkAccordionItem;
@@ -115,7 +113,6 @@ export class LocationSelectorComponent implements OnInit {
         );
 
         if (nearestLocation) {
-
           // Optional: Nach kurzem Timeout nochmal überprüfen, ob alles korrekt übernommen wurde
           setTimeout(() => {
             console.log('Status nach Timeout:', {
@@ -133,7 +130,6 @@ export class LocationSelectorComponent implements OnInit {
   }
 
   setCurrentLocation(location: Location): void {
-
 
     // Internen Zustand aktualisieren
     this.selectedFromLocation = location;
@@ -153,7 +149,6 @@ export class LocationSelectorComponent implements OnInit {
     this.fromLocationSelected.emit(this.selectedFromLocation);
 
   }
-
   // Setzt den Zielort
   private setDestinationLocation(location: Location) {
     this.selectedToLocation = location;
@@ -182,9 +177,7 @@ export class LocationSelectorComponent implements OnInit {
       // Akkordeon schließen
       if (this.fromAccordion) {
         this.fromAccordion.close();
-
       }
-
     }
   }
 

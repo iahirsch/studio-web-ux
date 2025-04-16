@@ -1,9 +1,9 @@
 <div class="card">
   <div class="flex items-start gap-2">
-    <img alt="" class="size-12 rounded-full" src="{{ userPicture() }}" />
+    <img alt="" class="size-12 rounded-full" src="{{ driver()?.picture || userPicture() }}" />
     <div class="flex flex-col">
-      <h3 class="font-medium text-gray-950">(Fahrerdaten)</h3>
-      <h4 class="font-light text-gray-950">(Bemerkung von Fahrer)</h4>
+      <h3 class="font-medium text-gray-950">{{ userName() }}</h3>
+      <h4 class="font-light text-gray-950">{{ displayComment() || '(Keine Bemerkung)' }}</h4>
     </div>
   </div>
 </div>
