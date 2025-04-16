@@ -12,6 +12,7 @@
         "{options.outputPath}"
       ],
       "options": {
+        "baseHref": "/studio-web-ux/",
         "outputPath": "dist/apps/frontend",
         "index": "apps/frontend/src/index.html",
         "browser": "apps/frontend/src/main.ts",
@@ -56,6 +57,7 @@
           ]
         },
         "development": {
+          "baseHref": "/",
           "optimization": false,
           "extractLicenses": false,
           "sourceMap": true
