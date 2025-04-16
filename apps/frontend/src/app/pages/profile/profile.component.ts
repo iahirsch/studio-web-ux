@@ -12,14 +12,17 @@ import { Router } from '@angular/router';
     CommonModule,
     ProfileSettingsComponent,
     CardGreetingComponent,
-    BtnPrimaryComponent,
+    BtnPrimaryComponent
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css',
+  styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
   private oauthService = inject(OAuthService);
   private router = inject(Router);
+
+  userInfo = this.oauthService.getIdentityClaims();
+  userName = this.userInfo['name'];
 
   logout(): void {
     this.oauthService.logOut();
