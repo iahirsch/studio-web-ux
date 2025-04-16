@@ -1,5 +1,5 @@
 // card-train.component.ts - TrainConnectionService importieren und injizieren
-import { Component, inject, input } from '@angular/core';
+import { Component, EventEmitter, inject, Input, input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Trip, TripTimedLeg } from 'ojp-sdk';
 import { Router } from '@angular/router';
@@ -37,6 +37,7 @@ export class CardTrainComponent {
   get effectivelyClickable(): boolean {
     return this.isClickable() && !this.isOnDetailsPage;
   }
+
   getServiceLineNumber(): string {
     if (!this.tripDetails() || !this.tripDetails()?.legs) return '';
 
@@ -110,6 +111,7 @@ export class CardTrainComponent {
       ? '/assets/icons/bus_icon.svg'
       : '/assets/icons/train_light_purple.svg';
   }
+
   onCardClick(): void {
 
     if (!this.effectivelyClickable) {
