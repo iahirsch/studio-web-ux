@@ -7,14 +7,25 @@
         class="rotate-90"
       />
     </button>
-    <h2 class="flex justify-center">Fahrgemeinschaft finden</h2>
+    <h2 class="flex justify-center">Details</h2>
   </div>
-  <h2>Details</h2>
   <app-card-car></app-card-car>
-  <h4>Fahrer</h4>
-  <app-rider-item></app-rider-item>
-  <h4>Treffpunkt</h4>
-  <app-map-pin-location></app-map-pin-location>
-  <app-card-members></app-card-members>
+  <div class="flex flex-col gap-2">
+    <h4>Fahrer</h4>
+    <app-rider-item></app-rider-item>
+  </div>
+  <div class="flex flex-col gap-2">
+    <h4>Treffpunkt</h4>
+    <div class="card flex flex-col w-full gap-2">
+      <app-map-pin-location
+        class="border-none"
+        [mode]="'display'"
+        [meetingPoint]="meetingPoint"
+        [meetingDateTime]="meetingTime"
+        >></app-map-pin-location
+      >
+      <app-card-members></app-card-members>
+    </div>
+  </div>
   <app-btn-primary text="Für Verbindung eintragen"></app-btn-primary>
 </div>

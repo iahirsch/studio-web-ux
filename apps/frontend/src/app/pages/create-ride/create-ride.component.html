@@ -11,7 +11,7 @@
   </div>
   <form [formGroup]="form" class="flex flex-col gap-5">
     <div class="flex flex-col gap-2">
-      <h4 class="mx-2">Meine Strecke</h4>
+      <h4>Meine Strecke</h4>
       <app-location-selector
         (fromLocationSelected)="onFromLocationSelected($event)"
         (toLocationSelected)="onToLocationSelected($event)"
@@ -21,7 +21,7 @@
       ></app-date-time-picker>
     </div>
     <div class="flex flex-col gap-2">
-      <h4 class="mx-2">Organisation</h4>
+      <h4>Organisation</h4>
       <app-map-pin-location
         [mode]="'select'"
         [locationFromSelector]="fromLocation"
@@ -30,7 +30,7 @@
       <app-available-seats [seatsForm]="form"></app-available-seats>
     </div>
     <div class="flex flex-col gap-2">
-      <h4 class="mx-2">Mein Fahrzeug</h4>
+      <h4>Mein Fahrzeug</h4>
       <ng-container formGroupName="carInfo">
         <app-plate-number formControlName="numberPlate"></app-plate-number>
       </ng-container>

@@ -20,7 +20,7 @@
     </app-date-time-picker>
   </div>
   <div class="container flex flex-col gap-2">
-    <h4 class="mx-2" *ngIf="selectedDateTime()">
+    <h4 *ngIf="selectedDateTime()">
       {{ selectedDateTime() | date : 'EEEE dd.MM.yyyy' }}
     </h4>
     <app-card-car></app-card-car>
