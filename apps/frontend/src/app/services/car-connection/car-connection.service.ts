@@ -26,6 +26,10 @@ export class CarConnectionService {
     return this.http.put<any>(`${this.apiUrl}/${id}`, carConnection);
   }
 
+  deleteCarConnection(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/carConnections/${id}`);
+  }
+
   getCarConnection(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/carConnections/${id}`);
   }

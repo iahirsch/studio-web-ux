@@ -41,6 +41,8 @@ export class CreateRideComponent implements OnInit {
   meetingPoint?: MapLocation;
   selectedDateTime = signal<Date>(new Date());
   dateTimeSelected = signal(false);
+  showInvalidFormPopup = false;
+  validationErrors: string[] = [];
 
   private location = inject(Location);
   private ojpSdkService = inject(OjpSdkService);
@@ -94,16 +96,43 @@ export class CreateRideComponent implements OnInit {
 
   async onSubmit() {
     try {
+      this.isLoading = true;
       await this.searchConnections();
       this.formData = this.form.value;
 
       if (this.form.invalid) {
         console.log('Validation errors:');
+        this.validationErrors = [];
+
+        // Collect validation errors
+        Object.keys(this.form.controls).forEach(key => {
+          const controlErrors = this.form.get(key)?.errors;
+          if (controlErrors) {
+            Object.keys(controlErrors).forEach(keyError => {
+              this.validationErrors.push(`${key}: ${keyError}`);
+            });
+          }
+
+          // Check nested form groups (carInfo and carConnection)
+          if (this.form.get(key) instanceof FormGroup) {
+            const formGroup = this.form.get(key) as FormGroup;
+            Object.keys(formGroup.controls).forEach(nestedKey => {
+              const nestedErrors = formGroup.get(nestedKey)?.errors;
+              if (nestedErrors) {
+                Object.keys(nestedErrors).forEach(keyError => {
+                  this.validationErrors.push(`${key}.${nestedKey}: ${keyError}`);
+                });
+              }
+            });
+          }
+        });
+
+        this.showInvalidFormPopup = true;
+        this.isLoading = false;
         return;
       }
 
       console.log(this.formData);
-      this.isLoading = true;
 
       // First create the car info
       this.carInfoService.createCarInfo(this.formData).subscribe({
@@ -139,6 +168,10 @@ export class CreateRideComponent implements OnInit {
 
   closePopup() {
     this.submitted = false;
+  }
+
+  closeInvalidFormPopup(): void {
+    this.showInvalidFormPopup = false;
   }
 
   // Event-Handler für die LocationSelector-Komponente

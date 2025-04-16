@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from '@nestjs/passport';
 import { TrainConnectionsService } from './train_connections/train-connections.service';
@@ -112,6 +112,31 @@ export class AppController {
     });
 
     return { message: 'CarConnection saved', connectionData };
+  }
+
+  @Delete('carConnections/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteCarConnection(@Param('id') id: number, @Req() req) {
+    const user = await this.userRepository.findOne({ where: { id: req.user.sub } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${req.user.sub} not found`);
+    }
+
+    const connection = await this.carConnectionsService.getCarConnectionWithPassengers(id);
+
+    if (!connection) {
+      throw new NotFoundException(`Car connection with ID ${id} not found`);
+    }
+
+    // Check if the requesting user is the owner of the car connection
+    if (connection.user.id !== user.id) {
+      throw new ForbiddenException('You are not authorized to delete this car connection');
+    }
+
+    await this.carConnectionsService.deleteCarConnection(id);
+
+    return { message: 'Car connection deleted successfully' };
   }
 
   @Post('joinRide/:connectionId')

@@ -13,7 +13,7 @@ export class TrainConnections {
   @Column()
   to: string;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamp' })
   date: Date;
 
   @Column({ type: 'time' })

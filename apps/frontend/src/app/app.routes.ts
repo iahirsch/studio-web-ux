@@ -25,7 +25,9 @@ export const appRoutes: Route[] = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [RouterModule.forRoot(appRoutes, {
+    scrollPositionRestoration: 'top'
+  })],
   providers: []
 })
 export class AppRoutingModule {

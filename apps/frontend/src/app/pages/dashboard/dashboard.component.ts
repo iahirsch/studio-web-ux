@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule, NgFor, ViewportScroller } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { env } from '../../../env/env';
@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit {
   private oauthService = inject(OAuthService);
   private httpClient = inject(HttpClient);
   private carConnectionService = inject(CarConnectionService);
+  private viewportScroller = inject(ViewportScroller);
 
   userInfo = this.oauthService.getIdentityClaims();
   userName = this.userInfo['name'];
@@ -46,6 +47,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserCarConnections();
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   onLocationButtonClick(coordinates: string) {

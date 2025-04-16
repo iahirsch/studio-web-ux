@@ -8,8 +8,9 @@ import { ChatComponent } from '../../components/chat/chat.component';
 import { MapLocation, MapPinLocationComponent } from '../../components/map-pin-location/map-pin-location.component';
 import { BtnPrimaryComponent } from '../../components/btn-primary/btn-primary.component';
 import { BtnSecondaryComponent } from '../../components/btn-secondary/btn-secondary.component';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CarConnectionService } from '../../services/car-connection/car-connection.service';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-car-event',
@@ -23,7 +24,10 @@ export class CarEventComponent implements OnInit {
   carInfo: any = null;
   isLoading = true;
   error: string | null = null;
+  showDeleteConfirmDialog = false;
+
   private location = inject(Location);
+  private oauthService = inject(OAuthService);
 
   meetingPoint: MapLocation = {
     longitude: 8.277735,
@@ -35,7 +39,8 @@ export class CarEventComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private carConnectionService: CarConnectionService
+    private carConnectionService: CarConnectionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +85,45 @@ export class CarEventComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onSecondaryButtonClick(): void {
+    const userInfo = this.oauthService.getIdentityClaims();
+
+    if (this.carConnection?.user?.id === userInfo['sub']) {
+      // User is the owner - show the custom confirmation dialog
+      this.showDeleteConfirmDialog = true;
+    } else {
+      console.log('Passenger');
+      // TODO: remove user from passengers in database
+    }
+  }
+
+  confirmDelete(): void {
+    this.carConnectionService.deleteCarConnection(this.carConnectionId as string)
+      .subscribe({
+        next: () => {
+          console.log('Fahrgemeinschaft erfolgreich gelöscht');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          console.error('Fehler beim Löschen der Fahrgemeinschaft', err);
+        }
+      });
+    this.showDeleteConfirmDialog = false;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirmDialog = false;
+  }
+
+  get secondaryButtonText(): string {
+    const userInfo = this.oauthService.getIdentityClaims();
+    if (this.carConnection?.user?.id === userInfo['sub']) {
+      return 'Fahrgemeinschaft löschen';
+    } else {
+      return 'Von Fahrgemeinschaft austragen';
+    }
   }
 
   goBack(): void {

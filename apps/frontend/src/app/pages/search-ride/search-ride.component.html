@@ -23,7 +23,20 @@
     <h4 *ngIf="selectedDateTime()">
       {{ selectedDateTime() | date : 'EEEE dd.MM.yyyy' }}
     </h4>
-    <app-card-car></app-card-car>
+
+    <!-- Display car connections first -->
+    <div
+      *ngIf="carConnections().length > 0"
+      class="connections-section flex flex-col gap-2"
+    >
+      <div *ngFor="let connection of carConnections()">
+        <app-card-car
+          [carConnection]="connection"
+          [carInfo]="connection.carInfo"
+        >
+        </app-card-car>
+      </div>
+    </div>
 
     <!-- Anzeige der gefundenen Zug Verbindungen -->
     <div

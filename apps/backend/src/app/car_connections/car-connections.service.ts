@@ -53,6 +53,14 @@ export class CarConnectionsService {
     return connection;
   }
 
+  async deleteCarConnection(id: number): Promise<void> {
+    const result = await this.carConnectionsRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new Error(`Could not delete car connection with ID ${id}`);
+    }
+  }
+
   async getUserCarConnections(userId: string): Promise<CarConnections[]> {
     return this.carConnectionsRepository.createQueryBuilder('connection')
       .leftJoinAndSelect('connection.passengers', 'passenger')

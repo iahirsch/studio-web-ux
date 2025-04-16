@@ -38,7 +38,7 @@
     </div>
     <app-btn-primary
       (click)="onSubmit()"
-      text="Fahrt erstellen"
+      [text]="isLoading ? 'Warten...' : 'Fahrt erstellen'"
     ></app-btn-primary>
   </form>
 
@@ -50,6 +50,30 @@
         [carConnection]="createdConnection"
         (popupClosed)="closePopup()"
       ></app-popup-feedback-car-ride>
+    </div>
+  }
+
+  @if (showInvalidFormPopup) {
+    <div class="popup">
+      <div class="card inline-flex flex-col justify-start gap-6 p-6 max-w-md mx-4">
+        <div class="self-stretch inline-flex justify-between items-start gap-4">
+          <h2 class="self-stretch justify-start">Formular unvollständig</h2>
+          <button (click)="closeInvalidFormPopup()">
+            <img class="w-6 h-6" src="assets/icons/close.svg" alt="close icon">
+          </button>
+        </div>
+        <div>
+          <p class="font-light mb-2">Bitte korrigiere die folgenden Fehler:</p>
+          <ul class="list-disc pl-5">
+            @for (error of validationErrors; track error) {
+              <li class="font-light text-sm">{{ error }}</li>
+            }
+          </ul>
+        </div>
+        <div class="self-stretch">
+          <app-btn-primary class="w-full" text="Verstanden" (click)="closeInvalidFormPopup()"></app-btn-primary>
+        </div>
+      </div>
     </div>
   }
 </div>
