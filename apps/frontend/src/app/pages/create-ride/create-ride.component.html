@@ -2,7 +2,7 @@
   <div class="items-center">
     <button class="absolute left-2 top-8.5" (click)="goBack()">
       <img
-        src="/assets/icons/keyboard_arrow_down.svg"
+        src="assets/icons/keyboard_arrow_down.svg"
         alt="arrow"
         class="rotate-90"
       />
@@ -43,13 +43,13 @@
   </form>
 
   @if (submitted) {
-  <div class="popup">
-    <app-popup-feedback-car-ride
-      class="mx-4"
-      [carInfo]="createdCarInfo"
-      [carConnection]="createdConnection"
-      (popupClosed)="closePopup()"
-    ></app-popup-feedback-car-ride>
-  </div>
+    <div class="popup">
+      <app-popup-feedback-car-ride
+        class="mx-4"
+        [carInfo]="createdCarInfo"
+        [carConnection]="createdConnection"
+        (popupClosed)="closePopup()"
+      ></app-popup-feedback-car-ride>
+    </div>
   }
 </div>
