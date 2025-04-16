@@ -37,6 +37,18 @@ export class CardCarComponent {
   }
 
   get departureTime(): string {
-    return this.carConnection?.departure || 'TBD';
+    if (!this.carConnection?.departure) return 'TBD';
+    // Format time to only show HH:MM
+    return this.carConnection.departure.substring(0, 5);
+  }
+
+  get arrivalTime(): string {
+    if (!this.carConnection?.arrival) return 'TBD';
+    // Format time to only show HH:MM
+    return this.carConnection.arrival.substring(0, 5);
+  }
+
+  get durationTime(): string {
+    return this.carConnection?.duration || 'TBD';
   }
 }

@@ -1,14 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  effect,
-  ElementRef,
-  Inject,
-  input,
-  LOCALE_ID,
-  model,
-  ViewChild
-} from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, Inject, input, LOCALE_ID, model, ViewChild } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import mapboxgl from 'mapbox-gl';
 import { env } from '../../../env/env';
@@ -78,12 +68,26 @@ export class MapPinLocationComponent implements AfterViewInit {
   // Formatiert das Datum und die Uhrzeit für die Anzeige
   formatDateOnly(date: Date | null | undefined): string {
     if (!date) return '';
-    return formatDate(date, 'dd.MM.yyyy', this.locale);
+    try {
+      // Check if date is valid
+      if (isNaN(date.getTime())) return '';
+      return formatDate(date, 'dd.MM.yyyy', this.locale);
+    } catch (error) {
+      console.log(error);
+      return '';
+    }
   }
 
   formatTimeOnly(date: Date | null | undefined): string {
     if (!date) return '';
-    return formatDate(date, 'HH:mm', this.locale);
+    try {
+      // Check if date is valid
+      if (isNaN(date.getTime())) return '';
+      return formatDate(date, 'HH:mm', this.locale);
+    } catch (error) {
+      console.log(error);
+      return '';
+    }
   }
 
 
@@ -254,4 +258,5 @@ export class MapPinLocationComponent implements AfterViewInit {
   }
 
   protected readonly Date = Date;
+  protected readonly isNaN = isNaN;
 }

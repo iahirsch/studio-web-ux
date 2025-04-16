@@ -7,7 +7,7 @@
       (toLocationSelected)="onToLocationSelected($event)">
       >
     </app-location-selector>
-    <app-date-time-picker [dateForm]="form"></app-date-time-picker>
+    <app-date-time-picker (dateTimeSelected)="onDateTimeSelected($event)"></app-date-time-picker>
     <h4>Organisation</h4>
     <app-map-pin-location
       [mode]="'select'"

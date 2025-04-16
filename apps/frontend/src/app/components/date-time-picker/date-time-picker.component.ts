@@ -1,24 +1,15 @@
-import { Component, forwardRef, Input, output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, FormGroup, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-date-time-picker',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => DateTimePickerComponent),
-      multi: true
-    }
-  ],
   templateUrl: './date-time-picker.component.html',
   styleUrl: './date-time-picker.component.css'
 })
-export class DateTimePickerComponent implements ControlValueAccessor {
-  @Input() dateForm?: FormGroup;
-
+export class DateTimePickerComponent {
   // Output-Event zur Weitergabe des ausgewählten Datums/Zeit
   dateTimeSelected = output<Date>();
 
@@ -43,7 +34,6 @@ export class DateTimePickerComponent implements ControlValueAccessor {
   // Diese Methode wird bei Änderungen an Datum oder Zeit aufgerufen
   onDateTimeChange(): void {
     this.emitDateTime();
-    this.updateValue();
   }
 
   // Kombiniert Datum und Zeit zu einem Date-Objekt und emitiert es
@@ -55,45 +45,5 @@ export class DateTimePickerComponent implements ControlValueAccessor {
 
       this.dateTimeSelected.emit(dateTime);
     }
-  }
-
-  private updateValue() {
-    const value = {
-      date: this.selectedDate,
-      departure: this.selectedTime
-    };
-    this.onChange(value);
-
-    if (this.dateForm?.get('carConnection')) {
-      const carConnection = this.dateForm.get('carConnection');
-      carConnection?.get('date')?.setValue(this.selectedDate);
-      carConnection?.get('departure')?.setValue(this.selectedTime);
-    }
-  }
-
-  //ControlValueAccessor
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onChange = (_value: any) => {};
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTouch = () => {};
-
-  writeValue(obj: any): void {
-    if (obj) {
-      if (obj.date !== undefined) {
-        this.selectedDate = obj.date;
-      }
-      if (obj.departure !== undefined) {
-        this.selectedTime = obj.departure;
-      }
-    }
-  }
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouch = fn;
   }
 }

@@ -14,12 +14,12 @@ export interface CarConnectionDto {
   providedIn: 'root'
 })
 export class CarConnectionService {
-  private apiUrl = `${env.api}/saveCarConnection`;
+  private apiUrl = `${env.api}`;
 
   constructor(private http: HttpClient) {}
 
   createCarConnection(carConnection: CarConnectionDto): Observable<any> {
-    return this.http.post<any>(this.apiUrl, carConnection);
+    return this.http.post<any>(`${this.apiUrl}/saveCarConnection`, carConnection);
   }
 
   updateCarConnection(id: string, carConnection: CarConnectionDto): Observable<any> {
@@ -27,6 +27,10 @@ export class CarConnectionService {
   }
 
   getCarConnection(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/carConnections/${id}`);
+  }
+
+  getUserCarConnections() {
+    return this.http.get<any[]>(`${this.apiUrl}/getUserCarConnections`);
   }
 }

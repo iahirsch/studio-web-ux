@@ -96,14 +96,16 @@ export class AppController {
     }
 
     console.log(carConnection);
-    console.log(user);
     console.log(carInfo);
+    console.log(user);
 
     const connectionData = await this.carConnectionsService.saveCarConnection({
       from: carConnection.from,
       to: carConnection.to,
       date: carConnection.date,
       departure: carConnection.departure,
+      arrival: carConnection.arrival,
+      duration: carConnection.duration,
       user: user,
       passengers: [user],
       carInfo: carInfo
@@ -127,5 +129,30 @@ export class AppController {
       message: 'Successfully joined the ride',
       connection
     };
+  }
+
+  @Get('getUserCarConnections')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserCarConnections(@Req() req) {
+    const userId = req.user.sub;
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    return await this.carConnectionsService.getUserCarConnections(userId);
+  }
+
+  @Get('carConnections/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async getCarConnection(@Param('id') id: number) {
+    const connection = await this.carConnectionsService.getCarConnectionWithPassengers(id);
+
+    if (!connection) {
+      throw new NotFoundException(`Car connection with ID ${id} not found`);
+    }
+
+    return connection;
   }
 }

@@ -1,17 +1,43 @@
-<h2>Fahrgemeinschaft</h2>
-<app-card-car bgColor="bg-secondary-200" txtColor="text-secondary-950" lineColor="bg-secondary-950"></app-card-car>
-<h4>Fahrer & Fahrzeug</h4>
-<app-rider-item></app-rider-item>
-<app-car-details></app-car-details>
-<h4>Chat</h4>
-<app-card-members></app-card-members>
-<app-chat></app-chat>
-<h4>Treffpunkt</h4>
-<app-map-pin-location [mode]="'display'"
-                      [meetingPoint]="meetingPoint"
-                      [meetingDateTime]="meetingTime">
-  >
-</app-map-pin-location>
+@if (isLoading) {
+  <div class="loading-container">
+    <p>Loading car connection details...</p>
+  </div>
+} @else if (error) {
+  <div class="error-container">
+    <p>{{ error }}</p>
+  </div>
+} @else {
+  <h2>Fahrgemeinschaft</h2>
+  <app-card-car
+    [carConnection]="carConnection"
+    [carInfo]="carInfo"
+    bgColor="bg-secondary-200"
+    txtColor="text-secondary-950"
+    lineColor="bg-secondary-950">
+  </app-card-car>
 
-<app-btn-primary text="Zurück zum Dashboard"></app-btn-primary>
-<app-btn-secondary text="Bei Fahrgemeinschaft austragen"></app-btn-secondary>
+  <h4>Fahrer & Fahrzeug</h4>
+  <!-- If RiderItem only accepts 'name' -->
+  <app-rider-item [name]="carConnection?.user?.name" [seatComment]="carInfo?.seatComment"></app-rider-item>
+  <div class="card">
+    <app-car-details
+      [carNumber]="carInfo?.numberPlate"
+      [carBrand]="carInfo?.description"
+      [carColor]="carInfo?.color">
+    </app-car-details>
+  </div>
+
+  <h4>Chat</h4>
+  <app-card-members></app-card-members>
+  <app-chat></app-chat>
+
+  <h4>Treffpunkt</h4>
+  <app-map-pin-location
+    [mode]="'display'"
+    [meetingPoint]="meetingPoint"
+    [meetingDateTime]="meetingTime">
+  </app-map-pin-location>
+
+  <app-btn-primary text="Zurück zum Dashboard" routerLink="/dashboard"></app-btn-primary>
+  <app-btn-secondary text="Bei Fahrgemeinschaft austragen"></app-btn-secondary>
+}

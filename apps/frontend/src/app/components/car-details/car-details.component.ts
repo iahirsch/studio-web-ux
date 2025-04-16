@@ -20,8 +20,8 @@ export class CarDetailsComponent implements OnInit {
   ngOnInit(): void {
     // Pills für die Anzeige von Auto-Details erstellen
     this.carDetailsPills = [
-      { id: 'number', label: `${this.carNumber}` },
-      { id: 'brand', label: `${this.carBrand}` },
+      { id: 'number', label: `${this.carNumber()}` },
+      { id: 'brand', label: `${this.carBrand()}` },
       { id: 'color', label: this.carColor(), color: this.colorCode() }
     ];
   }

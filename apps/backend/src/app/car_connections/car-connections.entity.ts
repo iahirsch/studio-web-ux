@@ -16,11 +16,14 @@ export class CarConnections {
   @Column({ type: 'timestamp' })
   date: Date;
 
-  @Column({ type: 'time' })
+  @Column({ type: 'time', precision: 0 })
   departure: string;
 
-  @Column({ type: 'time', nullable: true })
+  @Column({ type: 'time', precision: 0 })
   arrival: string;
+
+  @Column()
+  duration: string;
 
   @ManyToMany(() => User)
   @JoinTable()

@@ -17,6 +17,8 @@ export class CarConnectionsService {
     to: object;
     date: Date;
     departure: string;
+    arrival: string;
+    duration: string;
     user: User;
     passengers: User[];
     carInfo: CarInfo;
@@ -51,6 +53,16 @@ export class CarConnectionsService {
     return connection;
   }
 
+  async getUserCarConnections(userId: string): Promise<CarConnections[]> {
+    return this.carConnectionsRepository.createQueryBuilder('connection')
+      .leftJoinAndSelect('connection.passengers', 'passenger')
+      .leftJoinAndSelect('connection.user', 'driver')
+      .leftJoinAndSelect('connection.carInfo', 'carInfo')
+      .leftJoinAndSelect('driver.carInfo', 'driverCarInfo')
+      .where('passenger.id = :userId', { userId })
+      .getMany();
+  }
+
   async getCarConnectionWithPassengers(connectionId: number): Promise<CarConnections> {
     const connection = await this.carConnectionsRepository.findOne({
       where: { id: connectionId },
@@ -60,7 +72,6 @@ export class CarConnectionsService {
     if (!connection) {
       throw new Error(`Connection with ID ${connectionId} not found`);
     }
-
     return connection;
   }
 }

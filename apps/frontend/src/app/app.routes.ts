@@ -19,7 +19,7 @@ export const appRoutes: Route[] = [
   { path: 'search-ride', component: SearchRideComponent },
   { path: 'train-ride-details', component: TrainRideDetailsComponent },
   { path: 'car-ride-details', component: CarRideDetailsComponent },
-  { path: 'car-event', component: CarEventComponent },
+  { path: 'car-event/:id', component: CarEventComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'train-event', component: TrainEventComponent }
 ];

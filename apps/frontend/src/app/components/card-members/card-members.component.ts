@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-card-members',
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule],
   templateUrl: './card-members.component.html',
-  styleUrl: './card-members.component.css',
+  styleUrl: './card-members.component.css'
 })
-export class CardMembersComponent {}
+export class CardMembersComponent {
+  members = input<any[]>([]);
+}
