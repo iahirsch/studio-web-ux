@@ -13,20 +13,20 @@
   <!-- Abfahrtszeit/Ankunftszeit Umschalter bleibt unverändert -->
   <div class="pb-4" *ngIf="isPickerVisible">
     <div class="flex rounded-4xl ring-2 ring-background justify-between">
-      <div 
+      <button 
         class="flex-1 py-2 rounded-4xl flex justify-center items-center cursor-pointer transition-colors"
         [ngClass]="isArrivalMode ? 'text-gray-500' : 'bg-primary-300'"
         (click)="setDepartureMode()"
       >
         <h3>Abfahrtszeit</h3>
-      </div>
-      <div 
+      </button>
+      <button 
         class="flex-1 rounded-4xl flex justify-center items-center overflow-hidden cursor-pointer transition-colors"
         [ngClass]="isArrivalMode ? 'bg-primary-300' : 'text-gray-500'"
         (click)="setArrivalMode()"
       >
         <p>Ankunftszeit</p>
-      </div>
+      </button>
     </div>
   </div>
   
@@ -67,7 +67,7 @@
         </div>
       </div>
       
-      <!-- HIER KOMMEN DIE ÄNDERUNGEN: Stunden Rad-Picker -->
+      
       <div class="relative flex-none w-16">
         <div class="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-10 bg-opacity-50 border-y border-primary-500 z-10 pointer-events-none"></div>
         
@@ -91,11 +91,6 @@
           
           <div class="h-[72px]"></div>
         </div>
-      </div>
-
-      <!-- Doppelpunkt zwischen Stunden und Minuten -->
-      <div class="flex items-center justify-center">
-        <span class="font-medium text-xl">:</span>
       </div>
       
       <!-- Minuten Rad-Picker -->

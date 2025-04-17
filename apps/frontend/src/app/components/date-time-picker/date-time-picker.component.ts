@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, output, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, output, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -43,7 +43,7 @@ export class DateTimePickerComponent implements OnInit, AfterViewInit {
     const now = new Date();
     this.selectedDate = this.formatDateForInput(now);
     this.selectedTime = this.formatTimeForInput(now);
-    this.selectedDateFormatted = this.formatDateForDisplay(now);
+    this.selectedDateFormatted = this.formatDateForHeader(now);
     
     // Erzeuge verfügbare Daten (7 Tage vor/nach heute)
     this.generateAvailableDates();
@@ -180,7 +180,7 @@ export class DateTimePickerComponent implements OnInit, AfterViewInit {
   updateSelectedDate() {
     const selectedDate = this.availableDates[this.selectedDateIndex];
     this.selectedDate = this.formatDateForInput(selectedDate);
-    this.selectedDateFormatted = this.formatDateForDisplay(selectedDate);
+    this.selectedDateFormatted = this.formatDateForHeader(selectedDate);
     this.emitDateTimeChange();
   }
   
@@ -263,6 +263,14 @@ export class DateTimePickerComponent implements OnInit, AfterViewInit {
       weekday: 'short',
       day: '2-digit',
       month: 'short'
+    });
+  }
+
+  formatDateForHeader(date: Date): string {
+    return date.toLocaleDateString('de-DE', {
+      weekday: 'short', 
+      day: '2-digit',
+      month: '2-digit'
     });
   }
   
